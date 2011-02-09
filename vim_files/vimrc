@@ -77,16 +77,15 @@ autocmd FileType * set formatoptions-=ro
 " key mapping
 "=============================================================-
 inoremap <C-l> <ESC>
-nnoremap <silent> <SPACE><SPACE> :buffer<SPACE>#<CR>
-nnoremap <SPACE>l :ls<CR>:buffer<SPACE>
+nnoremap <silent> <SPACE><SPACE> :bnext<CR>
 nnoremap <C-h> :bNext<CR>
 nnoremap <C-l> :bnext<CR>
-nnoremap ,r :Ref<SPACE>alc<SPACE>
+nnoremap ,ref :Ref<SPACE>alc<SPACE>
 nnoremap ,t :tabnew<SPACE>
 nnoremap Y y$
 nnoremap + <C-w>+
 nnoremap - <C-w>-
-nnoremap <silent> <ESC><ESC> :set nohlsearch<CR>
+"nnoremap <silent> <ESC><ESC> :set nohlsearch<CR>
 
 " expand path
 cmap <C-x> <C-r>=expand('%:p:h')<CR>/
@@ -98,12 +97,13 @@ cmap <C-z> <C-r>=expand('%:p:r')<CR>
 "-------------------------------------------------------
 set t_Co=256
 hi CursorLine term=reverse cterm=none ctermbg=233
-"hi CursorColumn term=reverse cterm=none ctermbg=233
-hi Pmenu ctermbg=8 guibg=#606060
-hi PmenuSel ctermbg=12 guibg=SlateBlue
-hi PmenuSbar ctermbg=0 guibg=#404040
-hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=52
-let g:hi_insert = 'highlight StatusLine ctermfg=darkred ctermbg=green cterm=none'
+hi CursorColumn term=reverse cterm=none ctermbg=233
+hi Pmenu ctermbg=darkgrey ctermfg=white
+hi PmenuSel ctermbg=grey ctermfg=black
+hi PmenuSbar ctermbg=0 ctermfg=white
+hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=darkred
+let g:hi_insert = 'highlight StatusLine ctermfg=18 ctermbg=red cterm=none'
+hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
 
 if has('syntax')
   augroup InsertHook
@@ -298,6 +298,8 @@ nnoremap <silent> <Space>ut :Unite tab<CR>
 nnoremap <silent> <Space>uy :Unite register<CR>
 nnoremap <silent> <Space>ua :UniteBookmarkAdd<CR>
 nnoremap <silent> <Space>ub :Unite bookmark<CR>
+nnoremap <silent> <Space>l :Unite buffer_tab<CR>
+nnoremap <silent> <Space>ul :Unite buffer file_mru register bookmark<CR>
 
 autocmd FileType unite call s:unite_my_settings()
 function! s:unite_my_settings()"{{{
