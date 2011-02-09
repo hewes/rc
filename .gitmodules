@@ -1,0 +1,42 @@
+[submodule "vim_files/vim/bundle/vim-ruby"]
+	path = vim_files/vim/bundle/vim-ruby
+	url = http://github.com/vim-ruby/vim-ruby.git
+[submodule "vim_files/vim/bundle/nerdcommenter"]
+	path = vim_files/vim/bundle/nerdcommenter
+	url = https://github.com/scrooloose/nerdcommenter.git
+[submodule "vim_files/vim/bundle/vim-taglist"]
+	path = vim_files/vim/bundle/vim-taglist
+	url = https://github.com/mexpolk/vim-taglist.git
+[submodule "vim_files/vim/bundle/vim-pathogen"]
+	path = vim_files/vim/bundle/vim-pathogen
+	url = https://github.com/tpope/vim-pathogen.git
+[submodule "vim_files/vim/bundle/vim-quickrun"]
+	path = vim_files/vim/bundle/vim-quickrun
+	url = https://github.com/thinca/vim-quickrun.git
+[submodule "vim_files/vim/bundle/vim-align"]
+	path = vim_files/vim/bundle/vim-align
+	url = https://github.com/tsaleh/vim-align.git
+[submodule "vim_files/vim/bundle/vim-matchit"]
+	path = vim_files/vim/bundle/vim-matchit
+	url = https://github.com/tsaleh/vim-matchit.git
+[submodule "vim/bundle/vim-ref"]
+	path = vim/bundle/vim-ref
+	url = https://github.com/thinca/vim-ref.git
+[submodule "vim_files/vim/bundle/vim-project"]
+	path = vim_files/vim/bundle/vim-project
+	url = https://github.com/shemerey/vim-project.git
+[submodule "vim_files/vim/bundle/unite.vim"]
+	path = vim_files/vim/bundle/unite.vim
+	url = https://github.com/Shougo/unite.vim.git
+[submodule "vim_files/vim/bundle/neocomplcache"]
+	path = vim_files/vim/bundle/neocomplcache
+	url = https://github.com/Shougo/neocomplcache.git
+[submodule "vim_files/vim/bundle/eregex.vim"]
+	path = vim_files/vim/bundle/eregex.vim
+	url = https://github.com/othree/eregex.vim.git
+[submodule "vim_files/vim/bundle/vimshell"]
+	path = vim_files/vim/bundle/vimshell
+	url = https://github.com/Shougo/vimshell.git
+[submodule "vim_files/vim/bundle/git-vim"]
+	path = vim_files/vim/bundle/git-vim
+	url = https://github.com/motemen/git-vim.git

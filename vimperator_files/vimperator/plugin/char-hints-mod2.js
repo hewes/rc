@@ -1,0 +1,1 @@
+/home/hewes/vimperator-plugins/char-hints-mod2.js

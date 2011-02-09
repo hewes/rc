@@ -1,0 +1,7 @@
+alias	ls='ls --color=auto -F'
+alias	l='ls --color=auto -aF'
+alias	la='ls --color=auto -aF'
+alias	lla='ls --color=auto -alF'
+alias	s='screen'
+alias	ss='screen -S'
+alias	sr='screen -D -RR'
