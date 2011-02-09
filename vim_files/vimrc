@@ -1,18 +1,4 @@
 "=============================================================-
-" key mapping
-"=============================================================-
-inoremap <C-l> <ESC>
-nnoremap <silent> <SPACE><SPACE> :buffer<SPACE>#<CR>
-nnoremap <SPACE>l :ls<CR>:buffer<SPACE>
-nnoremap <C-h> :bNext<CR>
-nnoremap <C-l> :bnext<CR>
-nnoremap ,r :Ref<SPACE>alc<SPACE>
-nnoremap ,t :tabnew<SPACE>
-nnoremap + <C-w>+
-nnoremap - <C-w>-
-
-
-"=============================================================-
 " basic setting
 "=============================================================-
 let $VIMHOME=$HOME"/rc/vim"
@@ -42,16 +28,30 @@ else
     let $DOTVIM = $HOME."/.vim"
 endif
 
+set title
+set ruler
 set tabstop=2
 set shiftwidth=2
+set splitbelow
+set splitright
 set expandtab
 set autoindent
 set hidden
 set cursorline
+augroup cch
+  autocmd! cch
+  autocmd WinLeave * set nocursorline
+  autocmd WinEnter,BufRead * set cursorline
+augroup END
+
+set nocursorcolumn
 syntax on
 filetype plugin on
 filetype indent on
 set browsedir=buffer
+set backspace=indent,eol,start
+set clipboard=unnamed
+set showcmd
 set nocompatible
 set incsearch
 set hlsearch
@@ -65,8 +65,74 @@ set smartindent
 set smarttab
 set whichwrap=b,s,h,l,<,>,[,]
 set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%p%%]
+set nowildmenu
 set wildmode=list:full
 set virtualedit=all
+if exists('&ambiwidth')
+  set ambiwidth=double
+endif
+autocmd FileType * set formatoptions-=ro
+
+"=============================================================-
+" key mapping
+"=============================================================-
+inoremap <C-l> <ESC>
+nnoremap <silent> <SPACE><SPACE> :buffer<SPACE>#<CR>
+nnoremap <SPACE>l :ls<CR>:buffer<SPACE>
+nnoremap <C-h> :bNext<CR>
+nnoremap <C-l> :bnext<CR>
+nnoremap ,r :Ref<SPACE>alc<SPACE>
+nnoremap ,t :tabnew<SPACE>
+nnoremap Y y$
+nnoremap + <C-w>+
+nnoremap - <C-w>-
+nnoremap <silent> <ESC><ESC> :set nohlsearch<CR>
+
+" expand path
+cmap <C-x> <C-r>=expand('%:p:h')<CR>/
+" expand file (not ext)
+cmap <C-z> <C-r>=expand('%:p:r')<CR>
+
+"-------------------------------------------------------
+" color
+"-------------------------------------------------------
+set t_Co=256
+hi CursorLine term=reverse cterm=none ctermbg=233
+"hi CursorColumn term=reverse cterm=none ctermbg=233
+hi Pmenu ctermbg=8 guibg=#606060
+hi PmenuSel ctermbg=12 guibg=SlateBlue
+hi PmenuSbar ctermbg=0 guibg=#404040
+hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=52
+let g:hi_insert = 'highlight StatusLine ctermfg=darkred ctermbg=green cterm=none'
+
+if has('syntax')
+  augroup InsertHook
+    autocmd!
+    autocmd InsertEnter * call s:StatusLine('Enter')
+    autocmd InsertLeave * call s:StatusLine('Leave')
+  augroup END
+endif
+
+let s:slhlcmd = ''
+function! s:StatusLine(mode)
+  if a:mode == 'Enter'
+    silent! let s:slhlcmd = 'highlight ' . s:GetHighlight('StatusLine')
+    silent exec g:hi_insert
+  else
+    highlight clear StatusLine
+    silent exec s:slhlcmd
+  endif
+endfunction
+
+function! s:GetHighlight(hi)
+  redir => hl
+  exec 'highlight '.a:hi
+  redir END
+  let hl = substitute(hl, '[\r\n]', '', 'g')
+  let hl = substitute(hl, 'xxx', '', '')
+  return hl
+endfunction
+
 
 "=============================================================-
 " misc setting
@@ -147,9 +213,25 @@ if has('multi_byte_ime')
     xnoremap / :<C-u>set imsearch=0<CR>/
     nnoremap ? :<C-u>set imsearch=0<CR>?
     xnoremap ? :<C-u>set imsearch=0<CR>?
+    highlight Cursor ctermfg=NONE ctermbg=Green
+    highlight CursorIM ctermfg=NONE ctermbg=Purple
 endif
 "}}}
 
+"-------------------------------------------------------
+" Set augroup.
+"-------------------------------------------------------
+augroup MyAutoCmd
+    autocmd!
+augroup END
+
+if !has('gui_running') && !(has('win32') || has('win64'))
+    autocmd MyAutoCmd BufWritePost $MYVIMRC nested source $MYVIMRC
+else
+    autocmd MyAutoCmd BufWritePost $MYVIMRC source $MYVIMRC | 
+                \if has('gui_running') | source $MYGVIMRC  
+    autocmd MyAutoCmd BufWritePost $MYGVIMRC if has('gui_running') | source $MYGVIMRC
+endif
 
 "=============================================================-
 " Plugins
@@ -199,10 +281,11 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 " Enable heavy omni completion.
 if !exists('g:neocomplcache_omni_patterns')
-let g:neocomplcache_omni_patterns = {}
+  let g:neocomplcache_omni_patterns = {}
 endif
 let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+
 
 "---------------------------------------------------------------------
 " unite
