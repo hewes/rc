@@ -1,7 +1,7 @@
 "=============================================================-
 " basic setting
 "=============================================================-
-let $VIMHOME=$HOME"/rc/vim"
+let $VIMHOME=$HOME"/.vim"
 
 colorscheme zellner
 
@@ -12,23 +12,22 @@ set rtp+=~/.vim/vundle.git/
 call vundle#rc()
 Bundle 'vim-ruby/vim-ruby.git'
 Bundle 'scrooloose/nerdcommenter.git'
-Bundle 'mexpolk/vim-taglist.git'
-Bundle 'tpope/vim-pathogen.git'
+Bundle 'tpope/vim-surround'
 Bundle 'thinca/vim-quickrun.git'
 Bundle 'tsaleh/vim-align.git'
 Bundle 'tsaleh/vim-matchit.git'
 Bundle 'thinca/vim-ref.git'
 Bundle 'shemerey/vim-project.git'
+Bundle 'othree/eregex.vim.git'
+Bundle 'motemen/git-vim.git'
 Bundle 'Shougo/unite.vim.git'
 Bundle 'Shougo/neocomplcache.git'
-Bundle 'othree/eregex.vim.git'
 Bundle 'Shougo/vimshell.git'
-Bundle 'motemen/git-vim.git'
+Bundle 'h1mesuke/unite-outline.git'
+Bundle 'sgur/unite-qf.git'
+Bundle 'kmnk/vim-unite-svn.git'
+Bundle 'ujihisa/unite-locate.git'
 filetype plugin indent on
-
-"call pathogen#runtime_append_all_bundles()
-"call pathogen#helptags()
-"set helpfile=$VIMRUNTIME/doc/help.txt
 
 " Map <Leader> ','
 let mapleader= ','
@@ -65,13 +64,10 @@ augroup END
 
 set nocursorcolumn
 syntax on
-filetype plugin on
-filetype indent on
 set browsedir=buffer
 set backspace=indent,eol,start
 set clipboard=unnamed
 set showcmd
-set nocompatible
 set incsearch
 set hlsearch
 set number
@@ -87,24 +83,30 @@ set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc
 set nowildmenu
 set wildmode=list:full
 set virtualedit=all
+set directory=$VIMHOME
+set backup
+set backupdir=$TMPDIR
 if exists('&ambiwidth')
   set ambiwidth=double
 endif
 autocmd FileType * set formatoptions-=ro
+scriptencoding  utf-8
+highlight Zenkaku cterm=underline ctermfg=Green guifg=Green
+au BufRead,BufNew * match Zenkaku /ã/
 
 "=============================================================-
 " key mapping
 "=============================================================-
 inoremap <C-l> <ESC>
-nnoremap <silent> <SPACE><SPACE> :bnext<CR>
+nnoremap <silent> mm :bnext<CR>
 nnoremap <C-h> :bNext<CR>
 nnoremap <C-l> :bnext<CR>
-nnoremap ,ref :Ref<SPACE>alc<SPACE>
+nnoremap <Leader>a :Ref<SPACE>alc<SPACE>
 nnoremap ,t :tabnew<SPACE>
 nnoremap Y y$
 nnoremap + <C-w>+
 nnoremap - <C-w>-
-"nnoremap <silent> <ESC><ESC> :set nohlsearch<CR>
+nnoremap <expr> sw ':%s/\<' . expand('<cword>') .'\>/'
 
 " expand path
 cmap <C-x> <C-r>=expand('%:p:h')<CR>/
@@ -309,16 +311,24 @@ autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
 "---------------------------------------------------------------------
 " unite
 "---------------------------------------------------------------------
-nnoremap <silent> <Space>uu :Unite -buffer-name=files file<CR>
-nnoremap <silent> <Space>uf :Unite -buffer-name=file file_mru<CR>
-nnoremap <silent> <Space>ur :Unite file_rec<CR>
-nnoremap <silent> <Space>uc :UniteWithBufferDir -buffer-name=files file<CR>
-nnoremap <silent> <Space>ut :Unite tab<CR>
-nnoremap <silent> <Space>uy :Unite register<CR>
-nnoremap <silent> <Space>ua :UniteBookmarkAdd<CR>
-nnoremap <silent> <Space>ub :Unite bookmark<CR>
-nnoremap <silent> <Space>l :Unite buffer_tab<CR>
-nnoremap <silent> <Space>ul :Unite buffer file_mru register bookmark<CR>
+nnoremap <Leader>u <Nop>
+nnoremap <silent> <Leader>uu :Unite -buffer-name=files file<CR>
+nnoremap <silent> <Leader>uf :Unite -buffer-name=file file_mru<CR>
+nnoremap <silent> <Leader>ur :Unite file_rec<CR>
+nnoremap <silent> <Leader>uc :UniteWithBufferDir -buffer-name=files file<CR>
+nnoremap <silent> <Leader>ut :Unite tab<CR>
+nnoremap <silent> <Leader>uy :Unite register<CR>
+nnoremap <silent> <Leader>ua :UniteBookmarkAdd<CR>
+nnoremap <silent> <Leader>ub :Unite bookmark<CR>
+nnoremap <silent> <Leader>l :Unite buffer_tab<CR>
+nnoremap <silent> <Leader>ug :Unite line<CR>
+nnoremap <silent> <Leader>ul :Unite locate<CR>
+nnoremap <silent> <Leader>uo :Unite outline<CR>
+nnoremap <silent> <Leader>uq :Unite qf<CR>
+nnoremap <Leader>us<SPACE> :Unite svn/
+nnoremap <silent> <Leader>usd :Unite svn/diff<CR>
+nnoremap <silent> <Leader>usb :Unite svn/blame<CR>
+nnoremap <silent> <Leader>uss :Unite svn/status<CR>
 
 autocmd FileType unite call s:unite_my_settings()
 function! s:unite_my_settings()"{{{
