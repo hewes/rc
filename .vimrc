@@ -17,12 +17,14 @@ Bundle 'tsaleh/vim-align.git'
 Bundle 'tsaleh/vim-matchit.git'
 Bundle 'thinca/vim-quickrun.git'
 Bundle 'thinca/vim-ref.git'
-Bundle 'shemerey/vim-project.git'
+"Bundle 'shemerey/vim-project.git'
+Bundle 'vim-scripts/myprojects.git'
 Bundle 'othree/eregex.vim.git'
 Bundle 'motemen/git-vim.git'
 Bundle 'Shougo/unite.vim.git'
 Bundle 'Shougo/neocomplcache.git'
 Bundle 'Shougo/vimshell.git'
+Bundle 'Shougo/vimfiler.git'
 Bundle 'h1mesuke/unite-outline.git'
 Bundle 'sgur/unite-qf.git'
 Bundle 'kmnk/vim-unite-svn.git'
@@ -33,7 +35,7 @@ filetype plugin indent on
 " Map <Leader> ','
 let mapleader= ','
 let g:mapleader = ','
-let g:maplocalleader = ','
+let g:maplocalleader = 'm'
 
 " Exchange path separator.
 if has('win32') || has('win64') 
@@ -123,9 +125,7 @@ au BufRead,BufNew * match Zenkaku /ã/
 " key mapping
 "=============================================================-
 inoremap <C-l> <ESC>
-nnoremap <silent> mm :bnext<CR>
-nnoremap <C-h> :bNext<CR>
-nnoremap <C-l> :bnext<CR>
+nnoremap <silent> <Leader><Leader> :bnext<CR>
 nnoremap <Leader>a :Ref<SPACE>alc<SPACE>
 nnoremap ,t :tabnew<SPACE>
 nnoremap Y y$
@@ -290,13 +290,22 @@ else
     autocmd MyAutoCmd BufWritePost $MYGVIMRC if has('gui_running') | source $MYGVIMRC
 endif
 
-"=============================================================-
+"=============================================================
 " Plugins
-"=============================================================-
+"=============================================================
 
-" -------------------- 
-" neocomplcache
-" -------------------- 
+"---------------------------------------------------------------------
+" myprojects.vim {{{
+"---------------------------------------------------------------------
+let g:myprojects_file = $HOME. '/.project/default'
+let g:myprojects_auto_open = 0
+let g:myprojects_tags_generator = 'ctags'
+"let g:myprojects_tags_generator = 'gtags'
+"}}}
+
+"---------------------------------------------------------------------
+" neocomplcache.vim {{{
+"---------------------------------------------------------------------
 " snippets directory
 let g:NeoComplCache_SnippetsDir = '~/.vim/snippets'
 
@@ -349,6 +358,7 @@ if !exists('g:neocomplcache_omni_patterns')
 endif
 "let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 "autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+"}}}
 
 
 "---------------------------------------------------------------------
@@ -447,7 +457,9 @@ augroup MyAutoCmd
 augroup END
 "}}}
 
+"---------------------------------------------------------------------
 " q: Quickfix "{{{
+"---------------------------------------------------------------------
 
 " use Q for q
 nnoremap Q q
@@ -504,5 +516,51 @@ nnoremap [Quickfix]wM q:lmake<Space>
 nnoremap [Quickfix]w<Space> q:lmake<Space>
 nnoremap [Quickfix]wg q:lgrep<Space>
 "}}}
+"}}}
+
+"---------------------------------------------------------------------
+" vimfiler.vim"{{{
+"---------------------------------------------------------------------
+"nmap <Leader>v <Plug>(vimfiler_switch)
+"nnoremap <silent> <Leader>v :<C-u>VimFiler `=<SID>GetBufferDirectory()`<CR>
+nnoremap <silent> <Leader>v :<C-u>VimFiler<CR>
+nmap <Leader>ff <Plug>(vimfiler_switch)
+nmap <Leader>si <Plug>(vimfiler_simple)
+nmap <Leader>h :<C-u>edit %:h<CR>
+
+" Set local mappings.
+nmap <C-p> <Plug>(vimfiler_open_previous_file)
+nmap <C-n> <Plug>(vimfiler_open_next_file)
+
+call vimfiler#set_execute_file('vim', 'vim')
+call vimfiler#set_execute_file('txt', 'vim')
+let g:vimfiler_split_command = ''
+let g:vimfiler_edit_command = 'tabedit'
+let g:vimfiler_pedit_command = 'vnew'
+
+let g:vimfiler_enable_clipboard = 0
+let g:vimfiler_safe_mode_by_default = 1
+let g:vimshell_cd_command = 'TabpageCD'
+
+" Linux default.
+let g:vimfiler_external_copy_directory_command = 'cp -r $src $dest'
+let g:vimfiler_external_copy_file_command = 'cp $src $dest'
+let g:vimfiler_external_delete_command = 'rm -r $srcs'
+let g:vimfiler_external_move_command = 'mv $srcs $dest'
+
+" Windows default.
+let g:vimfiler_external_delete_command = 'system rmdir /Q /S $srcs'
+let g:vimfiler_external_copy_file_command = 'system copy $src $dest'
+let g:vimfiler_external_copy_directory_command = ''
+let g:vimfiler_external_move_command = 'move /Y $srcs $dest'
+
+let g:vimfiler_as_default_explorer = 1
+let g:vimfiler_detect_drives = ['C', 'D', 'E', 'F', 'G', 'H', 'I',
+      \ 'J', 'K', 'L', 'M', 'N']
+
+autocmd MyAutoCmd FileType vimfiler call s:vimfiler_my_settings()
+function! s:vimfiler_my_settings()"{{{
+" Overwrite settings.
+endfunction"}}}
 "}}}
 
