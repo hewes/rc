@@ -283,6 +283,7 @@ let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 let g:neocomplcache_dictionary_filetype_lists = {
     \ 'default' : '',
     \ 'vimshell' : $HOME.'/.vimshell_hist',
+    \ 'ruby' : $HOME.'/.vim/dict/ruby.dict',
     \ }
 
 " Plugin key-mappings.
