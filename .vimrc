@@ -151,6 +151,7 @@ hi Pmenu ctermbg=darkgrey ctermfg=white
 hi PmenuSel ctermbg=grey ctermfg=black
 hi PmenuSbar ctermbg=0 ctermfg=white
 hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=darkred
+
 let g:hi_insert = 'highlight StatusLine ctermfg=18 ctermbg=red cterm=none'
 hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
 
@@ -416,8 +417,8 @@ function! s:unite_my_settings()"{{{
   call unite#set_substitute_pattern('file', '\\ \@!', '/', -30)
   let g:unite_enable_ignore_case = 1
   let g:unite_enable_smart_case = 1
-  "let g:unite_enable_start_insert = 1
-endfunction
+  let g:unite_enable_start_insert = 1
+endfunction "}}}
 "}}}
 
 "---------------------------------------------------------------------
