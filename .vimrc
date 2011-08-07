@@ -13,9 +13,9 @@ call vundle#rc()
 Bundle 'vim-ruby/vim-ruby.git'
 Bundle 'scrooloose/nerdcommenter.git'
 Bundle 'tpope/vim-surround'
-Bundle 'thinca/vim-quickrun.git'
 Bundle 'tsaleh/vim-align.git'
 Bundle 'tsaleh/vim-matchit.git'
+Bundle 'thinca/vim-quickrun.git'
 Bundle 'thinca/vim-ref.git'
 Bundle 'shemerey/vim-project.git'
 Bundle 'othree/eregex.vim.git'
@@ -27,6 +27,7 @@ Bundle 'h1mesuke/unite-outline.git'
 Bundle 'sgur/unite-qf.git'
 Bundle 'kmnk/vim-unite-svn.git'
 Bundle 'ujihisa/unite-locate.git'
+Bundle 'kana/vim-smartchr.git'
 filetype plugin indent on
 
 " Map <Leader> ','
@@ -81,19 +82,21 @@ set smartindent
 set smarttab
 set whichwrap=b,s,h,l,<,>,[,]
 set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%p%%]
-" completion option
+" No auto return
+set textwidth=0
+" Completion option
 set nowildmenu
 set wildmode=list:full
-" virtual edit always
+" Virtual edit always
 set virtualedit=all
 " swp file dir
 set directory=$VIMHOME
-" backupfile dir
+" Backupfile dir
 set backup
 set backupdir=$TMPDIR
-" round tab width
+" Round tab width
 set shiftround
-" show full info about tag
+" Show full info about tag
 set showfulltag
 " No Beep
 set visualbell
@@ -129,6 +132,7 @@ nnoremap Y y$
 nnoremap + <C-w>+
 nnoremap - <C-w>-
 nnoremap <expr> sw ':%s/\<' . expand('<cword>') .'\>/'
+nnoremap <Leader>m :make 
 
 " expand path
 cmap <C-x> <C-r>=expand('%:p:h')<CR>/
@@ -183,6 +187,9 @@ endfunction
 let g:java_highlight_functions = 'style'
 let g:java_highlight_all = 1
 let g:java_allow_cpp_keywords = 1
+
+" ruby
+autocmd FileType ruby compiler ruby
 
 "=============================================================-
 " misc setting
@@ -345,7 +352,7 @@ endif
 
 
 "---------------------------------------------------------------------
-" unite
+" unite.vim{{{
 "---------------------------------------------------------------------
 " map ff as default f
 nnoremap ff f
@@ -356,13 +363,16 @@ nnoremap [unite] <Nop>
 xnoremap [unite] <Nop>
 " mapping for Unite functions
 nnoremap <silent> [unite]u :Unite -buffer-name=files file<CR>
-nnoremap <silent> [unite]f :Unite -buffer-name=file file_mru<CR>
+nnoremap <silent> [unite]m :Unite -buffer-name=file file_mru<CR>
 nnoremap <silent> [unite]r :Unite file_rec<CR>
+nnoremap [unite]R :Unite ref/
 nnoremap <silent> [unite]c :UniteWithBufferDir -buffer-name=files file<CR>
 nnoremap <silent> [unite]t :Unite tab<CR>
 nnoremap <silent> [unite]y :Unite register<CR>
 nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
 nnoremap <silent> [unite]b :Unite bookmark<CR>
+" Explore home dir
+nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file -input='. $HOME .'/<CR>'
 nnoremap <silent> <Leader>l :Unite buffer_tab<CR>
 nnoremap <silent> [unite]g :Unite line<CR>
 nnoremap <silent> [unite]* :UniteWithCursorWord line<CR>
@@ -393,5 +403,106 @@ function! s:unite_my_settings()"{{{
   call unite#set_substitute_pattern('file', '\\ \@!', '/', -30)
   let g:unite_enable_ignore_case = 1
   let g:unite_enable_smart_case = 1
-endfunction"}}}
+  "let g:unite_enable_start_insert = 1
+endfunction
+"}}}
+
+"---------------------------------------------------------------------
+" smartchr.vim"{{{
+"---------------------------------------------------------------------
+inoremap <expr> , smartchr#one_of(', ', ',')
+
+inoremap <expr> ? smartchr#one_of('?', '? ')
+
+" Smart =.
+inoremap <expr> = search('\(&\<bar><bar>\<bar>+\<bar>-\<bar>/\<bar>>\<bar><\) \%#', 'bcn')? '<bs>= '
+      \ : search('\(*\<bar>!\)\%#', 'bcn') ? '= '
+      \ : smartchr#one_of(' = ', '=', ' == ',  '=')
+augroup MyAutoCmd
+  autocmd FileType c,cpp inoremap <buffer> <expr> . smartchr#loop('.', '->', '...')
+  autocmd FileType perl,php inoremap <buffer> <expr> . smartchr#loop(' . ', '->', '.')
+  autocmd FileType perl,php inoremap <buffer> <expr> - smartchr#loop('-', '->')
+  autocmd FileType vim inoremap <buffer> <expr> . smartchr#loop('.', ' . ', '..', '...')
+
+  autocmd FileType haskell,int-ghci
+        \ inoremap <buffer> <expr> + smartchr#loop('+', ' ++ ')
+        \| inoremap <buffer> <expr> - smartchr#loop('-', ' -> ', ' <- ')
+        \| inoremap <buffer> <expr> $ smartchr#loop(' $ ', '$')
+        \| inoremap <buffer> <expr> \ smartchr#loop('\ ', '\')
+        \| inoremap <buffer> <expr> : smartchr#loop(':', ' :: ', ' : ')
+        \| inoremap <buffer> <expr> . smartchr#loop('.', ' . ', '..')
+
+  autocmd FileType ruby
+        \ inoremap <buffer> <expr> = smartchr#loop(' = ', ' == ', ' === ', '=')
+
+  autocmd FileType scala
+        \ inoremap <buffer> <expr> - smartchr#loop('-', ' -> ', ' <- ')
+        \| inoremap <buffer> <expr> = smartchr#loop(' = ', '=', ' => ')
+        \| inoremap <buffer> <expr> : smartchr#loop(': ', ':', ' :: ')
+        \| inoremap <buffer> <expr> . smartchr#loop('.', ' => ')
+
+  autocmd FileType eruby, yaml
+        \ inoremap <buffer> <expr> > smartchr#loop('>', '%>')
+        \| inoremap <buffer> <expr> < smartchr#loop('<', '<%', '<%=')
+augroup END
+"}}}
+
+" q: Quickfix "{{{
+
+" use Q for q
+nnoremap Q q
+" The prefix key.
+nnoremap [Quickfix] <Nop>
+nmap q [Quickfix]
+
+" For quickfix list "{{{
+nnoremap <silent> [Quickfix]n :<C-u>cnext<CR>
+nnoremap <silent> [Quickfix]p :<C-u>cprevious<CR>
+nnoremap <silent> [Quickfix]r :<C-u>crewind<CR>
+nnoremap <silent> [Quickfix]N :<C-u>cfirst<CR>
+nnoremap <silent> [Quickfix]P :<C-u>clast<CR>
+nnoremap <silent> [Quickfix]fn :<C-u>cnfile<CR>
+nnoremap <silent> [Quickfix]fp :<C-u>cpfile<CR>
+nnoremap <silent> [Quickfix]l :<C-u>clist<CR>
+nnoremap <silent> [Quickfix]q :<C-u>cc<CR>
+nnoremap <silent> [Quickfix]o :<C-u>copen<CR>
+nnoremap <silent> [Quickfix]c :<C-u>cclose<CR>
+nnoremap <silent> [Quickfix]en :<C-u>cnewer<CR>
+nnoremap <silent> [Quickfix]ep :<C-u>colder<CR>
+nnoremap <silent> [Quickfix]m :<C-u>make<CR>
+nnoremap [Quickfix]M q:make<Space>
+nnoremap [Quickfix]g q:grep<Space>
+" Toggle quickfix window.
+nnoremap <silent> [Quickfix]<Space> :<C-u>call <SID>toggle_quickfix_window()<CR>
+function! s:toggle_quickfix_window()
+  let _ = winnr('$')
+  cclose
+  if _ == winnr('$')
+    copen
+    setlocal nowrap
+    setlocal whichwrap=b,s
+  endif
+endfunction
+"}}}
+
+" For location list (mnemonic: Quickfix list for the current Window) "{{{
+nnoremap <silent> [Quickfix]wn :<C-u>lnext<CR>
+nnoremap <silent> [Quickfix]wp :<C-u>lprevious<CR>
+nnoremap <silent> [Quickfix]wr :<C-u>lrewind<CR>
+nnoremap <silent> [Quickfix]wP :<C-u>lfirst<CR>
+nnoremap <silent> [Quickfix]wN :<C-u>llast<CR>
+nnoremap <silent> [Quickfix]wfn :<C-u>lnfile<CR>
+nnoremap <silent> [Quickfix]wfp :<C-u>lpfile<CR>
+nnoremap <silent> [Quickfix]wl :<C-u>llist<CR>
+nnoremap <silent> [Quickfix]wq :<C-u>ll<CR>
+nnoremap <silent> [Quickfix]wo :<C-u>lopen<CR>
+nnoremap <silent> [Quickfix]wc :<C-u>lclose<CR>
+nnoremap <silent> [Quickfix]wep :<C-u>lolder<CR>
+nnoremap <silent> [Quickfix]wen :<C-u>lnewer<CR>
+nnoremap <silent> [Quickfix]wm :<C-u>lmake<CR>
+nnoremap [Quickfix]wM q:lmake<Space>
+nnoremap [Quickfix]w<Space> q:lmake<Space>
+nnoremap [Quickfix]wg q:lgrep<Space>
+"}}}
+"}}}
 
