@@ -5,9 +5,9 @@ let $VIMHOME=$HOME"/.vim"
 
 colorscheme zellner
 
-" Vundle
 set nocompatible
 filetype off
+" Vundle
 set rtp+=~/.vim/vundle.git/
 call vundle#rc()
 Bundle 'vim-ruby/vim-ruby.git'
@@ -39,8 +39,9 @@ if has('win32') || has('win64')
     set shellslash
 endif
 
+let s:has_win = has('win32') || has('win64')
 " abosorb difference between windows and Linux
-if has('win32') || has('win64')
+if s:has_win
     let $DOTVIM = $VIM."/vimfiles"
 else
     let $DOTVIM = $HOME."/.vim"
@@ -80,12 +81,33 @@ set smartindent
 set smarttab
 set whichwrap=b,s,h,l,<,>,[,]
 set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%p%%]
+" completion option
 set nowildmenu
 set wildmode=list:full
+" virtual edit always
 set virtualedit=all
+" swp file dir
 set directory=$VIMHOME
+" backupfile dir
 set backup
 set backupdir=$TMPDIR
+" round tab width
+set shiftround
+" show full info about tag
+set showfulltag
+" No Beep
+set visualbell
+set vb t_vb=
+" Spell check language
+set spelllang=en_us
+" Completion setting.
+set completeopt=menuone
+" Don't complete from other buffer.
+set complete=.
+" Set popup menu max height.
+set pumheight=20
+
+set display=lastline
 if exists('&ambiwidth')
   set ambiwidth=double
 endif
@@ -154,6 +176,13 @@ function! s:GetHighlight(hi)
   return hl
 endfunction
 
+"-------------------------------------------------------
+" for language
+"-------------------------------------------------------
+" Java
+let g:java_highlight_functions = 'style'
+let g:java_highlight_all = 1
+let g:java_allow_cpp_keywords = 1
 
 "=============================================================-
 " misc setting
@@ -284,7 +313,13 @@ let g:neocomplcache_dictionary_filetype_lists = {
     \ 'default' : '',
     \ 'vimshell' : $HOME.'/.vimshell_hist',
     \ 'ruby' : $HOME.'/.vim/dict/ruby.dict',
+    \ 'java' : $HOME.'/.vim/dict/java.dict',
     \ }
+
+let g:neocomplcache_omni_functions = {
+      \ 'python' : 'pythoncomplete#Complete',
+      \ 'ruby' : 'rubycomplete#Complete',
+      \ }
 
 " Plugin key-mappings.
 inoremap <expr><C-g> neocomplcache#undo_completion()
@@ -305,31 +340,39 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 if !exists('g:neocomplcache_omni_patterns')
   let g:neocomplcache_omni_patterns = {}
 endif
-let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
-autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+"let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+"autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
 
 
 "---------------------------------------------------------------------
 " unite
 "---------------------------------------------------------------------
-nnoremap <Leader>u <Nop>
-nnoremap <silent> <Leader>uu :Unite -buffer-name=files file<CR>
-nnoremap <silent> <Leader>uf :Unite -buffer-name=file file_mru<CR>
-nnoremap <silent> <Leader>ur :Unite file_rec<CR>
-nnoremap <silent> <Leader>uc :UniteWithBufferDir -buffer-name=files file<CR>
-nnoremap <silent> <Leader>ut :Unite tab<CR>
-nnoremap <silent> <Leader>uy :Unite register<CR>
-nnoremap <silent> <Leader>ua :UniteBookmarkAdd<CR>
-nnoremap <silent> <Leader>ub :Unite bookmark<CR>
+" map ff as default f
+nnoremap ff f
+" map f as unite prefix key
+nmap f [unite]
+xmap f [unite]
+nnoremap [unite] <Nop>
+xnoremap [unite] <Nop>
+" mapping for Unite functions
+nnoremap <silent> [unite]u :Unite -buffer-name=files file<CR>
+nnoremap <silent> [unite]f :Unite -buffer-name=file file_mru<CR>
+nnoremap <silent> [unite]r :Unite file_rec<CR>
+nnoremap <silent> [unite]c :UniteWithBufferDir -buffer-name=files file<CR>
+nnoremap <silent> [unite]t :Unite tab<CR>
+nnoremap <silent> [unite]y :Unite register<CR>
+nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
+nnoremap <silent> [unite]b :Unite bookmark<CR>
 nnoremap <silent> <Leader>l :Unite buffer_tab<CR>
-nnoremap <silent> <Leader>ug :Unite line<CR>
-nnoremap <silent> <Leader>ul :Unite locate<CR>
-nnoremap <silent> <Leader>uo :Unite outline<CR>
-nnoremap <silent> <Leader>uq :Unite qf<CR>
-nnoremap <Leader>us<SPACE> :Unite svn/
-nnoremap <silent> <Leader>usd :Unite svn/diff<CR>
-nnoremap <silent> <Leader>usb :Unite svn/blame<CR>
-nnoremap <silent> <Leader>uss :Unite svn/status<CR>
+nnoremap <silent> [unite]g :Unite line<CR>
+nnoremap <silent> [unite]* :UniteWithCursorWord line<CR>
+nnoremap <silent> [unite]l :Unite locate<CR>
+nnoremap <silent> [unite]o :Unite outline<CR>
+nnoremap <silent> [unite]q :Unite qf<CR>
+nnoremap [unite]s<SPACE> :Unite svn/
+nnoremap <silent> [unite]sd :Unite svn/diff<CR>
+nnoremap <silent> [unite]sb :Unite svn/blame<CR>
+nnoremap <silent> [unite]ss :Unite svn/status<CR>
 
 autocmd FileType unite call s:unite_my_settings()
 function! s:unite_my_settings()"{{{
