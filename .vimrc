@@ -113,6 +113,8 @@ set completeopt=menuone
 set complete=.
 " Set popup menu max height.
 set pumheight=20
+" use ack for grep
+set grepprg=ack\ -a
 
 set display=lastline
 if exists('&ambiwidth')
@@ -389,9 +391,10 @@ nnoremap <silent> [unite]b :Unite bookmark<CR>
 " Explore home dir
 nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file -input='. $HOME .'/<CR>'
 nnoremap <silent> <Leader>l :Unite buffer_tab<CR>
-nnoremap <silent> [unite]g :Unite line<CR>
+nnoremap <silent> [unite]l :Unite line<CR>
+nnoremap <expr> [unite]g ':Unite grep:'. expand("%:h") . ':-r'
 nnoremap <silent> [unite]* :UniteWithCursorWord line<CR>
-nnoremap <silent> [unite]l :Unite locate<CR>
+"nnoremap <silent> [unite]l :Unite locate<CR>
 nnoremap <silent> [unite]o :Unite outline<CR>
 nnoremap <silent> [unite]q :Unite qf<CR>
 nnoremap [unite]s<SPACE> :Unite svn/
