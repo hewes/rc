@@ -17,6 +17,7 @@ Bundle 'tsaleh/vim-align.git'
 Bundle 'tsaleh/vim-matchit.git'
 Bundle 'thinca/vim-quickrun.git'
 Bundle 'thinca/vim-ref.git'
+Bundle 'thinca/vim-qfreplace.git'
 "Bundle 'shemerey/vim-project.git'
 Bundle 'vim-scripts/myprojects.git'
 Bundle 'othree/eregex.vim.git'
@@ -31,6 +32,7 @@ Bundle 'sgur/unite-qf.git'
 Bundle 'kmnk/vim-unite-svn.git'
 Bundle 'ujihisa/unite-locate.git'
 Bundle 'kana/vim-smartchr.git'
+Bundle 'Sixeight/unite-grep.git'
 filetype plugin indent on
 
 " Map <Leader> ','
@@ -218,42 +220,42 @@ cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 "-------------------------------------------------------
 " The automatic recognition of the character code."{{{
 "-------------------------------------------------------
-if !exists('did_encoding_settings') && has('iconv')
-    let s:enc_euc = 'euc-jp'
-    let s:enc_jis = 'iso-2022-jp'
+"if !exists('did_encoding_settings') && has('iconv')
+    "let s:enc_euc = 'euc-jp'
+    "let s:enc_jis = 'iso-2022-jp'
 
-    " Does iconv support JIS X 0213?
-    if iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
-        let s:enc_euc = 'euc-jisx0213,euc-jp'
-        let s:enc_jis = 'iso-2022-jp-3'
-    endif
+    "" Does iconv support JIS X 0213?
+    "if iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
+        "let s:enc_euc = 'euc-jisx0213,euc-jp'
+        "let s:enc_jis = 'iso-2022-jp-3'
+    "endif
  
-    " Build encodings.
-    let &fileencodings = 'ucs-bom'
-    if &encoding !=# 'utf-8'
-        let &fileencodings = &fileencodings . ',' . 'ucs-2le'
-        let &fileencodings = &fileencodings . ',' . 'ucs-2'
-    endif
-    let &fileencodings = &fileencodings . ',' . s:enc_jis
+    "" Build encodings.
+    "let &fileencodings = 'ucs-bom'
+    "if &encoding !=# 'utf-8'
+        "let &fileencodings = &fileencodings . ',' . 'ucs-2le'
+        "let &fileencodings = &fileencodings . ',' . 'ucs-2'
+    "endif
+    "let &fileencodings = &fileencodings . ',' . s:enc_jis
 
-    if &encoding ==# 'utf-8'
-        let &fileencodings = &fileencodings . ',' . s:enc_euc
-        let &fileencodings = &fileencodings . ',' . 'cp932'
-    elseif &encoding =~# '^euc-\%(jp\|jisx0213\)$'
-        let &encoding = s:enc_euc
-        let &fileencodings = &fileencodings . ',' . 'utf-8'
-        let &fileencodings = &fileencodings . ',' . 'cp932'
-    else  " cp932
-        let &fileencodings = &fileencodings . ',' . 'utf-8'
-        let &fileencodings = &fileencodings . ',' . s:enc_euc
-    endif
-    let &fileencodings = &fileencodings . ',' . &encoding
+    "if &encoding ==# 'utf-8'
+        "let &fileencodings = &fileencodings . ',' . s:enc_euc
+        "let &fileencodings = &fileencodings . ',' . 'cp932'
+    "elseif &encoding =~# '^euc-\%(jp\|jisx0213\)$'
+        "let &encoding = s:enc_euc
+        "let &fileencodings = &fileencodings . ',' . 'utf-8'
+        "let &fileencodings = &fileencodings . ',' . 'cp932'
+    "else  " cp932
+        "let &fileencodings = &fileencodings . ',' . 'utf-8'
+        "let &fileencodings = &fileencodings . ',' . s:enc_euc
+    "endif
+    "let &fileencodings = &fileencodings . ',' . &encoding
 
-    unlet s:enc_euc
-    unlet s:enc_jis
+    "unlet s:enc_euc
+    "unlet s:enc_jis
 
-    let did_encoding_settings = 1
-endif
+    "let did_encoding_settings = 1
+"endif
 "}}}
 
 "-------------------------------------------------------
