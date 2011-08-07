@@ -20,6 +20,7 @@ Bundle 'thinca/vim-ref.git'
 Bundle 'thinca/vim-qfreplace.git'
 "Bundle 'shemerey/vim-project.git'
 Bundle 'vim-scripts/myprojects.git'
+Bundle 'vim-scripts/gtags.vim.git'
 Bundle 'othree/eregex.vim.git'
 Bundle 'motemen/git-vim.git'
 Bundle 'Shougo/unite.vim.git'
@@ -307,8 +308,14 @@ endif
 "---------------------------------------------------------------------
 let g:myprojects_file = $HOME. '/.project/default'
 let g:myprojects_auto_open = 0
-let g:myprojects_tags_generator = 'ctags'
-"let g:myprojects_tags_generator = 'gtags'
+let g:myprojects_display_empty_folder = 1
+if has('mac')
+  let g:myprojects_tags_generator = '/usr/local/bin/ctags'
+  "let g:myprojects_tags_generator = 'gtags'
+else
+  let g:myprojects_tags_generator = 'ctags'
+  "let g:myprojects_tags_generator = 'gtags'
+end
 "}}}
 
 "---------------------------------------------------------------------
