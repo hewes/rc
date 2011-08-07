@@ -340,6 +340,7 @@ let g:neocomplcache_omni_functions = {
 " Plugin key-mappings.
 inoremap <expr><C-g> neocomplcache#undo_completion()
 inoremap <expr><C-c> neocomplcache#complete_common_string()
+nnoremap <Leader>es :NeoComplCacheEditSnippets<CR>
 
 " expand snippets by TAB
 imap  <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : "\<TAB>"
