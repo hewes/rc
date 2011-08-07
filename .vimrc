@@ -106,6 +106,7 @@ set vb t_vb=
 " Spell check language
 set spelllang=en_us
 " Completion setting.
+"set completeopt=menuone,preview
 set completeopt=menuone
 " Don't complete from other buffer.
 set complete=.
@@ -116,6 +117,7 @@ set display=lastline
 if exists('&ambiwidth')
   set ambiwidth=double
 endif
+
 autocmd FileType * set formatoptions-=ro
 scriptencoding  utf-8
 highlight Zenkaku cterm=underline ctermfg=Green guifg=Green
