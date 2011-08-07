@@ -25,6 +25,7 @@ Bundle 'Shougo/unite.vim.git'
 Bundle 'Shougo/neocomplcache.git'
 Bundle 'Shougo/vimshell.git'
 Bundle 'Shougo/vimfiler.git'
+Bundle 'Shougo/vimproc.git'
 Bundle 'h1mesuke/unite-outline.git'
 Bundle 'sgur/unite-qf.git'
 Bundle 'kmnk/vim-unite-svn.git'
@@ -544,7 +545,7 @@ let g:vimfiler_pedit_command = 'vnew'
 
 let g:vimfiler_enable_clipboard = 0
 let g:vimfiler_safe_mode_by_default = 1
-let g:vimshell_cd_command = 'TabpageCD'
+"let g:vimshell_cd_command = 'TabpageCD'
 
 " Linux default.
 let g:vimfiler_external_copy_directory_command = 'cp -r $src $dest'
