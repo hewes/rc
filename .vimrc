@@ -430,7 +430,7 @@ function! s:unite_my_settings()"{{{
   call unite#set_substitute_pattern('file', '\\ \@!', '/', -30)
   let g:unite_enable_ignore_case = 1
   let g:unite_enable_smart_case = 1
-  let g:unite_enable_start_insert = 1
+  let g:unite_enable_start_insert = 0
 endfunction "}}}
 "}}}
 
@@ -471,6 +471,8 @@ augroup MyAutoCmd
   autocmd FileType eruby, yaml
         \ inoremap <buffer> <expr> > smartchr#loop('>', '%>')
         \| inoremap <buffer> <expr> < smartchr#loop('<', '<%', '<%=')
+
+  autocmd FileType help nnoremap <buffer> <Leader>q <C-w>q
 augroup END
 "}}}
 
