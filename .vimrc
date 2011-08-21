@@ -437,7 +437,7 @@ nnoremap <silent> [unite]l :Unite line<CR>
 nnoremap <expr> [unite]g ':Unite grep:'. expand("%:h") . ':-r'
 nnoremap <silent> [unite]* :UniteWithCursorWord line<CR>
 "nnoremap <silent> [unite]l :Unite locate<CR>
-nnoremap <silent> [unite]o :Unite outline<CR>
+nnoremap <silent> [unite]o :Unite -buffer-name=outline outline<CR>
 nnoremap <silent> [unite]q :Unite qf<CR>
 nnoremap [unite]s<SPACE> :Unite svn/
 nnoremap <silent> [unite]sd :Unite svn/diff<CR>
