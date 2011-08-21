@@ -19,7 +19,7 @@ Bundle 'thinca/vim-quickrun.git'
 Bundle 'thinca/vim-ref.git'
 Bundle 'thinca/vim-qfreplace.git'
 "Bundle 'shemerey/vim-project.git'
-Bundle 'vim-scripts/myprojects.git'
+"Bundle 'vim-scripts/myprojects.git'
 Bundle 'vim-scripts/gtags.vim.git'
 Bundle 'othree/eregex.vim.git'
 Bundle 'motemen/git-vim.git'
@@ -33,7 +33,9 @@ Bundle 'sgur/unite-qf.git'
 Bundle 'kmnk/vim-unite-svn.git'
 Bundle 'ujihisa/unite-locate.git'
 Bundle 'kana/vim-smartchr.git'
+Bundle 'kana/vim-altercmd'
 Bundle 'Sixeight/unite-grep.git'
+Bundle 'tsukkee/unite-tag.git'
 filetype plugin indent on
 
 " Map <Leader> ','
@@ -78,7 +80,7 @@ set clipboard=unnamed
 set showcmd
 set incsearch
 set hlsearch
-set number
+"set number
 set list
 set laststatus=2
 set listchars=eol:$,tab:>\ ,extends:<
@@ -87,7 +89,7 @@ set smartcase
 set smartindent
 set smarttab
 set whichwrap=b,s,h,l,<,>,[,]
-set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%p%%]
+set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%05c]
 " No auto return
 set textwidth=0
 " Completion option
@@ -102,8 +104,15 @@ set backup
 set backupdir=$TMPDIR
 " Round tab width
 set shiftround
+" tags
+if has('path_extra')
+"  set tags+=.;
+"  set tags+=tags;
+endif
+set notagbsearch
 " Show full info about tag
 set showfulltag
+
 " No Beep
 set visualbell
 set vb t_vb=
@@ -118,6 +127,8 @@ set complete=.
 set pumheight=20
 " use ack for grep
 set grepprg=ack\ -a
+" use help for K
+set keywordprg=:help
 
 set display=lastline
 if exists('&ambiwidth')
@@ -200,12 +211,28 @@ let g:java_allow_cpp_keywords = 1
 " ruby
 autocmd FileType ruby compiler ruby
 
-"=============================================================-
+"==============================================================
 " misc setting
-"=============================================================-
+"==============================================================
+" :TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
+call altercmd#load()
+command! -complete=dir -nargs=? TabpageCD
+      \ execute 'cd' fnameescape(<q-args>)
+      \| let t:cwd  =  getcwd()
+
+AlterCommand cd TabpageCD
+command! -nargs=0 CD silent execute 'TabpageCD' unite#util#path2project_directory(expand('%:p'))
+
+autocmd VimEnter,TabEnter *
+      \ if !exists('t:cwd')
+      \| let t:cwd = getcwd()
+      \| endif
+      \| execute 'cd' fnameescape(t:cwd)
+
+"}}}
+
 "-------------------------------------------------------
-" kill line from current to eol
-"-------------------------------------------------------
+" kill line from current to eol "{{{
 func! s:kill_line()
     let curcol = col('.')
     if curcol == col('$')
@@ -217,10 +244,10 @@ func! s:kill_line()
 endfunc
 inoremap <C-k>  <C-o>:<C-u>call <SID>kill_line()<CR>
 cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
+"}}}
 
 "-------------------------------------------------------
 " The automatic recognition of the character code."{{{
-"-------------------------------------------------------
 "if !exists('did_encoding_settings') && has('iconv')
     "let s:enc_euc = 'euc-jp'
     "let s:enc_jis = 'iso-2022-jp'
@@ -302,20 +329,21 @@ endif
 "=============================================================
 " Plugins
 "=============================================================
-
 "---------------------------------------------------------------------
 " myprojects.vim {{{
 "---------------------------------------------------------------------
-let g:myprojects_file = $HOME. '/.project/default'
-let g:myprojects_auto_open = 0
-let g:myprojects_display_empty_folder = 1
-if has('mac')
-  let g:myprojects_tags_generator = '/usr/local/bin/ctags'
+"let g:myprojects_file = $HOME. '/.project/default'
+"let g:myprojects_auto_open = 1
+"let g:myprojects_display_empty_folder = 1
+"let g:myprojects_cursorcolumn = 0
+"let g:myprojects_cursorline = 1
+"if has('mac')
+  ""let g:myprojects_tags_generator = '/usr/local/bin/ctags'
   "let g:myprojects_tags_generator = 'gtags'
-else
-  let g:myprojects_tags_generator = 'ctags'
-  "let g:myprojects_tags_generator = 'gtags'
-end
+"else
+  "let g:myprojects_tags_generator = 'ctags'
+  ""let g:myprojects_tags_generator = 'gtags'
+"end
 "}}}
 
 "---------------------------------------------------------------------
@@ -393,10 +421,15 @@ nnoremap <silent> [unite]m :Unite -buffer-name=file file_mru<CR>
 nnoremap <silent> [unite]r :Unite file_rec<CR>
 nnoremap [unite]R :Unite ref/
 nnoremap <silent> [unite]c :UniteWithBufferDir -buffer-name=files file<CR>
-nnoremap <silent> [unite]t :Unite tab<CR>
+nnoremap <silent> [unite]T :Unite tab<CR>
+nnoremap <silent> [unite]t :Unite tag<CR>
 nnoremap <silent> [unite]y :Unite register<CR>
 nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
 nnoremap <silent> [unite]b :Unite bookmark<CR>
+"nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -winwidth=30 -winheight=0 -default-action=rec<CR>
+"nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -winwidth=30 -default-action=rec<CR>
+"nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -default-action=rec<CR>
+nnoremap <silent> [unite]B :Unite bookmark -vertical -default-action=rec<CR>
 " Explore home dir
 nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file -input='. $HOME .'/<CR>'
 nnoremap <silent> <Leader>l :Unite buffer_tab<CR>
@@ -415,7 +448,12 @@ autocmd FileType unite call s:unite_my_settings()
 function! s:unite_my_settings()"{{{
   nnoremap <silent><buffer> <C-o> :call unite#mappings#do_action('tabopen')<CR>
   nnoremap <silent><buffer> <C-v> :call unite#mappings#do_action('vsplit')<CR>
+  nnoremap <silent><buffer> <C-s> :call unite#mappings#do_action('split')<CR>
+  nnoremap <silent><buffer> <C-r> :call unite#mappings#do_action('rec')<CR>
   inoremap <silent><buffer> <C-o> <Esc>:call unite#mappings#do_action('tabopen')<CR>
+  inoremap <silent><buffer> <C-v> <Esc>:call unite#mappings#do_action('vsplit')<CR>
+  inoremap <silent><buffer> <C-s> <Esc>:call unite#mappings#do_action('split')<CR>
+  inoremap <silent><buffer> <C-r> <Esc>:call unite#mappings#do_action('rec')<CR>
 
   call unite#set_substitute_pattern('file', '[^~.]\zs/', '*/*', 20)
   call unite#set_substitute_pattern('file', '/\ze[^*]', '/*', 10)
@@ -431,6 +469,7 @@ function! s:unite_my_settings()"{{{
   let g:unite_enable_ignore_case = 1
   let g:unite_enable_smart_case = 1
   let g:unite_enable_start_insert = 0
+  let g:unite_source_file_rec_min_cache_files = 100
 endfunction "}}}
 "}}}
 
@@ -472,7 +511,8 @@ augroup MyAutoCmd
         \ inoremap <buffer> <expr> > smartchr#loop('>', '%>')
         \| inoremap <buffer> <expr> < smartchr#loop('<', '<%', '<%=')
 
-  autocmd FileType help nnoremap <buffer> <Leader>q <C-w>q
+  autocmd FileType help nnoremap <buffer> <TAB> <C-w>w
+  autocmd FileType ref nnoremap <buffer> <TAB> <C-w>w
 augroup END
 "}}}
 
