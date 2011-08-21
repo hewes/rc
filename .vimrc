@@ -414,7 +414,7 @@ endif
 
 
 "---------------------------------------------------------------------
-" unite.vim{{{
+" unite.vim "{{{
 "---------------------------------------------------------------------
 " map ff as default f
 nnoremap ff f
@@ -437,7 +437,7 @@ nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
 "nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -winwidth=30 -winheight=0 -default-action=rec<CR>
 "nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -winwidth=30 -default-action=rec<CR>
 "nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -default-action=rec<CR>
-nnoremap <silent> [unite]b :Unite bookmark -default-action=rec<CR>
+nnoremap <silent> [unite]b :Unite bookmark -default-action=rec -no-start-insert<CR>
 " Explore home dir
 nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file -input='. $HOME .'/<CR>'
 nnoremap <silent> <Leader>l :Unite buffer_tab<CR>
@@ -484,6 +484,7 @@ function! s:unite_my_settings()"{{{
 
   call unite#set_substitute_pattern('file', '\\\@<! ', '\\ ', -20)
   call unite#set_substitute_pattern('file', '\\ \@!', '/', -30)
+  call unite#custom_max_candidates('file_rec', 100)
 endfunction "}}}
 "}}}
 
