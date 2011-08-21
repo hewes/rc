@@ -367,6 +367,14 @@ let g:neocomplcache_enable_underbar_completion = 1
 let g:neocomplcache_min_syntax_length = 3
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 
+let g:neocomplcache_vim_completefuncs = {
+      \ 'Ref' : 'ref#complete',
+      \ 'Unite' : 'unite#complete_source',
+      \ 'VimShellExecute' : 'vimshell#complete#vimshell_execute_complete#completefunc',
+      \ 'VimShellTerminal' : 'vimshell#complete#vimshell_execute_complete#completefunc', 
+      \ 'VimShellInteractive' : 'vimshell#complete#vimshell_execute_complete#completefunc',
+      \}
+
 " Define dictionary.
 let g:neocomplcache_dictionary_filetype_lists = {
     \ 'default' : '',
@@ -425,11 +433,11 @@ nnoremap <silent> [unite]T :Unite tab<CR>
 nnoremap <silent> [unite]t :Unite tag<CR>
 nnoremap <silent> [unite]y :Unite register<CR>
 nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
-nnoremap <silent> [unite]b :Unite bookmark<CR>
+"nnoremap <silent> [unite]b :Unite bookmark<CR>
 "nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -winwidth=30 -winheight=0 -default-action=rec<CR>
 "nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -winwidth=30 -default-action=rec<CR>
 "nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -default-action=rec<CR>
-nnoremap <silent> [unite]B :Unite bookmark -vertical -default-action=rec<CR>
+nnoremap <silent> [unite]b :Unite bookmark -default-action=rec<CR>
 " Explore home dir
 nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file -input='. $HOME .'/<CR>'
 nnoremap <silent> <Leader>l :Unite buffer_tab<CR>
@@ -443,6 +451,16 @@ nnoremap [unite]s<SPACE> :Unite svn/
 nnoremap <silent> [unite]sd :Unite svn/diff<CR>
 nnoremap <silent> [unite]sb :Unite svn/blame<CR>
 nnoremap <silent> [unite]ss :Unite svn/status<CR>
+let g:unite_enable_ignore_case = 1
+let g:unite_enable_smart_case = 1
+let g:unite_enable_start_insert = 1
+let g:unite_enable_split_vertically  =  0
+let g:unite_source_file_mru_limit  =  300
+let g:unite_source_file_rec_min_cache_files = 300
+let g:unite_source_file_rec_max_depth = 10
+let g:unite_cd_command = 'TabpageCD'
+let g:unite_lcd_command = 'TabpageCD'
+let g:unite_winheight = 20
 
 autocmd FileType unite call s:unite_my_settings()
 function! s:unite_my_settings()"{{{
@@ -466,10 +484,6 @@ function! s:unite_my_settings()"{{{
 
   call unite#set_substitute_pattern('file', '\\\@<! ', '\\ ', -20)
   call unite#set_substitute_pattern('file', '\\ \@!', '/', -30)
-  let g:unite_enable_ignore_case = 1
-  let g:unite_enable_smart_case = 1
-  let g:unite_enable_start_insert = 0
-  let g:unite_source_file_rec_min_cache_files = 100
 endfunction "}}}
 "}}}
 
