@@ -3,8 +3,6 @@
 "=============================================================-
 let $VIMHOME=$HOME"/.vim"
 
-colorscheme zellner
-
 set nocompatible
 filetype off
 " Vundle
@@ -36,6 +34,7 @@ Bundle 'kana/vim-smartchr.git'
 Bundle 'kana/vim-altercmd'
 Bundle 'Sixeight/unite-grep.git'
 Bundle 'tsukkee/unite-tag.git'
+Bundle 'altercation/vim-colors-solarized.git'
 filetype plugin indent on
 
 " Map <Leader> ','
@@ -43,12 +42,13 @@ let mapleader= ','
 let g:mapleader = ','
 let g:maplocalleader = 'm'
 
+let s:has_win = has('win32') || has('win64')
+
 " Exchange path separator.
-if has('win32') || has('win64') 
+if s:has_win
     set shellslash
 endif
 
-let s:has_win = has('win32') || has('win64')
 " abosorb difference between windows and Linux
 if s:has_win
     let $DOTVIM = $VIM."/vimfiles"
@@ -58,14 +58,19 @@ endif
 
 set title
 set ruler
+" tab char setting
 set tabstop=2
 set shiftwidth=2
+set expandtab
+" split window direction
 set splitbelow
 set splitright
-set expandtab
+
 set autoindent
+syntax on
 set hidden
 set cursorline
+" set cursolline only focused window
 augroup cch
   autocmd! cch
   autocmd WinLeave * set nocursorline
@@ -73,7 +78,6 @@ augroup cch
 augroup END
 
 set nocursorcolumn
-syntax on
 set browsedir=buffer
 set backspace=indent,eol,start
 set clipboard=unnamed
@@ -88,8 +92,11 @@ set showmatch
 set smartcase
 set smartindent
 set smarttab
+" always show tab
+set showtabline=2
 set whichwrap=b,s,h,l,<,>,[,]
-set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%05c]
+" status line format
+set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]
 " No auto return
 set textwidth=0
 " Completion option
@@ -110,7 +117,7 @@ if has('path_extra')
 "  set tags+=tags;
 endif
 set notagbsearch
-" Show full info about tag
+" Show full taginfo
 set showfulltag
 
 " No Beep
@@ -162,6 +169,26 @@ cmap <C-z> <C-r>=expand('%:p:r')<CR>
 " color
 "-------------------------------------------------------
 set t_Co=256
+"colorscheme zellner
+" solarized "{{{
+if has('gui_running')
+    "set background=light
+    set background=dark
+else
+    set background=dark
+    let g:solarized_termcolors=256
+endif
+let g:solarized_termtrans=0
+let g:solarized_degrade=0
+let g:solarized_bold=1
+let g:solarized_underline=1
+let g:solarized_italic=1
+let g:solarized_hitrail=1
+let g:solarized_contrast="high"
+let g:solarized_visibility="normal"
+colorscheme solarized
+"}}}
+
 hi CursorLine term=reverse cterm=none ctermbg=233
 hi CursorColumn term=reverse cterm=none ctermbg=233
 hi Pmenu ctermbg=darkgrey ctermfg=white
@@ -429,15 +456,15 @@ nnoremap <silent> [unite]m :Unite -buffer-name=file file_mru<CR>
 nnoremap <silent> [unite]r :Unite file_rec<CR>
 nnoremap [unite]R :Unite ref/
 nnoremap <silent> [unite]c :UniteWithBufferDir -buffer-name=files file<CR>
-nnoremap <silent> [unite]T :Unite tab<CR>
-nnoremap <silent> [unite]t :Unite tag<CR>
+nnoremap <silent> [unite]t :Unite tab<CR>
+nnoremap <silent> [unite]T :Unite tag<CR>
 nnoremap <silent> [unite]y :Unite register<CR>
 nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
 "nnoremap <silent> [unite]b :Unite bookmark<CR>
 "nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -winwidth=30 -winheight=0 -default-action=rec<CR>
 "nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -winwidth=30 -default-action=rec<CR>
 "nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -default-action=rec<CR>
-nnoremap <silent> [unite]b :Unite bookmark -default-action=rec -no-start-insert<CR>
+nnoremap <silent> [unite]b :Unite bookmark -default-action=cd -no-start-insert<CR>
 " Explore home dir
 nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file -input='. $HOME .'/<CR>'
 nnoremap <silent> <Leader>l :Unite buffer_tab<CR>
@@ -472,6 +499,7 @@ function! s:unite_my_settings()"{{{
   inoremap <silent><buffer> <C-v> <Esc>:call unite#mappings#do_action('vsplit')<CR>
   inoremap <silent><buffer> <C-s> <Esc>:call unite#mappings#do_action('split')<CR>
   inoremap <silent><buffer> <C-r> <Esc>:call unite#mappings#do_action('rec')<CR>
+  inoremap <silent><buffer> <C-e> <Esc>:call unite#mappings#do_action('edit')<CR>
 
   call unite#set_substitute_pattern('file', '[^~.]\zs/', '*/*', 20)
   call unite#set_substitute_pattern('file', '/\ze[^*]', '/*', 10)
@@ -512,6 +540,9 @@ augroup MyAutoCmd
         \| inoremap <buffer> <expr> \ smartchr#loop('\ ', '\')
         \| inoremap <buffer> <expr> : smartchr#loop(':', ' :: ', ' : ')
         \| inoremap <buffer> <expr> . smartchr#loop('.', ' . ', '..')
+
+  autocmd FileType sh,bash,vim
+        \ inoremap = =
 
   autocmd FileType ruby
         \ inoremap <buffer> <expr> = smartchr#loop(' = ', ' == ', ' === ', '=')
