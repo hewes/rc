@@ -34,7 +34,9 @@ Bundle 'kana/vim-smartchr.git'
 Bundle 'kana/vim-altercmd'
 Bundle 'Sixeight/unite-grep.git'
 Bundle 'tsukkee/unite-tag.git'
-Bundle 'altercation/vim-colors-solarized.git'
+Bundle 'ujihisa/unite-colorscheme.git'
+"Bundle 'altercation/vim-colors-solarized.git'
+Bundle 'vim-scripts/wombat256.vim.git'
 filetype plugin indent on
 
 " Map <Leader> ','
@@ -169,25 +171,8 @@ cmap <C-z> <C-r>=expand('%:p:r')<CR>
 " color
 "-------------------------------------------------------
 set t_Co=256
-"colorscheme zellner
-" solarized "{{{
-if has('gui_running')
-    "set background=light
-    set background=dark
-else
-    set background=dark
-    let g:solarized_termcolors=256
-endif
-let g:solarized_termtrans=0
-let g:solarized_degrade=0
-let g:solarized_bold=1
-let g:solarized_underline=1
-let g:solarized_italic=1
-let g:solarized_hitrail=1
-let g:solarized_contrast="high"
-let g:solarized_visibility="normal"
-colorscheme solarized
-"}}}
+set background=dark
+colorscheme wombat256mod
 
 hi CursorLine term=reverse cterm=none ctermbg=233
 hi CursorColumn term=reverse cterm=none ctermbg=233
@@ -353,6 +338,50 @@ else
     autocmd MyAutoCmd BufWritePost $MYGVIMRC if has('gui_running') | source $MYGVIMRC
 endif
 
+"-------------------------------------------------------
+" tab line setting
+"-------------------------------------------------------
+"function! GetCDProjectName()
+  "let s:cd=getcwd()
+  "for line in readfile(g:unite_source_bookmark_file)
+    "echo line
+    "let match = matchlist(line, '^\(^\t\*\)\t\(^\t\+\)\t\t')
+    "if empty(match)
+      "continue
+    "endif
+    "echo match
+    "if match[1] == s:cd
+      "return match[0]
+    "endif
+  "endfor
+  "return ''
+"endfunction
+
+function! MyTabLabel(n)
+  let buflist  =  tabpagebuflist(a:n)
+  let winnr  =  tabpagewinnr(a:n)
+  return bufname(buflist[winnr - 1]) 
+endfunction
+
+function! MyTabLine()
+  let s = ''
+  for i in range(tabpagenr('$'))
+    if i + 1 == tabpagenr()
+      let s .= '%#TabLineSel#'
+    else
+      let s .= '%#TabLine#'
+    endif
+    let s .= '%' . (i+1) . 'T' 
+    let s .= ' ' . (i+1) . (1==getwinvar(i+1,'&modified')?'[+]':'') . ' %{MyTabLabel(' . (i+1) . ')} '
+  endfor
+  let s .= '%#TabLineFill#%T'
+  if tabpagenr('$') > 1 
+    let s .= '%=%#TabLine#%999Xclose'
+  endif
+  return s
+endfunction
+set tabline=%!MyTabLine()
+
 "=============================================================
 " Plugins
 "=============================================================
@@ -381,7 +410,6 @@ let g:NeoComplCache_SnippetsDir = '~/.vim/snippets'
 
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
-
 " Use neocomplcache.
 let g:neocomplcache_enable_at_startup = 1
 " Use smartcase.
@@ -467,7 +495,7 @@ nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
 nnoremap <silent> [unite]b :Unite bookmark -default-action=cd -no-start-insert<CR>
 " Explore home dir
 nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file -input='. $HOME .'/<CR>'
-nnoremap <silent> <Leader>l :Unite buffer_tab<CR>
+nnoremap <silent> <Leader>l :Unite buffer_tab -no-start-insert<CR>
 nnoremap <silent> [unite]l :Unite line<CR>
 nnoremap <expr> [unite]g ':Unite grep:'. expand("%:h") . ':-r'
 nnoremap <silent> [unite]* :UniteWithCursorWord line<CR>
