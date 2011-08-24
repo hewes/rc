@@ -341,25 +341,25 @@ endif
 "-------------------------------------------------------
 " tab line setting
 "-------------------------------------------------------
-"function! GetCDProjectName()
-  "let s:cd=getcwd()
-  "for line in readfile(g:unite_source_bookmark_file)
-    "echo line
-    "let match = matchlist(line, '^\(^\t\*\)\t\(^\t\+\)\t\t')
-    "if empty(match)
-      "continue
-    "endif
-    "echo match
-    "if match[1] == s:cd
-      "return match[0]
-    "endif
-  "endfor
-  "return ''
-"endfunction
+" FIXME: only project tab return project name
+function! GetCDProjectName()
+  for line in readfile(g:unite_source_bookmark_directory . '/default')
+    let match = matchlist(line, '^\([^\t]*\)\t\([^\t]*\)\t\t')
+    if empty(match)
+      continue
+    endif
+    if match[2] == t:cwd .'/'
+      return '['. match[1] .']'
+    endif
+  endfor
+  return ''
+endfunction
 
 function! MyTabLabel(n)
+  "let project = GetCDProjectName()
   let buflist  =  tabpagebuflist(a:n)
   let winnr  =  tabpagewinnr(a:n)
+  "return project . bufname(buflist[winnr - 1]) 
   return bufname(buflist[winnr - 1]) 
 endfunction
 
@@ -493,6 +493,7 @@ nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
 "nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -winwidth=30 -default-action=rec<CR>
 "nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -default-action=rec<CR>
 nnoremap <silent> [unite]b :Unite bookmark -default-action=cd -no-start-insert<CR>
+nnoremap <silent> [unite]j :Unite jump<CR>
 " Explore home dir
 nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file -input='. $HOME .'/<CR>'
 nnoremap <silent> <Leader>l :Unite buffer_tab -no-start-insert<CR>
@@ -507,14 +508,17 @@ nnoremap <silent> [unite]sd :Unite svn/diff<CR>
 nnoremap <silent> [unite]sb :Unite svn/blame<CR>
 nnoremap <silent> [unite]ss :Unite svn/status<CR>
 let g:unite_enable_ignore_case = 1
+noremap <silent> <C-]> :<C-u>Unite -immediately -no-start-insert tags:<C-r>=expand('<cword>')<CR><CR>
 let g:unite_enable_smart_case = 1
 let g:unite_enable_start_insert = 1
 let g:unite_enable_split_vertically  =  0
 let g:unite_source_file_mru_limit  =  300
 let g:unite_source_file_rec_min_cache_files = 300
 let g:unite_source_file_rec_max_depth = 10
-let g:unite_cd_command = 'TabpageCD'
-let g:unite_lcd_command = 'TabpageCD'
+let g:unite_kind_openable_cd_command = 'TabpageCD'
+let g:unite_kind_openable_lcd_command = 'TabpageCD'
+"let g:unite_cd_command = 'TabpageCD'
+"let g:unite_lcd_command = 'TabpageCD'
 let g:unite_winheight = 20
 
 autocmd FileType unite call s:unite_my_settings()
@@ -697,3 +701,10 @@ function! s:vimfiler_my_settings()"{{{
 endfunction"}}}
 "}}}
 
+"---------------------------------------------------------------------
+" vimshell.vim"{{{
+"---------------------------------------------------------------------
+nnoremap <Leader>x :VimShellTab<CR>
+"let g:vimshell_user_prompt = 'getcwd()'
+
+"}}}
