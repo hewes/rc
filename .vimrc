@@ -362,6 +362,7 @@ endif
 function MyStatusLine()
   return "\%{t:project}\ %F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]"
 endfunction
+
 set statusline=%!MyStatusLine()
 "set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]
 
@@ -475,7 +476,8 @@ nnoremap <silent> [unite]u :Unite -buffer-name=files file<CR>
 nnoremap <silent> [unite]m :Unite -buffer-name=file file_mru<CR>
 nnoremap <silent> [unite]r :Unite file_rec<CR>
 nnoremap [unite]R :Unite ref/
-nnoremap <silent> [unite]c :UniteWithBufferDir -buffer-name=files file<CR>
+nnoremap <silent> [unite]b :UniteWithBufferDir -buffer-name=files file<CR>
+nnoremap <silent> [unite]c :UniteWithCurrentDir -buffer-name=files file<CR>
 nnoremap <silent> [unite]t :Unite tab<CR>
 nnoremap <silent> [unite]T :Unite tag<CR>
 nnoremap <silent> [unite]y :Unite register<CR>
@@ -484,7 +486,7 @@ nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
 "nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -winwidth=30 -winheight=0 -default-action=rec<CR>
 "nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -winwidth=30 -default-action=rec<CR>
 "nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -default-action=rec<CR>
-nnoremap <silent> [unite]b :Unite bookmark -default-action=cd -no-start-insert<CR>
+nnoremap <silent> [unite]p :Unite bookmark -default-action=cd -no-start-insert<CR>
 nnoremap <silent> [unite]j :Unite jump<CR>
 " Explore home dir
 nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file -input='. $HOME .'/<CR>'
