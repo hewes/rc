@@ -573,7 +573,8 @@ augroup MyAutoCmd
 
   autocmd FileType ruby
         \ inoremap <buffer> <expr> = smartchr#loop('=', ' = ', ' == ', ' === ')
-        \ inoremap <buffer> <expr> ~ smartchr#loop('~', ' =~ ', ' !~ ')
+        \| inoremap <buffer> <expr> ~ smartchr#loop('~', ' =~ ', ' !~ ')
+        \| inoremap <buffer> <expr> > smartchr#loop(' > ', ' => ', ' >> ', '>')
 
   autocmd FileType scala
         \ inoremap <buffer> <expr> - smartchr#loop('-', ' -> ', ' <- ')
