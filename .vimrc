@@ -10,6 +10,7 @@ call vundle#rc()
 Bundle 'vim-ruby/vim-ruby.git'
 Bundle 'scrooloose/nerdcommenter.git'
 Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-fugitive'
 Bundle 'tsaleh/vim-align.git'
 Bundle 'tsaleh/vim-matchit.git'
 Bundle 'thinca/vim-quickrun.git'
@@ -359,8 +360,17 @@ endif
 " tab line setting
 "-------------------------------------------------------
 " status line format
-function MyStatusLine()
-  return "\%{t:project}\ %F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]"
+function! Dirname()
+  if exists("t:project") && ! empty(t:project)
+    return t:project . "\ %f"
+  else
+    return "%f"
+  end
+  return 
+endfunction
+
+function! MyStatusLine()
+  return "\%{fugitive#statusline()}". Dirname(). "\ %m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]"
 endfunction
 
 set statusline=%!MyStatusLine()
