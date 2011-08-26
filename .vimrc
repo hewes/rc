@@ -1,7 +1,6 @@
 "=============================================================-
 " basic setting
 "=============================================================-
-let $VIMHOME=$HOME"/.vim"
 
 set nocompatible
 filetype off
@@ -33,7 +32,6 @@ Bundle 'kana/vim-altercmd'
 Bundle 'Sixeight/unite-grep.git'
 Bundle 'tsukkee/unite-tag.git'
 Bundle 'ujihisa/unite-colorscheme.git'
-"Bundle 'altercation/vim-colors-solarized.git'
 Bundle 'vim-scripts/wombat256.vim.git'
 filetype plugin indent on
 
@@ -50,11 +48,7 @@ if s:has_win
 endif
 
 " abosorb difference between windows and Linux
-if s:has_win
-    let $DOTVIM = $VIM."/vimfiles"
-else
-    let $DOTVIM = $HOME."/.vim"
-endif
+let dotvim = $HOME . "/.vim"
 
 set title
 set ruler
@@ -95,8 +89,6 @@ set smarttab
 " always show tab
 set showtabline=2
 set whichwrap=b,s,h,l,<,>,[,]
-" status line format
-set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]
 " No auto return
 set textwidth=0
 " Completion option
@@ -104,11 +96,17 @@ set nowildmenu
 set wildmode=list:full
 " Virtual edit always
 set virtualedit=all
+
 " swp file dir
-set directory=$VIMHOME
+set directory-=.
+if v:version >= 703
+  set undofile
+  let &undodir=&directory
+endif
+
 " Backupfile dir
-set backup
-set backupdir=$TMPDIR
+set nobackup
+set nowritebackup
 " Round tab width
 set shiftround
 " tags
@@ -224,11 +222,30 @@ autocmd FileType ruby compiler ruby
 "==============================================================
 " misc setting
 "==============================================================
+" FIXME: only project tab return project name
+function! GetCDProjectName()
+  if !exists('g:unite_source_bookmark_directory')
+    return
+  endif
+  for line in readfile(g:unite_source_bookmark_directory . '/default')
+    let match = matchlist(line, '^\([^\t]*\)\t\([^\t]*\)\t\t')
+    if empty(match)
+      continue
+    endif
+    if match[2] == t:cwd .'/'
+      return '['. match[1] .']'
+    endif
+  endfor
+  return ''
+endfunction
+
+let t:project = ''
 " :TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 call altercmd#load()
 command! -complete=dir -nargs=? TabpageCD
       \ execute 'cd' fnameescape(<q-args>)
       \| let t:cwd  =  getcwd()
+      \| let t:project  =  GetCDProjectName()
 
 AlterCommand cd TabpageCD
 command! -nargs=0 CD silent execute 'TabpageCD' unite#util#path2project_directory(expand('%:p'))
@@ -286,7 +303,7 @@ cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
     "else  " cp932
         "let &fileencodings = &fileencodings . ',' . 'utf-8'
         "let &fileencodings = &fileencodings . ',' . s:enc_euc
-    "endif
+        "                                      endif
     "let &fileencodings = &fileencodings . ',' . &encoding
 
     "unlet s:enc_euc
@@ -317,7 +334,7 @@ if has('multi_byte_ime')
     nnoremap ? :<C-u>set imsearch=0<CR>?
     xnoremap ? :<C-u>set imsearch=0<CR>?
     highlight Cursor ctermfg=NONE ctermbg=Green
-    highlight CursorIM ctermfg=NONE ctermbg=Purple
+    highlight CursorIM ctermfg=NONE ctermbg=Yellow
 endif
 "}}}
 
@@ -339,22 +356,14 @@ endif
 "-------------------------------------------------------
 " tab line setting
 "-------------------------------------------------------
-" FIXME: only project tab return project name
-function! GetCDProjectName()
-  for line in readfile(g:unite_source_bookmark_directory . '/default')
-    let match = matchlist(line, '^\([^\t]*\)\t\([^\t]*\)\t\t')
-    if empty(match)
-      continue
-    endif
-    if match[2] == t:cwd .'/'
-      return '['. match[1] .']'
-    endif
-  endfor
-  return ''
+" status line format
+function MyStatusLine()
+  return "\%{t:project}\ %F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]"
 endfunction
+set statusline=%!MyStatusLine()
+"set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]
 
 function! MyTabLabel(n)
-  "let project = GetCDProjectName()
   let buflist  =  tabpagebuflist(a:n)
   let winnr  =  tabpagewinnr(a:n)
   "return project . bufname(buflist[winnr - 1]) 
@@ -556,6 +565,7 @@ augroup MyAutoCmd
 
   autocmd FileType sh,bash,vim
         \ inoremap = =
+        \| inoremap , ,
 
   autocmd FileType ruby
         \ inoremap <buffer> <expr> = smartchr#loop('=', ' = ', ' == ', ' === ')
@@ -567,13 +577,13 @@ augroup MyAutoCmd
         \| inoremap <buffer> <expr> : smartchr#loop(': ', ':', ' :: ')
         \| inoremap <buffer> <expr> . smartchr#loop('.', ' => ')
 
-  autocmd FileType eruby, yaml
+  autocmd FileType eruby,yaml
         \ inoremap <buffer> <expr> > smartchr#loop('>', '%>')
         \| inoremap <buffer> <expr> < smartchr#loop('<', '<%', '<%=')
 
-  autocmd FileType help, ref
-        \nnoremap <buffer> <TAB> <C-w>w
-        \nnoremap <buffer> <SPACE> <C-q>
+  autocmd FileType help,ref
+        \ nnoremap <buffer> <TAB> <C-w>w
+        \|nnoremap <buffer> <SPACE> <C-w>q
 augroup END
 "}}}
 
@@ -691,3 +701,4 @@ nnoremap <Leader>x :VimShellTab<CR>
 "let g:vimshell_user_prompt = 'getcwd()'
 
 "}}}
+
