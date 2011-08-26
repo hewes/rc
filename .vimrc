@@ -225,7 +225,7 @@ autocmd FileType ruby compiler ruby
 " FIXME: only project tab return project name
 function! GetCDProjectName()
   if !exists('g:unite_source_bookmark_directory')
-    return
+    return ''
   endif
   for line in readfile(g:unite_source_bookmark_directory . '/default')
     let match = matchlist(line, '^\([^\t]*\)\t\([^\t]*\)\t\t')
@@ -239,7 +239,6 @@ function! GetCDProjectName()
   return ''
 endfunction
 
-let t:project = ''
 " :TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 call altercmd#load()
 command! -complete=dir -nargs=? TabpageCD
@@ -253,6 +252,9 @@ command! -nargs=0 CD silent execute 'TabpageCD' unite#util#path2project_director
 autocmd VimEnter,TabEnter *
       \ if !exists('t:cwd')
       \| let t:cwd = getcwd()
+      \| endif
+      \| if !exists('t:project')
+      \| let t:project = GetCDProjectName()
       \| endif
       \| execute 'cd' fnameescape(t:cwd)
 
