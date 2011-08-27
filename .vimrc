@@ -27,7 +27,7 @@ Bundle 'Shougo/vimproc.git'
 Bundle 'h1mesuke/unite-outline.git'
 Bundle 'sgur/unite-qf.git'
 Bundle 'kmnk/vim-unite-svn.git'
-Bundle 'ujihisa/unite-locate.git'
+"Bundle 'ujihisa/unite-locate.git'
 Bundle 'kana/vim-smartchr.git'
 Bundle 'kana/vim-altercmd'
 Bundle 'Sixeight/unite-grep.git'
@@ -149,7 +149,10 @@ au BufRead,BufNew * match Zenkaku /ã/
 "=============================================================-
 " key mapping
 "=============================================================-
+" insert
 inoremap <C-l> <ESC>
+
+" normal
 nnoremap <silent> <Leader><Leader> :bnext<CR>
 nnoremap <Leader>a :Ref<SPACE>alc<SPACE>
 nnoremap ,t :tabnew<SPACE>
@@ -157,7 +160,15 @@ nnoremap Y y$
 nnoremap + <C-w>+
 nnoremap - <C-w>-
 nnoremap <expr> sw ':%s/\<' . expand('<cword>') .'\>/'
-nnoremap <Leader>m :make 
+
+" bash like key-bind at cmdline
+cnoremap <C-h> <BS>
+cnoremap <C-l> <ESC>
+cnoremap <C-b> <Left>
+cnoremap <C-e> <END>
+cnoremap <C-a> <HOME>
+cnoremap <C-p> <Up>
+cnoremap <C-n> <Down>
 
 " expand path
 cmap <C-x> <C-r>=expand('%:p:h')<CR>/
@@ -208,17 +219,6 @@ function! s:GetHighlight(hi)
   let hl = substitute(hl, 'xxx', '', '')
   return hl
 endfunction
-
-"-------------------------------------------------------
-" for language
-"-------------------------------------------------------
-" Java
-let g:java_highlight_functions = 'style'
-let g:java_highlight_all = 1
-let g:java_allow_cpp_keywords = 1
-
-" ruby
-autocmd FileType ruby compiler ruby
 
 "==============================================================
 " misc setting
@@ -492,10 +492,6 @@ nnoremap <silent> [unite]t :Unite tab<CR>
 nnoremap <silent> [unite]T :Unite tag<CR>
 nnoremap <silent> [unite]y :Unite register<CR>
 nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
-"nnoremap <silent> [unite]b :Unite bookmark<CR>
-"nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -winwidth=30 -winheight=0 -default-action=rec<CR>
-"nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -winwidth=30 -default-action=rec<CR>
-"nnoremap <silent> [unite]B :Unite bookmark -vertical -no-quit -default-action=rec<CR>
 nnoremap <silent> [unite]p :Unite bookmark -default-action=cd -no-start-insert<CR>
 nnoremap <silent> [unite]j :Unite jump<CR>
 " Explore home dir
@@ -504,9 +500,8 @@ nnoremap <silent> <Leader>l :Unite buffer_tab -no-start-insert<CR>
 nnoremap <silent> [unite]l :Unite line<CR>
 nnoremap <expr> [unite]g ':Unite grep:'. expand("%:h") . ':-r'
 nnoremap <silent> [unite]* :UniteWithCursorWord line<CR>
-"nnoremap <silent> [unite]l :Unite locate<CR>
 nnoremap <silent> [unite]o :Unite -buffer-name=outline outline<CR>
-nnoremap <silent> [unite]q :Unite qf<CR>
+nnoremap <silent> [unite]q :Unite qf -no-start-insert<CR>
 nnoremap [unite]s<SPACE> :Unite svn/
 nnoremap <silent> [unite]sd :Unite svn/diff<CR>
 nnoremap <silent> [unite]sb :Unite svn/blame<CR>
@@ -596,9 +591,10 @@ augroup MyAutoCmd
         \ inoremap <buffer> <expr> > smartchr#loop('>', '%>')
         \| inoremap <buffer> <expr> < smartchr#loop('<', '<%', '<%=')
 
-  autocmd FileType help,ref
+  autocmd FileType help,ref,git-diff
         \ nnoremap <buffer> <TAB> <C-w>w
         \|nnoremap <buffer> <SPACE> <C-w>q
+
 augroup END
 "}}}
 
@@ -611,6 +607,7 @@ nnoremap Q q
 " The prefix key.
 nnoremap [Quickfix] <Nop>
 nmap q [Quickfix]
+nmap [make] :<C-u>make<SPACE>
 
 " For quickfix list "{{{
 nnoremap <silent> [Quickfix]n :<C-u>cnext<CR>
@@ -626,7 +623,7 @@ nnoremap <silent> [Quickfix]o :<C-u>copen<CR>
 nnoremap <silent> [Quickfix]c :<C-u>cclose<CR>
 nnoremap <silent> [Quickfix]en :<C-u>cnewer<CR>
 nnoremap <silent> [Quickfix]ep :<C-u>colder<CR>
-nnoremap <silent> [Quickfix]m :<C-u>make<CR>
+nmap [Quickfix]m [make]
 nnoremap [Quickfix]M q:make<Space>
 nnoremap [Quickfix]g q:grep<Space>
 " Toggle quickfix window.
@@ -716,4 +713,18 @@ nnoremap <Leader>x :VimShellTab<CR>
 "let g:vimshell_user_prompt = 'getcwd()'
 
 "}}}
+
+"=============================================================
+" for language
+"=============================================================
+
+" Java
+let g:java_highlight_functions = 'style'
+let g:java_highlight_all = 1
+let g:java_allow_cpp_keywords = 1
+
+" ruby
+autocmd FileType ruby
+      \ compiler ruby
+      \| nmap [make] :<C-u>make -c %<CR>
 
