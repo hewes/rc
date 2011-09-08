@@ -34,10 +34,11 @@ Bundle 'kana/vim-altercmd'
 Bundle 'Sixeight/unite-grep.git'
 Bundle 'tsukkee/unite-tag.git'
 Bundle 'ujihisa/unite-colorscheme.git'
+Bundle 'vim-scripts/DrawIt.git'
 Bundle 'vim-scripts/wombat256.vim.git'
 filetype plugin indent on
 
-" Map <Leader> ','
+" Map <Leader> ','          
 let mapleader= ','
 let g:mapleader = ','
 let g:maplocalleader = 'm'
