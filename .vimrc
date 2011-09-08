@@ -171,6 +171,8 @@ cnoremap <C-a> <HOME>
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
 
+vnoremap $ $h
+
 " expand path
 cmap <C-x> <C-r>=expand('%:p:h')<CR>/
 " expand file (not ext)
