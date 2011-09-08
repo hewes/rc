@@ -38,10 +38,11 @@ Bundle 'vim-scripts/DrawIt.git'
 Bundle 'vim-scripts/wombat256.vim.git'
 filetype plugin indent on
 
-" Map <Leader> ','          
+" Map Leader {{{
 let mapleader= ','
 let g:mapleader = ','
 let g:maplocalleader = 'm'
+"}}}
 
 let s:has_win = has('win32') || has('win64')
 
@@ -54,19 +55,16 @@ endif
 let dotvim = $HOME . "/.vim"
 
 set title
-set ruler
-" tab char setting
-set tabstop=2
-set shiftwidth=2
-set expandtab
-" split window direction
+set noruler
+
+" split window direction {{{
 set splitbelow
 set splitright
+" }}}
 
-set autoindent
 syntax on
 set hidden
-set cursorline
+
 " set cursolline only focused window
 augroup cch
   autocmd! cch
@@ -74,23 +72,50 @@ augroup cch
   autocmd WinEnter,BufRead * set cursorline
 augroup END
 
+" indent setting{{{
+set autoindent
+set cindent
+" tab setting
+set tabstop=2
+set shiftwidth=2
+set expandtab
+set smarttab
+set smartindent
+"}}}
+
+" cursor hilight setting{{{
+set cursorline
 set nocursorcolumn
+" }}}
+
 set browsedir=buffer
 set backspace=indent,eol,start
 set clipboard=unnamed
 set showcmd
-set incsearch
-set hlsearch
 "set number
 set list
-set laststatus=2
 set listchars=eol:$,tab:>\ ,extends:<
 set showmatch
+set laststatus=2
+
+"search settings {{{
 set smartcase
-set smartindent
-set smarttab
+set ignorecase
+set wrapscan
+set incsearch
+set hlsearch
+"}}}
+
+"Japanese input etc settings {{{
+set noimdisable
+set noimcmdline
+set iminsert=1
+set imsearch=1
+"}}}
+
 " always show tab
 set showtabline=2
+" beyond line 
 set whichwrap=b,s,h,l,<,>,[,]
 " No auto return
 set textwidth=0
@@ -99,6 +124,8 @@ set nowildmenu
 set wildmode=list:full
 " Virtual edit always
 set virtualedit=all
+set foldenable
+
 
 " swp file dir
 set directory-=.
@@ -731,4 +758,14 @@ let g:java_allow_cpp_keywords = 1
 autocmd FileType ruby
       \ compiler ruby
       \| nmap [make] :<C-u>make -c %<CR>
+      \| ts=2
+      \| sw=2
+      \| expandtab
+
+" c
+autocmd FileType c
+      \  setlocal
+      \| ts=8
+      \| sw=4
+      \| noexpandtab
 
