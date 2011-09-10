@@ -603,7 +603,7 @@ augroup MyAutoCmd
         \| inoremap <buffer> <expr> : smartchr#loop(':', ' :: ', ' : ')
         \| inoremap <buffer> <expr> . smartchr#loop('.', ' . ', '..')
 
-  autocmd FileType sh,bash,vim
+  autocmd FileType sh,bash,vim,zsh
         \ inoremap = =
         \| inoremap , ,
 
