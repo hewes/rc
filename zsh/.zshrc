@@ -57,24 +57,13 @@ case ${UID} in
 		)
     ;;
 *)
-	path=( ./ \
-		/bin \
-		/sbin \
-		/usr/local/bin \
-		/usr/local/sbin \
-		/usr/bin \
-		/usr/sbin \
-		/opt/bin32-jdk/bin \
-		/opt/java/bin \
-		/opt/jruby/bin \
-		$HOME/.gem/ruby/1.8/bin \
-		$HOME/perl5/bin \
-		)
+  PATH=$PATH:./:/bin:/sbin:/opt/local/bin
     ;;
 esac
 
 ## MAN PATH
 export MANPATH="/opt/SUNWspro/man:/usr/man:/usr/local/man:/usr/openwin/man:/usr/X11R5/man:/usr/X11R6/man:/usr/dt/man:/opt/gnu/man:/opt/SUNWspro/man:/home/gaea.home10/DEMO/SUNWspro/man:/alliance/man:/home/project/spice3f4/man:/usr/local/ssl/"
+
 
 ##-----------------------------------
 ## PROMPT
@@ -91,10 +80,22 @@ case ${UID} in
 	RPROMPT="%{${fg[cyan]}%}[%~]%{${reset_color}%} "
 	;;
 *)
-	PROMPT="%{${fg[yellow]}%}<%T>%{$fg[white]%}[%n@%m]%%%{$reset_color%} "
+  autoload -Uz vcs_info
+  zstyle ':vcs_info:*' formats '(%s:%b)'
+  zstyle ':vcs_info:*' actionformats '(%s)-[%b|%a]'
+  precmd () {
+    psvar=()
+    LANG=en_US.UTF-8 vcs_info
+    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+  }
+  TIME_FORMAT="%{${fg[yellow]}%}<%T>"
+  USER_AND_HOST="%{$fg[white]%}[%n@%m]"
+  CURRENT_DIR="%{${fg[yellow]}%}[%~]"
+  RESET_COLOR="%{${reset_color}%}"
+	PROMPT="${TIME_FORMAT}${USER_AND_HOST}${RESET_COLOR}%% "
 	PROMPT2="%{${fg[red]}%}%_> %{${reset_color}%}"
 	SPROMPT="%{${fg[red]}%}correct: %R -> %r [nyae]? %{${reset_color}%}"
-	RPROMPT="%{${fg[yellow]}%}[%~]%{${reset_color}%} "
+	RPROMPT="%1(v|%F{green}%1v%f|)${CURRENT_DIR}$RESET_COLOR"
 	;;
 esac
 
@@ -158,7 +159,7 @@ setopt auto_pushd
   #eval "function auto-fu-init () { $code }"
 #}
 
-eval `dircolors`
+# eval `dircolors`
 export LSCOLORS=exfxcxdxbxegedabagacad
 
 LS_COLORS='di=94:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
