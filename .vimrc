@@ -538,7 +538,7 @@ nnoremap <silent> [unite]sd :Unite svn/diff<CR>
 nnoremap <silent> [unite]sb :Unite svn/blame<CR>
 nnoremap <silent> [unite]ss :Unite svn/status<CR>
 let g:unite_enable_ignore_case = 1
-noremap <silent> <C-]> :<C-u>Unite -immediately -no-start-insert tags:<C-r>=expand('<cword>')<CR><CR>
+noremap <silent> <C-]> :<C-u>Unite -immediately -no-start-insert tag:<C-r>=expand('<cword>')<CR><CR>
 let g:unite_enable_smart_case = 1
 let g:unite_enable_start_insert = 1
 let g:unite_enable_split_vertically  =  0
@@ -764,8 +764,7 @@ autocmd FileType ruby
 
 " c
 autocmd FileType c
-      \  setlocal
       \| ts=8
-      \| sw=4
+      \| sw=4
       \| noexpandtab
 
