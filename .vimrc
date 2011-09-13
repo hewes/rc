@@ -750,21 +750,27 @@ nnoremap <Leader>x :VimShellTab<CR>
 "=============================================================
 
 " Java
-let g:java_highlight_functions = 'style'
-let g:java_highlight_all = 1
-let g:java_allow_cpp_keywords = 1
+autocmd MyAutoCmd FileType java call s:java_my_settings()
+function! s:java_my_settings()"{{{
+  let g:java_highlight_functions = 'style'
+  let g:java_highlight_all = 1
+  let g:java_allow_cpp_keywords = 1
+endfunction"}}}
 
 " ruby
-autocmd FileType ruby
-      \ compiler ruby
-      \| nmap [make] :<C-u>make -c %<CR>
-      \| ts=2
-      \| sw=2
-      \| expandtab
+autocmd MyAutoCmd FileType ruby call s:ruby_my_settings()
+function! s:ruby_my_settings()"{{{
+  compiler ruby
+  nmap [make] :<C-u>make -c %<CR>
+  set ts=2
+  set sw=2
+  set expandtab
+endfunction"}}}
 
 " c
-autocmd FileType c
-      \| ts=8
-      \| sw=4
-      \| noexpandtab
-
+autocmd MyAutoCmd FileType c call s:clang_my_settings()
+function! s:clang_my_settings()"{{{
+  set ts=8
+  set sw=4
+  set noexpandtab
+endfunction"}}}
