@@ -93,8 +93,15 @@ set backspace=indent,eol,start
 set clipboard=unnamed
 set showcmd
 "set number
+
+" list chars
 set list
 set listchars=eol:$,tab:>\ ,extends:<
+
+" scroll
+set scroll=5
+set scrolloff=0
+
 set showmatch
 set laststatus=2
 
@@ -624,7 +631,7 @@ augroup MyAutoCmd
 
   autocmd FileType help,ref,git-diff
         \ nnoremap <buffer> <TAB> <C-w>w
-        \|nnoremap <buffer> <SPACE> <C-w>q
+        \|nnoremap <silent> <buffer> <SPACE> :bd<CR>
 
 augroup END
 "}}}
