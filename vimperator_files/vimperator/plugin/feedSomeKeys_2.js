@@ -1,1 +1,0 @@
-/home/hewes/vimperator-plugins/feedSomeKeys_2.js

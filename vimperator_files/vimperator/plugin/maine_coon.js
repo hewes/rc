@@ -1,1 +1,0 @@
-/home/hewes/vimperator-plugins/maine_coon.js

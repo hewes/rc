@@ -1,1 +1,0 @@
-/home/hewes/vimperator-plugins/copy.js

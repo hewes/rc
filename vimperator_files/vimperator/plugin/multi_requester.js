@@ -1,1 +1,0 @@
-/home/hewes/vimperator-plugins/multi_requester.js

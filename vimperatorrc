@@ -6,8 +6,6 @@ echo "loading vimperatorrc"
 " basic settings
 "+========================================================================================+
  
-set wildoptions=auto
- 
 set complete=l
  
 "change browser title
@@ -19,10 +17,9 @@ set hlsearch
 set visualbell
 highlight Bell display:none
  
-set history=50
+set history=100
  
-" gui option , only menu
-set go=m
+set hintchars=fjklasdhguionmerwc
  
 " quick mark
 qmark m https://mail.google.com/mail/
@@ -39,18 +36,6 @@ qmark p http://www.pixiv.net/mypage.php
  
 " auto switch E/J\
 style -name commandline-ime chrome://* #liberator-commandline-command input {ime-mode: inactive;}
- 
-" Show feed-button in statusbar
-:javascript <<EOM
-(function(){
-var feedPanel = document.createElement('statusbarpanel');
-var feedButton = document.getElementById('feed-button');
-feedPanel.setAttribute('id','feed-panel-clone');
-feedPanel.appendChild(feedButton.cloneNode(true));
-feedButton.parentNode.removeChild(feedButton);
-document.getElementById('status-bar').insertBefore(feedPanel,document.getElementById('security-button'));
-})();
-EOM
  
 " colorscheme
 colorscheme sweets_snaka
@@ -139,34 +124,14 @@ inoremap <C-f> <Right>
 nnoremap ma :mr alc<Space>
  
 "+------------------------------------------------------------------+
-" feedsomekeys_2.js
+" feedsomekeys_3.js
 "+------------------------------------------------------------------+
-" default
-autocmd LocationChange .* :fmapc
- 
+ command! -nargs=+ lazy autocmd VimperatorEnter .* <args>
 "Gmail
-autocmd LocationChange 'mail\.google\.com/mail' :fmap c / J,j K,k n p o u e x s r a # [ ] z ? gi gs gt gd ga gc
- 
-"Google Reader
-autocmd LocationChange 'www\.google\.co\.jp/reader' :fmap! -vkey j k n p m v A r N P X O gh ga gs gt gu u / ?
- 
+ lazy fmaps -u='mail\.google\.com/mail' c / j k n p o u e x s r a # [ ] ? gi gs gt gd ga gc
+ lazy fmaps -u='mail\.google\.com/mail/.*/[0-9a-f]+$' c / j, n k, p n, j p, k o u e x s r a # [ ] ? gi gs gt gd g
 "Google Calendar
-autocmd LocationChange 'www\.google\.com/calendar/' :fmap! -vkey -event keydown t a d w m x c e <Del> / + q s ?
- 
-"+------------------------------------------------------------------+
-" char-hists-mod.js
-"+------------------------------------------------------------------+
-" A -> a
-let g:hintsio="iO"
- 
-" display alphabet
-let g:hintchars="HJKLASDFGYUIOPQERTNZXCVB"
- 
-"+------------------------------------------------------------------+
-" asdfghjkl.js
-"+------------------------------------------------------------------+
-"let g:asdfghjkl_default = "true"
- 
+ lazy fmaps -u='www\.google\.co\.jp/reader' -events=vkeypress j k n p m s v A r S N P X O gh ga gs gt gu u / ? J K
  
 "+------------------------------------------------------------------+
 " delicious_search.js
@@ -184,8 +149,8 @@ nnoremap ,Q :delicioussearcht -query<SPACE>
 nnoremap a :sbm<SPACE>[
 let g:direct_sbm_use_services_by_post = 'd'
 let g:direct_sbm_use_services_by_tag = 'd'
- 
- 
+
+
 "+------------------------------------------------------------------+
 " append_anchor.js
 "+------------------------------------------------------------------+
