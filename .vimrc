@@ -7,7 +7,8 @@ filetype off
 " Vundle
 set rtp+=~/.vim/vundle.git/
 call vundle#rc()
-Bundle 'vim-ruby/vim-ruby.git'
+"Bundle 'vim-ruby/vim-ruby.git'
+Bundle 'm2ym/rsense.git'
 Bundle 'scrooloose/nerdcommenter.git'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-fugitive'
@@ -484,6 +485,7 @@ let g:neocomplcache_omni_functions = {
       \ 'ruby' : 'rubycomplete#Complete',
       \ }
 
+
 " Plugin key-mappings.
 inoremap <expr><C-g> neocomplcache#undo_completion()
 inoremap <expr><C-c> neocomplcache#complete_common_string()
@@ -503,6 +505,12 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 " Enable heavy omni completion.
 if !exists('g:neocomplcache_omni_patterns')
   let g:neocomplcache_omni_patterns = {}
+endif
+let g:rsenseUseOmniFunc = 1
+if filereadable(expand('~/.vim/bundle/rsense/bin/rsense'))
+  let g:rsenseHome = expand('~/.vim/bundle/rsense/bin/rsense')
+
+  let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 endif
 "let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 "autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
