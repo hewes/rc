@@ -21,6 +21,7 @@ Bundle 'vim-scripts/gtags.vim.git'
 Bundle 'othree/eregex.vim.git'
 Bundle 'motemen/git-vim.git'
 Bundle 'Shougo/unite.vim.git'
+Bundle 'Shougo/unite-build.git'
 Bundle 'Shougo/neocomplcache.git'
 Bundle 'Shougo/vimshell.git'
 Bundle 'Shougo/vimfiler.git'
@@ -100,7 +101,7 @@ set list
 set listchars=eol:$,tab:>\ ,extends:<
 
 " scroll
-set scroll=5
+"set scroll=5
 set scrolloff=0
 
 set showmatch
@@ -192,6 +193,7 @@ inoremap <C-l> <ESC>
 " normal
 nnoremap <silent> <Leader><Leader> :bnext<CR>
 nnoremap <Leader>a :Ref<SPACE>alc<SPACE>
+nnoremap <SPACE> <C-^>
 nnoremap ,t :tabnew<SPACE>
 nnoremap Y y$
 nnoremap + <C-w>+
@@ -263,7 +265,7 @@ endfunction
 " misc setting
 "==============================================================
 " FIXME: only project tab return project name
-function! GetCDProjectName()
+function! s:GetCDProjectName()
   if !exists('g:unite_source_bookmark_directory')
     return ''
   endif
@@ -284,7 +286,7 @@ call altercmd#load()
 command! -complete=dir -nargs=? TabpageCD
       \ execute 'cd' fnameescape(<q-args>)
       \| let t:cwd  =  getcwd()
-      \| let t:project  =  GetCDProjectName()
+      \| let t:project  =  s:GetCDProjectName()
 
 AlterCommand cd TabpageCD
 command! -nargs=0 CD silent execute 'TabpageCD' unite#util#path2project_directory(expand('%:p'))
@@ -294,10 +296,9 @@ autocmd VimEnter,TabEnter *
       \| let t:cwd = getcwd()
       \| endif
       \| if !exists('t:project')
-      \| let t:project = GetCDProjectName()
+      \| let t:project = s:GetCDProjectName()
       \| endif
       \| execute 'cd' fnameescape(t:cwd)
-
 "}}}
 
 "-------------------------------------------------------
@@ -313,6 +314,13 @@ func! s:kill_line()
 endfunc
 inoremap <C-k>  <C-o>:<C-u>call <SID>kill_line()<CR>
 cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
+"}}}
+
+"-------------------------------------------------------
+" kill buffer, not close window {{{
+" http://nanasi.jp/articles/vim/kwbd_vim.html
+:com! Kwbd let kwbd_bn= bufnr("%")|enew|exe "bdel ".kwbd_bn|unlet kwbd_bn 
+nnoremap <C-k>  :Kwbd<CR>
 "}}}
 
 "-------------------------------------------------------
@@ -542,6 +550,7 @@ nnoremap <silent> [unite]p :Unite bookmark -default-action=cd -no-start-insert<C
 nnoremap <silent> [unite]j :Unite jump<CR>
 " Explore home dir
 nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file -input='. $HOME .'/<CR>'
+nnoremap <silent> <expr> <C-h> ':UniteWithInput -buffer-name=files file -input='. $HOME .'/<CR>'
 nnoremap <silent> <Leader>l :Unite buffer_tab -no-start-insert<CR>
 nnoremap <silent> [unite]l :Unite line<CR>
 nnoremap <expr> [unite]g ':Unite grep:'. expand("%:h") . ':-r'
@@ -553,7 +562,7 @@ nnoremap <silent> [unite]sd :Unite svn/diff<CR>
 nnoremap <silent> [unite]sb :Unite svn/blame<CR>
 nnoremap <silent> [unite]ss :Unite svn/status<CR>
 let g:unite_enable_ignore_case = 1
-noremap <silent> <C-]> :<C-u>Unite -immediately -no-start-insert tag:<C-r>=expand('<cword>')<CR><CR>
+noremap [unite]] :<C-u>Unite -immediately -no-start-insert tag:<C-r>=expand('<cword>')<CR><CR>
 let g:unite_enable_smart_case = 1
 let g:unite_enable_start_insert = 1
 let g:unite_enable_split_vertically  =  0
@@ -562,8 +571,6 @@ let g:unite_source_file_rec_min_cache_files = 300
 let g:unite_source_file_rec_max_depth = 10
 let g:unite_kind_openable_cd_command = 'TabpageCD'
 let g:unite_kind_openable_lcd_command = 'TabpageCD'
-"let g:unite_cd_command = 'TabpageCD'
-"let g:unite_lcd_command = 'TabpageCD'
 let g:unite_winheight = 20
 
 autocmd FileType unite call s:unite_my_settings()
@@ -577,6 +584,8 @@ function! s:unite_my_settings()"{{{
   inoremap <silent><buffer> <C-s> <Esc>:call unite#mappings#do_action('split')<CR>
   inoremap <silent><buffer> <C-r> <Esc>:call unite#mappings#do_action('rec')<CR>
   inoremap <silent><buffer> <C-e> <Esc>:call unite#mappings#do_action('edit')<CR>
+  imap <silent><buffer> <C-j> <Plug>(unite_exit)
+  nmap <silent><buffer> <C-j> <Plug>(unite_exit)
 
   call unite#set_substitute_pattern('file', '[^~.]\zs/', '*/*', 20)
   call unite#set_substitute_pattern('file', '/\ze[^*]', '/*', 10)
@@ -637,9 +646,6 @@ augroup MyAutoCmd
         \ inoremap <buffer> <expr> > smartchr#loop('>', '%>')
         \| inoremap <buffer> <expr> < smartchr#loop('<', '<%', '<%=')
 
-  autocmd FileType help,ref,git-diff
-        \ nnoremap <buffer> <TAB> <C-w>w
-        \|nnoremap <silent> <buffer> <SPACE> :bd<CR>
 
 augroup END
 "}}}
@@ -665,8 +671,6 @@ nnoremap <silent> [Quickfix]fn :<C-u>cnfile<CR>
 nnoremap <silent> [Quickfix]fp :<C-u>cpfile<CR>
 nnoremap <silent> [Quickfix]l :<C-u>clist<CR>
 nnoremap <silent> [Quickfix]q :<C-u>cc<CR>
-nnoremap <silent> [Quickfix]o :<C-u>copen<CR>
-nnoremap <silent> [Quickfix]c :<C-u>cclose<CR>
 nnoremap <silent> [Quickfix]en :<C-u>cnewer<CR>
 nnoremap <silent> [Quickfix]ep :<C-u>colder<CR>
 nmap [Quickfix]m [make]
@@ -756,14 +760,17 @@ endfunction"}}}
 " vimshell.vim"{{{
 "---------------------------------------------------------------------
 nnoremap <Leader>x :VimShellTab<CR>
-"let g:vimshell_user_prompt = 'getcwd()'
+let g:vimshell_user_prompt = 'getcwd()'
+autocmd MyAutoCmd FileType vimshell call s:vimshell_my_settings()
+function! s:vimshell_my_settings()"{{{
+  imap <silent><buffer> <C-j> <Plug>(vimshell_exit)
+endfunction"}}}
 
 "}}}
 
 "=============================================================
 " for language
 "=============================================================
-
 " Java
 autocmd MyAutoCmd FileType java call s:java_my_settings()
 function! s:java_my_settings()"{{{
@@ -785,7 +792,16 @@ endfunction"}}}
 " c
 autocmd MyAutoCmd FileType c call s:clang_my_settings()
 function! s:clang_my_settings()"{{{
-  set ts=8
-  set sw=4
-  set noexpandtab
+  setlocal ts=8
+  setlocal sw=4
+  setlocal noexpandtab
 endfunction"}}}
+
+autocmd MyAutoCmd FileType help call s:help_my_settings()
+function! s:help_my_settings()"{{{
+  nnoremap <buffer> <TAB> <C-w>w
+  nnoremap <silent> <buffer> <SPACE> :bd<CR>
+  nnoremap <buffer> j 5j
+  nnoremap <buffer> k 5k
+endfunction"}}}
+
