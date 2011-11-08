@@ -17,7 +17,7 @@ Bundle 'tsaleh/vim-matchit.git'
 Bundle 'thinca/vim-quickrun.git'
 Bundle 'thinca/vim-ref.git'
 Bundle 'thinca/vim-qfreplace.git'
-Bundle 'vim-scripts/gtags.vim.git'
+Bundle 'fuenor/qfixhowm'
 Bundle 'othree/eregex.vim.git'
 Bundle 'motemen/git-vim.git'
 Bundle 'Shougo/unite.vim.git'
@@ -36,6 +36,7 @@ Bundle 'kana/vim-altercmd'
 Bundle 'Sixeight/unite-grep.git'
 Bundle 'tsukkee/unite-tag.git'
 Bundle 'ujihisa/unite-colorscheme.git'
+Bundle 'vim-scripts/gtags.vim.git'
 Bundle 'vim-scripts/DrawIt.git'
 Bundle 'vim-scripts/wombat256.vim.git'
 filetype plugin indent on
@@ -586,6 +587,8 @@ function! s:unite_my_settings()"{{{
   inoremap <silent><buffer> <C-e> <Esc>:call unite#mappings#do_action('edit')<CR>
   imap <silent><buffer> <C-j> <Plug>(unite_exit)
   nmap <silent><buffer> <C-j> <Plug>(unite_exit)
+  inoremap <silent><buffer> <SPACE> _
+  inoremap <silent><buffer> _ <SPACE>
 
   call unite#set_substitute_pattern('file', '[^~.]\zs/', '*/*', 20)
   call unite#set_substitute_pattern('file', '/\ze[^*]', '/*', 10)
@@ -766,6 +769,12 @@ function! s:vimshell_my_settings()"{{{
   imap <silent><buffer> <C-j> <Plug>(vimshell_exit)
 endfunction"}}}
 
+"}}}
+
+"---------------------------------------------------------------------
+" gtags.vim"{{{
+"---------------------------------------------------------------------
+nnoremap <C-j> :GtagsCursor<CR>
 "}}}
 
 "=============================================================
