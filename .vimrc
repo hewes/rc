@@ -204,6 +204,7 @@ nnoremap Y y$
 nnoremap + <C-w>+
 nnoremap - <C-w>-
 nnoremap <expr> sw ':%s/\<' . expand('<cword>') .'\>/'
+nnoremap <C-l> <C-g>
 
 " bash like key-bind at cmdline
 cnoremap <C-h> <BS>
@@ -772,6 +773,7 @@ endfunction"}}}
 " gtags.vim"{{{
 "---------------------------------------------------------------------
 nnoremap <C-j> :GtagsCursor<CR>
+nnoremap <C-g> :Gtags<SPACE>
 "}}}
 
 "=============================================================
