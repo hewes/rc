@@ -1,5 +1,6 @@
+
 "=============================================================-
-" basic setting
+" vundle
 "=============================================================-
 
 set nocompatible
@@ -39,6 +40,10 @@ Bundle 'vim-scripts/gtags.vim.git'
 Bundle 'vim-scripts/DrawIt.git'
 Bundle 'vim-scripts/wombat256.vim.git'
 filetype plugin indent on
+
+"=============================================================-
+" basic setting
+"=============================================================-
 
 " Map Leader {{{
 let mapleader= ','
