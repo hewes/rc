@@ -633,7 +633,7 @@ augroup MyAutoCmd
         \| inoremap , ,
 
   autocmd FileType ruby
-        \ inoremap <buffer> <expr> = smartchr#loop('=', ' = ', ' == ', ' === ')
+        \ inoremap <buffer> <expr> = smartchr#one_of(' = ', ' == ', ' === ', '=')
         \| inoremap <buffer> <expr> ~ smartchr#loop('~', ' =~ ', ' !~ ')
         \| inoremap <buffer> <expr> > smartchr#loop(' > ', ' => ', ' >> ', '>')
 
@@ -674,6 +674,8 @@ nnoremap <silent> [Quickfix]l :<C-u>clist<CR>
 nnoremap <silent> [Quickfix]q :<C-u>cc<CR>
 nnoremap <silent> [Quickfix]en :<C-u>cnewer<CR>
 nnoremap <silent> [Quickfix]ep :<C-u>colder<CR>
+nnoremap <silent> [Quickfix]o :<C-u>copen<CR>
+nnoremap <silent> [Quickfix]c :<C-u>cclose<CR>
 nmap [Quickfix]m [make]
 nnoremap [Quickfix]M q:make<Space>
 nnoremap [Quickfix]g q:grep<Space>
