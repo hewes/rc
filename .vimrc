@@ -235,9 +235,9 @@ hi Pmenu ctermbg=darkgrey ctermfg=white
 hi PmenuSel ctermbg=grey ctermfg=black
 hi PmenuSbar ctermbg=0 ctermfg=white
 hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=darkred
-
-let g:hi_insert = 'highlight StatusLine ctermfg=18 ctermbg=red cterm=none'
+hi MatchParen term=NONE cterm=NONE ctermfg=NONE ctermbg=red guifg=NONE guibg=red
 hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
+let g:hi_insert = 'highlight StatusLine ctermfg=18 ctermbg=red cterm=none'
 
 if has('syntax')
   augroup InsertHook
