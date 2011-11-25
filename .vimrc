@@ -607,7 +607,6 @@ endfunction "}}}
 " smartchr.vim"{{{
 "---------------------------------------------------------------------
 inoremap <expr> , smartchr#one_of(', ', ',')
-
 inoremap <expr> ? smartchr#one_of('?', '? ')
 
 " Smart =.
@@ -631,11 +630,6 @@ augroup MyAutoCmd
   autocmd FileType sh,bash,vim,zsh
         \ inoremap = =
         \| inoremap , ,
-
-  autocmd FileType ruby
-        \ inoremap <buffer> <expr> = smartchr#one_of(' = ', ' == ', ' === ', '=')
-        \| inoremap <buffer> <expr> ~ smartchr#loop('~', ' =~ ', ' !~ ')
-        \| inoremap <buffer> <expr> > smartchr#loop(' > ', ' => ', ' >> ', '>')
 
   autocmd FileType scala
         \ inoremap <buffer> <expr> - smartchr#loop('-', ' -> ', ' <- ')
@@ -797,6 +791,11 @@ function! s:ruby_my_settings()"{{{
   set ts=2
   set sw=2
   set expandtab
+  inoremap <buffer> <expr> = search('\(&\<bar><bar>\<bar>+\<bar>-\<bar>/\<bar>>\<bar><\) \%#', 'bcn')? '<bs>= '
+        \ : search('\(*\<bar>!\)\%#', 'bcn') ? '= '
+        \ : smartchr#one_of(' = ', '=', ' == ',  '===', '=')
+  inoremap <buffer> <expr> ~ smartchr#loop('~', ' =~ ', ' !~ ')
+  inoremap <buffer> <expr> > smartchr#loop(' > ', ' => ', ' >> ', '>')
 endfunction"}}}
 
 " c
