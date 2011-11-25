@@ -801,6 +801,10 @@ function! s:ruby_my_settings()"{{{
         \ : smartchr#one_of(' = ', '=', ' == ',  '===', '=')
   inoremap <buffer> <expr> ~ smartchr#loop('~', ' =~ ', ' !~ ')
   inoremap <buffer> <expr> > smartchr#loop(' > ', ' => ', ' >> ', '>')
+  inoremap <buffer> <expr> < smartchr#one_of(' < ', ' << ', '<')
+  inoremap <buffer> <expr> + smartchr#one_of(' + ', ' += ', '+')
+  inoremap <buffer> <expr> - smartchr#one_of(' - ', ' -= ', '-')
+  inoremap <buffer> <expr> # "#{}<LEFT>"
 endfunction"}}}
 
 " c
