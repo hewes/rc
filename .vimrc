@@ -205,6 +205,7 @@ nnoremap Y y$
 nnoremap + <C-w>+
 nnoremap - <C-w>-
 nnoremap <expr> sw ':%s/\<' . expand('<cword>') .'\>/'
+nnoremap <C-l> <C-g>
 
 " bash like key-bind at cmdline
 cnoremap <C-h> <BS>
@@ -216,6 +217,11 @@ cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
 
 vnoremap $ $h
+vnoremap { "zdi{<C-R>z}<ESC>
+vnoremap [ "zdi[<C-R>z]<ESC>
+vnoremap ( "zdi(<C-R>z)<ESC>
+vnoremap " "zdi"<C-R>z"<ESC>
+vnoremap ' "zdi'<C-R>z'<ESC>
 
 " expand path
 cmap <C-x> <C-r>=expand('%:p:h')<CR>/
@@ -235,9 +241,9 @@ hi Pmenu ctermbg=darkgrey ctermfg=white
 hi PmenuSel ctermbg=grey ctermfg=black
 hi PmenuSbar ctermbg=0 ctermfg=white
 hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=darkred
-
-let g:hi_insert = 'highlight StatusLine ctermfg=18 ctermbg=red cterm=none'
+hi MatchParen term=NONE cterm=NONE ctermfg=NONE ctermbg=red guifg=NONE guibg=red
 hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
+let g:hi_insert = 'highlight StatusLine ctermfg=18 ctermbg=red cterm=none'
 
 if has('syntax')
   augroup InsertHook
@@ -614,7 +620,6 @@ endfunction "}}}
 " smartchr.vim"{{{
 "---------------------------------------------------------------------
 inoremap <expr> , smartchr#one_of(', ', ',')
-
 inoremap <expr> ? smartchr#one_of('?', '? ')
 
 " Smart =.
@@ -638,11 +643,6 @@ augroup MyAutoCmd
   autocmd FileType sh,bash,vim,zsh
         \ inoremap = =
         \| inoremap , ,
-
-  autocmd FileType ruby
-        \ inoremap <buffer> <expr> = smartchr#loop('=', ' = ', ' == ', ' === ')
-        \| inoremap <buffer> <expr> ~ smartchr#loop('~', ' =~ ', ' !~ ')
-        \| inoremap <buffer> <expr> > smartchr#loop(' > ', ' => ', ' >> ', '>')
 
   autocmd FileType scala
         \ inoremap <buffer> <expr> - smartchr#loop('-', ' -> ', ' <- ')
@@ -681,6 +681,8 @@ nnoremap <silent> [Quickfix]l :<C-u>clist<CR>
 nnoremap <silent> [Quickfix]q :<C-u>cc<CR>
 nnoremap <silent> [Quickfix]en :<C-u>cnewer<CR>
 nnoremap <silent> [Quickfix]ep :<C-u>colder<CR>
+nnoremap <silent> [Quickfix]o :<C-u>copen<CR>
+nnoremap <silent> [Quickfix]c :<C-u>cclose<CR>
 nmap [Quickfix]m [make]
 nnoremap [Quickfix]M q:make<Space>
 nnoremap [Quickfix]g q:grep<Space>
@@ -780,6 +782,7 @@ endfunction"}}}
 " gtags.vim"{{{
 "---------------------------------------------------------------------
 nnoremap <C-j> :GtagsCursor<CR>
+nnoremap <C-g> :Gtags<SPACE>
 "}}}
 
 "=============================================================
@@ -801,6 +804,11 @@ function! s:ruby_my_settings()"{{{
   set ts=2
   set sw=2
   set expandtab
+  inoremap <buffer> <expr> = search('\(&\<bar><bar>\<bar>+\<bar>-\<bar>/\<bar>>\<bar><\) \%#', 'bcn')? '<bs>= '
+        \ : search('\(*\<bar>!\)\%#', 'bcn') ? '= '
+        \ : smartchr#one_of(' = ', '=', ' == ',  '===', '=')
+  inoremap <buffer> <expr> ~ smartchr#loop('~', ' =~ ', ' !~ ')
+  inoremap <buffer> <expr> > smartchr#loop(' > ', ' => ', ' >> ', '>')
 endfunction"}}}
 
 " c
