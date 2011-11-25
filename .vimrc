@@ -216,6 +216,11 @@ cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
 
 vnoremap $ $h
+vnoremap { "zdi{<C-R>z}<ESC>
+vnoremap [ "zdi[<C-R>z]<ESC>
+vnoremap ( "zdi(<C-R>z)<ESC>
+vnoremap " "zdi"<C-R>z"<ESC>
+vnoremap ' "zdi'<C-R>z'<ESC>
 
 " expand path
 cmap <C-x> <C-r>=expand('%:p:h')<CR>/
