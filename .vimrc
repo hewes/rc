@@ -179,6 +179,8 @@ set grepprg=ack\ -a
 " use help for K
 set keywordprg=:help
 
+set foldmethod=marker
+
 set display=lastline
 if exists('&ambiwidth')
   set ambiwidth=double
