@@ -180,6 +180,8 @@ set grepprg=ack\ -a
 " use help for K
 set keywordprg=:help
 
+set foldmethod=marker
+
 set display=lastline
 if exists('&ambiwidth')
   set ambiwidth=double
@@ -195,6 +197,7 @@ au BufRead,BufNew * match Zenkaku /ã/
 "=============================================================-
 " insert
 inoremap <C-l> <ESC>
+inoremap <C-e> <END>
 
 " normal
 nnoremap <silent> <Leader><Leader> :bnext<CR>
@@ -536,7 +539,6 @@ endif
 "autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
 "}}}
 
-
 "---------------------------------------------------------------------
 " unite.vim "{{{
 "---------------------------------------------------------------------
@@ -788,17 +790,17 @@ nnoremap <C-g> :Gtags<SPACE>
 "=============================================================
 " for language
 "=============================================================
-" Java
+" Java {{{
 autocmd MyAutoCmd FileType java call s:java_my_settings()
-function! s:java_my_settings()"{{{
+function! s:java_my_settings()
   let g:java_highlight_functions = 'style'
   let g:java_highlight_all = 1
   let g:java_allow_cpp_keywords = 1
 endfunction"}}}
 
-" ruby
+" ruby {{{
 autocmd MyAutoCmd FileType ruby call s:ruby_my_settings()
-function! s:ruby_my_settings()"{{{
+function! s:ruby_my_settings()
   compiler ruby
   nmap [make] :<C-u>make -c %<CR>
   set ts=2
@@ -809,18 +811,25 @@ function! s:ruby_my_settings()"{{{
         \ : smartchr#one_of(' = ', '=', ' == ',  '===', '=')
   inoremap <buffer> <expr> ~ smartchr#loop('~', ' =~ ', ' !~ ')
   inoremap <buffer> <expr> > smartchr#loop(' > ', ' => ', ' >> ', '>')
+  inoremap <buffer> <expr> < smartchr#one_of(' < ', ' << ', '<')
+  inoremap <buffer> <expr> + smartchr#one_of(' + ', ' += ', '+')
+  inoremap <buffer> <expr> - smartchr#one_of(' - ', ' -= ', '-')
+  inoremap <buffer> <expr> # "#{}<LEFT>"
+  inoremap <buffer> ( ()<LEFT>
+  inoremap <buffer> { {}<LEFT>
+  inoremap <buffer> [ []<LEFT>
 endfunction"}}}
 
-" c
+" c  "{{{
 autocmd MyAutoCmd FileType c call s:clang_my_settings()
-function! s:clang_my_settings()"{{{
+function! s:clang_my_settings()
   setlocal ts=8
   setlocal sw=4
   setlocal noexpandtab
 endfunction"}}}
 
-autocmd MyAutoCmd FileType help call s:help_my_settings()
-function! s:help_my_settings()"{{{
+autocmd MyAutoCmd FileType help call s:help_my_settings() "{{{
+function! s:help_my_settings()
   nnoremap <buffer> <TAB> <C-w>w
   nnoremap <silent> <buffer> <SPACE> :bd<CR>
   nnoremap <buffer> j 5j
