@@ -196,6 +196,7 @@ au BufRead,BufNew * match Zenkaku /ã/
 "=============================================================-
 " insert
 inoremap <C-l> <ESC>
+inoremap <C-e> <END>
 
 " normal
 nnoremap <silent> <Leader><Leader> :bnext<CR>
