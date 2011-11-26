@@ -806,6 +806,9 @@ function! s:ruby_my_settings()
   inoremap <buffer> <expr> + smartchr#one_of(' + ', ' += ', '+')
   inoremap <buffer> <expr> - smartchr#one_of(' - ', ' -= ', '-')
   inoremap <buffer> <expr> # "#{}<LEFT>"
+  inoremap <buffer> ( ()<LEFT>
+  inoremap <buffer> { {}<LEFT>
+  inoremap <buffer> [ []<LEFT>
 endfunction"}}}
 
 " c  "{{{
