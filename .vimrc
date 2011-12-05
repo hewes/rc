@@ -40,6 +40,7 @@ Bundle 'ujihisa/unite-colorscheme.git'
 Bundle 'vim-scripts/gtags.vim.git'
 Bundle 'vim-scripts/DrawIt.git'
 Bundle 'vim-scripts/wombat256.vim.git'
+Bundle 'rosstimson/scala-vim-support.git'
 filetype plugin indent on
 
 "=============================================================-
@@ -470,8 +471,14 @@ set tabline=%!MyTabLine()
 "---------------------------------------------------------------------
 " neocomplcache.vim {{{
 "---------------------------------------------------------------------
+" keymapping {{{
+" neocomplcache prefix
+nmap <Leader>n [neocomplcache]
+nnoremap [neocomplcache]e :<C-u>NeoComplCacheEditSnippets<CR>
+" }}}
+
 " snippets directory
-let g:NeoComplCache_SnippetsDir = '~/.vim/snippets'
+let g:neocomplcache_snippets_dir = $HOME. '/.vim/snippets'
 
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
