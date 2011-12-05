@@ -134,16 +134,11 @@ snippet case
 abbr case
 prev_word   '^'
   case ${1} => ${2}
-## println
 
 snippet print
 abbr print string
 prev_word   '^'
   println(${1})
-    snippet main
-    def main(args: Array[String]) = {
-      ${1}
-    }
 
 snippet arg1
 abbr specifies arguments - x1
