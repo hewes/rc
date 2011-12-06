@@ -394,7 +394,7 @@ if has('multi_byte_ime')
     " Settings of default ime condition.
     set iminsert=0 imsearch=0
     " Don't save ime condition.
-    autocmd MyAutoCmd InsertLeave * set iminsert=0 imsearch=0
+    autocmd InsertLeave * set iminsert=0 imsearch=0
     nnoremap / :<C-u>set imsearch=0<CR>/
     xnoremap / :<C-u>set imsearch=0<CR>/
     nnoremap ? :<C-u>set imsearch=0<CR>?
