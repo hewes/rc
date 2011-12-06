@@ -423,7 +423,7 @@ endif
 " tab line setting
 "-------------------------------------------------------
 " status line format
-if v:version < 730
+if v:version < 703
   function! Dirname()
     let project = ProjectName()
     if !empty(project)
@@ -452,7 +452,7 @@ endfunction
 set statusline=%!MyStatusLine()
 "set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]
 
-if v:version < 730
+if v:version < 703
   function! MyTabLabel(n)
     let buflist  =  tabpagebuflist(a:n)
     let winnr  =  tabpagewinnr(a:n)
@@ -463,8 +463,8 @@ else
     let buflist  =  tabpagebuflist(a:n)
     let winnr  =  tabpagewinnr(a:n)
     let project = gettabvar(a:n, "project")
-    if !empty("project")
-      return '[' . project . ']' . bufname(buflist[winnr - 1]) 
+    if !empty(project)
+      return  project . ' ' .  bufname(buflist[winnr - 1]) 
     else
       return bufname(buflist[winnr - 1]) 
     end
