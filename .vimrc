@@ -141,7 +141,7 @@ set wildmode=list:full
 " Virtual edit always
 set virtualedit=all
 set foldenable
-
+set nrformats-=octal
 
 " swp file dir
 set directory-=.
