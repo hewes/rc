@@ -1,11 +1,10 @@
 
 "=============================================================-
-" vundle
+" NeoBundle
 "=============================================================-
 
 set nocompatible
 filetype off
-" NeoBundle
 if has('vim_starting')
   set rtp+=~/.vim/bundle/neobundle.vim/
   call neobundle#rc('~/.vim/bundle/')
