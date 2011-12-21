@@ -250,7 +250,7 @@ hi PmenuSbar ctermbg=0 ctermfg=white
 hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=darkred
 hi MatchParen term=NONE cterm=NONE ctermfg=NONE ctermbg=red guifg=NONE guibg=red
 hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
-let g:hi_insert = 'highlight StatusLine ctermfg=18 ctermbg=red cterm=none'
+let g:hi_insert = 'highlight StatusLine ctermfg=white ctermbg=blue cterm=none'
 
 if has('syntax')
   augroup InsertHook
@@ -258,6 +258,15 @@ if has('syntax')
     autocmd InsertEnter * call s:StatusLine('Enter')
     autocmd InsertLeave * call s:StatusLine('Leave')
   augroup END
+endif
+
+" change cursor shape
+if &term == "xterm-256color"
+    let &t_SI .= "\eP\e[5 q\e\\"
+    let &t_EI .= "\eP\e[1 q\e\\"
+elseif &term == "xterm"
+    let &t_SI .= "\e[5 q"
+    let &t_EI .= "\e[1 q"
 endif
 
 let s:slhlcmd = ''
