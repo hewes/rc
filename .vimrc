@@ -537,6 +537,7 @@ let g:neocomplcache_vim_completefuncs = {
       \ 'VimShellExecute' : 'vimshell#complete#vimshell_execute_complete#completefunc',
       \ 'VimShellTerminal' : 'vimshell#complete#vimshell_execute_complete#completefunc', 
       \ 'VimShellInteractive' : 'vimshell#complete#vimshell_execute_complete#completefunc',
+      \ 'VimFiler' : 'vimfiler#complete',
       \}
 
 " Define dictionary.
@@ -788,7 +789,7 @@ let g:vimfiler_pedit_command = 'vnew'
 
 let g:vimfiler_enable_clipboard = 0
 let g:vimfiler_safe_mode_by_default = 1
-"let g:vimshell_cd_command = 'TabpageCD'
+let g:vimshell_cd_command = 'TabpageCD'
 
 " Linux default.
 let g:vimfiler_external_copy_directory_command = 'cp -r $src $dest'
@@ -846,7 +847,7 @@ endfunction"}}}
 autocmd MyAutoCmd FileType ruby call s:ruby_my_settings()
 function! s:ruby_my_settings()
   compiler ruby
-  nmap [make] :<C-u>make -c %<CR>
+  nmap <buffer> [make] :<C-u>make -c %<CR>
   set ts=2
   set sw=2
   set expandtab
@@ -870,6 +871,16 @@ function! s:clang_my_settings()
   setlocal ts=8
   setlocal sw=4
   setlocal noexpandtab
+endfunction"}}}
+
+" scala  "{{{
+autocmd MyAutoCmd FileType scala call s:scala_my_settings()
+function! s:scala_my_settings()
+  setlocal ts=4
+  setlocal sw=4
+  setlocal noexpandtab
+  compiler scalac
+  nmap <buffer> [make] :<C-u>make %<CR>
 endfunction"}}}
 
 autocmd MyAutoCmd FileType help call s:help_my_settings() "{{{
