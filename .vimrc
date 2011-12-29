@@ -39,6 +39,7 @@ NeoBundle 'kana/vim-smartchr.git'
 NeoBundle 'kana/vim-altercmd'
 NeoBundle 'Sixeight/unite-grep.git'
 NeoBundle 'tsukkee/unite-tag.git'
+"NeoBundle 'tyru/eskk.vim'
 NeoBundle 'ujihisa/unite-colorscheme.git'
 NeoBundle 'vim-scripts/gtags.vim.git'
 NeoBundle 'vim-scripts/DrawIt.git'
@@ -830,6 +831,17 @@ endfunction"}}}
 "---------------------------------------------------------------------
 nnoremap <C-j> :GtagsCursor<CR>
 nnoremap <C-g> :Gtags<SPACE>
+"}}}
+
+"---------------------------------------------------------------------
+" eskk.vim"{{{
+"---------------------------------------------------------------------
+"let g:eskk#directory  =  "~/.vim/.eskk"
+"let g:eskk#dictionary  =  { 'path': "~/.vim/dict/skk.dict",  'sorted': 0,  'encoding': 'utf-8',  }
+"let g:eskk#large_dictionary  =  { 'path': "~/.vim/dict/skkl.dict",  'sorted': 0,  'encoding': 'utf-8',  }
+"let g:eskk#enable_completion = 1
+"let g:eskk_map_normal_keys = 1
+"let g:eskk#use_cursor_color = 1
 "}}}
 
 "=============================================================
