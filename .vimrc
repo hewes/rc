@@ -38,6 +38,7 @@ NeoBundle 'kana/vim-smartchr.git'
 NeoBundle 'kana/vim-altercmd'
 NeoBundle 'Sixeight/unite-grep.git'
 NeoBundle 'tsukkee/unite-tag.git'
+"NeoBundle 'tyru/eskk.vim'
 NeoBundle 'ujihisa/unite-colorscheme.git'
 NeoBundle 'vim-scripts/gtags.vim.git'
 NeoBundle 'vim-scripts/DrawIt.git'
@@ -249,7 +250,7 @@ hi PmenuSbar ctermbg=0 ctermfg=white
 hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=darkred
 hi MatchParen term=NONE cterm=NONE ctermfg=NONE ctermbg=red guifg=NONE guibg=red
 hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
-let g:hi_insert = 'highlight StatusLine ctermfg=18 ctermbg=red cterm=none'
+let g:hi_insert = 'highlight StatusLine ctermfg=white ctermbg=blue cterm=none'
 
 if has('syntax')
   augroup InsertHook
@@ -257,6 +258,15 @@ if has('syntax')
     autocmd InsertEnter * call s:StatusLine('Enter')
     autocmd InsertLeave * call s:StatusLine('Leave')
   augroup END
+endif
+
+" change cursor shape
+if &term == "xterm-256color"
+    let &t_SI .= "\eP\e[5 q\e\\"
+    let &t_EI .= "\eP\e[1 q\e\\"
+elseif &term == "xterm"
+    let &t_SI .= "\e[5 q"
+    let &t_EI .= "\e[1 q"
 endif
 
 let s:slhlcmd = ''
@@ -527,6 +537,7 @@ let g:neocomplcache_vim_completefuncs = {
       \ 'VimShellExecute' : 'vimshell#complete#vimshell_execute_complete#completefunc',
       \ 'VimShellTerminal' : 'vimshell#complete#vimshell_execute_complete#completefunc', 
       \ 'VimShellInteractive' : 'vimshell#complete#vimshell_execute_complete#completefunc',
+      \ 'VimFiler' : 'vimfiler#complete',
       \}
 
 " Define dictionary.
@@ -778,7 +789,7 @@ let g:vimfiler_pedit_command = 'vnew'
 
 let g:vimfiler_enable_clipboard = 0
 let g:vimfiler_safe_mode_by_default = 1
-"let g:vimshell_cd_command = 'TabpageCD'
+let g:vimshell_cd_command = 'TabpageCD'
 
 " Linux default.
 let g:vimfiler_external_copy_directory_command = 'cp -r $src $dest'
@@ -821,6 +832,17 @@ nnoremap <C-j> :GtagsCursor<CR>
 nnoremap <C-g> :Gtags<SPACE>
 "}}}
 
+"---------------------------------------------------------------------
+" eskk.vim"{{{
+"---------------------------------------------------------------------
+"let g:eskk#directory  =  "~/.vim/.eskk"
+"let g:eskk#dictionary  =  { 'path': "~/.vim/dict/skk.dict",  'sorted': 0,  'encoding': 'utf-8',  }
+"let g:eskk#large_dictionary  =  { 'path': "~/.vim/dict/skkl.dict",  'sorted': 0,  'encoding': 'utf-8',  }
+"let g:eskk#enable_completion = 1
+"let g:eskk_map_normal_keys = 1
+"let g:eskk#use_cursor_color = 1
+"}}}
+
 "=============================================================
 " for language
 "=============================================================
@@ -836,7 +858,7 @@ endfunction"}}}
 autocmd MyAutoCmd FileType ruby call s:ruby_my_settings()
 function! s:ruby_my_settings()
   compiler ruby
-  nmap [make] :<C-u>make -c %<CR>
+  nmap <buffer> [make] :<C-u>make -c %<CR>
   set ts=2
   set sw=2
   set expandtab
@@ -860,6 +882,16 @@ function! s:clang_my_settings()
   setlocal ts=8
   setlocal sw=4
   setlocal noexpandtab
+endfunction"}}}
+
+" scala  "{{{
+autocmd MyAutoCmd FileType scala call s:scala_my_settings()
+function! s:scala_my_settings()
+  setlocal ts=4
+  setlocal sw=4
+  setlocal noexpandtab
+  compiler scalac
+  nmap <buffer> [make] :<C-u>make %<CR>
 endfunction"}}}
 
 autocmd MyAutoCmd FileType help call s:help_my_settings() "{{{
