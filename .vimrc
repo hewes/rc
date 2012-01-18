@@ -297,6 +297,9 @@ function! s:GetCDProjectName()
   if !exists('g:unite_source_bookmark_directory')
     return ''
   endif
+  if !filereadable(g:unite_source_bookmark_directory . '/default')
+    return ''
+  endif
   for line in readfile(g:unite_source_bookmark_directory . '/default')
     let match = matchlist(line, '^\([^\t]*\)\t\([^\t]*\)\t\t')
     if empty(match)
