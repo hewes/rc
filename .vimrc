@@ -638,11 +638,14 @@ function! s:unite_my_settings()"{{{
   nnoremap <silent><buffer> <C-v> :call unite#mappings#do_action('vsplit')<CR>
   nnoremap <silent><buffer> <C-s> :call unite#mappings#do_action('split')<CR>
   nnoremap <silent><buffer> <C-r> :call unite#mappings#do_action('rec')<CR>
+  nnoremap <silent><buffer> <C-f> :call unite#mappings#do_action('preview')<CR>
   inoremap <silent><buffer> <C-o> <Esc>:call unite#mappings#do_action('tabopen')<CR>
   inoremap <silent><buffer> <C-v> <Esc>:call unite#mappings#do_action('vsplit')<CR>
   inoremap <silent><buffer> <C-s> <Esc>:call unite#mappings#do_action('split')<CR>
   inoremap <silent><buffer> <C-r> <Esc>:call unite#mappings#do_action('rec')<CR>
   inoremap <silent><buffer> <C-e> <Esc>:call unite#mappings#do_action('edit')<CR>
+  inoremap <silent><buffer> <C-f> <C-o>:call unite#mappings#do_action('preview')<CR>
+  " I hope to use <C-o> and return to the selected item after action...
   imap <silent><buffer> <C-j> <Plug>(unite_exit)
   nmap <silent><buffer> <C-j> <Plug>(unite_exit)
   inoremap <silent><buffer> <SPACE> _
