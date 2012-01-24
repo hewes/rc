@@ -515,7 +515,7 @@ set tabline=%!MyTabLine()
 "---------------------------------------------------------------------
 " keymapping {{{
 " neocomplcache prefix
-nmap <Leader>n [neocomplcache]
+nmap <Leader>c [neocomplcache]
 nnoremap [neocomplcache]e :<C-u>NeoComplCacheEditSnippets<CR>
 " }}}
 
