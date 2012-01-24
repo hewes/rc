@@ -508,41 +508,43 @@ endfunction
 set tabline=%!MyTabLine()
 
 "-------------------------------------------------------
-" sticky shift.
+" sticky shift."{{{
 "-------------------------------------------------------
 inoremap <expr> ;  <SID>sticky_func()
 cnoremap <expr> ;  <SID>sticky_func()
 snoremap <expr> ;  <SID>sticky_func()
 
+let g:us_sticky_table = {
+      \',' : '<', '.' : '>', '/' : '?',
+      \'1' : '!', '2' : '@', '3' : '#', '4' : '$', '5' : '%',
+      \'6' : '^', '7' : '&', '8' : '*', '9' : '(', '0' : ')', '-' : '_', '=' : '+',
+      \';' : ':', '[' : '{', ']' : '}', '`' : '~', "'" : "\"", '\' : '|',
+      \}
+let g:jp_sticky_table = {
+      \',' : '<', '.' : '>', '/' : '?',
+      \'1' : '!', '2' : "\"" , '3' : '#', '4' : '$', '5' : '%',
+      \'6' : '&', '7' : "'", '8' : '(', '9' : ')', '-' : '=', '^' : '~',
+      \';' : '+', '[' : '{', ']' : '}', '@' : '`'  , ':' : '*', '\' :  '_' ,
+      \}
+let g:sticky_table = g:jp_sticky_table
 function! s:sticky_func()
-    let l:us_sticky_table = {
-                \',' : '<', '.' : '>', '/' : '?',
-                \'1' : '!', '2' : '@', '3' : '#', '4' : '$', '5' : '%',
-                \'6' : '^', '7' : '&', '8' : '*', '9' : '(', '0' : ')', '-' : '_', '=' : '+',
-                \';' : ':', '[' : '{', ']' : '}', '`' : '~', "'" : "\"", '\' : '|',
-                \}
-    let l:jp_sticky_table = {
-                \',' : '<', '.' : '>', '/' : '?',
-                \'1' : '!', '2' : "\"" , '3' : '#', '4' : '$', '5' : '%',
-                \'6' : '&', '7' : "'", '8' : '(', '9' : ')', '-' : '=', '^' : '~',
-                \';' : '+', '[' : '{', ']' : '}', '@' : '`'  , ':' : '*', '\' :  '_' ,
-                \}
-    let l:special_table = {
+    let g:special_table = {
                 \"\<ESC>" : "\<ESC>", "\<Space>" : ';', "\<CR>" : ";\<CR>"
                 \}
 
-    let l:sticky_table = l:jp_sticky_table
     let l:key = getchar()
     if nr2char(l:key) =~ '\l'
         return toupper(nr2char(l:key))
-    elseif has_key(l:sticky_table, nr2char(l:key))
-        return l:sticky_table[nr2char(l:key)]
+    elseif has_key(g:sticky_table, nr2char(l:key))
+        return g:sticky_table[nr2char(l:key)]
     elseif has_key(l:special_table, nr2char(l:key))
         return l:special_table[nr2char(l:key)]
     else
         return ''
     endif
 endfunction
+"}}}
+
 "=============================================================
 " Plugins
 "=============================================================
@@ -945,4 +947,13 @@ function! s:help_my_settings()
   nnoremap <buffer> j 5j
   nnoremap <buffer> k 5k
 endfunction"}}}
+
+"=============================================================
+" post processing
+"=============================================================
+" source localized vimrc"{{{
+if filereadable('~/.vimrc.local')
+  source '~/.vimrc.local'
+endif
+"}}}
 
