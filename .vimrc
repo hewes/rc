@@ -204,11 +204,13 @@ au BufRead,BufNew * match Zenkaku /ã/
 " insert
 inoremap <C-l> <ESC>
 inoremap <C-e> <END>
+inoremap <C-f> <Right>
+inoremap <C-b> <Left>
 
 " normal
 nnoremap <silent> <Leader><Leader> :bnext<CR>
 nnoremap <Leader>a :Ref<SPACE>alc<SPACE>
-nnoremap <SPACE> <C-^>
+nnoremap <SPACE><SPACE> <C-^>
 nnoremap ,t :tabnew<SPACE>
 nnoremap Y y$
 nnoremap + <C-w>+
@@ -528,8 +530,9 @@ let g:jp_sticky_table = {
       \}
 let g:sticky_table = g:jp_sticky_table
 function! s:sticky_func()
-    let g:special_table = {
-                \"\<ESC>" : "\<ESC>", "\<Space>" : ';', "\<CR>" : ";\<CR>"
+    let l:special_table = {
+                \"\<ESC>" : "\<ESC>", "\<Space>" : ';', "\<CR>" : ";\<CR>", 
+                \"\<TAB>" : "\<C-o>W" , "\<BS>" : "\<C-o>B"
                 \}
 
     let l:key = getchar()
@@ -539,6 +542,8 @@ function! s:sticky_func()
         return g:sticky_table[nr2char(l:key)]
     elseif has_key(l:special_table, nr2char(l:key))
         return l:special_table[nr2char(l:key)]
+    elseif exists("b:buffer_sticky") && has_key(b:buffer_sticky, nr2char(l:key))
+        return b:buffer_sticky[nr2char(l:key)]
     else
         return ''
     endif
@@ -916,10 +921,10 @@ function! s:ruby_my_settings()
   inoremap <buffer> <expr> < smartchr#one_of(' < ', ' << ', '<')
   inoremap <buffer> <expr> + smartchr#one_of(' + ', ' += ', '+')
   inoremap <buffer> <expr> - smartchr#one_of(' - ', ' -= ', '-')
-  inoremap <buffer> <expr> # "#{}<LEFT>"
-  inoremap <buffer> ( ()<LEFT>
-  inoremap <buffer> { {}<LEFT>
-  inoremap <buffer> [ []<LEFT>
+  let b:buffer_sticky = {
+        \"#" : "#{}\<LEFT>", "(" : "()\<LEFT>", 
+        \"{" : "{}\<LEFT>", "[" : "[]\<LEFT>", 
+        \}
 endfunction"}}}
 
 " c  "{{{
