@@ -1,24 +1,24 @@
 snippet each
-abbr each with block
+abbr each{..}
 prev_word   '.'
     each{|${1:var}|
           ${2:body}
-    }
+    }${3}
 snippet each_do
-abbr each with block
+abbr each do .. end
 prev_word   '.'
     each do |${1:var}|
           ${2:body}
-    }
+    }${3}
 snippet map
-abbr map with block
+abbr map{..}
 prev_word   '.'
     map{|${1:var}|
           ${2:body}
-    }
+    }${3}
 snippet map_do
-abbr map with block
+abbr map do .. end
 prev_word   '.'
     map do |${1:var}|
           ${2:body}
-    }
+    }${3}
