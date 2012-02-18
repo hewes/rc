@@ -32,6 +32,7 @@ NeoBundle 'Shougo/vimshell.git'
 NeoBundle 'Shougo/vimfiler.git'
 NeoBundle 'Shougo/vimproc.git'
 NeoBundle 'Shougo/vim-vcs.git'
+NeoBundle 'Shougo/neocomplcache-snippets-complete.git'
 NeoBundle 'h1mesuke/unite-outline.git'
 NeoBundle 'sgur/unite-qf.git'
 NeoBundle 'kmnk/vim-unite-svn.git'
@@ -40,12 +41,14 @@ NeoBundle 'kana/vim-smartchr.git'
 NeoBundle 'kana/vim-altercmd'
 NeoBundle 'Sixeight/unite-grep.git'
 NeoBundle 'tsukkee/unite-tag.git'
-"NeoBundle 'tyru/eskk.vim'
+NeoBundle 'tsukkee/unite-help'
+NeoBundle 'tyru/eskk.vim'
 NeoBundle 'ujihisa/unite-colorscheme.git'
 NeoBundle 'vim-scripts/gtags.vim.git'
 NeoBundle 'vim-scripts/DrawIt.git'
 NeoBundle 'vim-scripts/wombat256.vim.git'
 NeoBundle 'rosstimson/scala-vim-support.git'
+
 filetype plugin indent on
 
 "=============================================================-
@@ -202,10 +205,12 @@ au BufRead,BufNew * match Zenkaku /ã/
 " key mapping
 "=============================================================-
 " insert
-inoremap <C-l> <ESC>
+"inoremap <C-l> <ESC>
 inoremap <C-e> <END>
 inoremap <C-f> <Right>
 inoremap <C-b> <Left>
+inoremap jj <ESC>
+inoremap <ESC> <ESC>
 
 " normal
 nnoremap <silent> <Leader><Leader> :bnext<CR>
@@ -216,7 +221,9 @@ nnoremap Y y$
 nnoremap + <C-w>+
 nnoremap - <C-w>-
 nnoremap <expr> sw ':%s/\<' . expand('<cword>') .'\>/'
-nnoremap <C-l> <C-g>
+"nnoremap <C-l> <C-g>
+nnoremap <C-h> gT
+nnoremap <C-l> gt
 
 " bash like key-bind at cmdline
 cnoremap <C-h> <BS>
@@ -226,6 +233,7 @@ cnoremap <C-e> <END>
 cnoremap <C-a> <HOME>
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
+cnoremap <ESC> <ESC>
 
 vnoremap $ $h
 vnoremap { "zdi{<C-R>z}<ESC>
@@ -296,7 +304,6 @@ endfunction
 "==============================================================
 " misc setting
 "==============================================================
-" FIXME: only project tab return project name
 function! s:GetCDProjectName()
   if !exists('g:unite_source_bookmark_directory')
     return ''
@@ -502,9 +509,6 @@ function! MyTabLine()
     let s .= ' ' . (i+1) . (1==getwinvar(i+1,'&modified')?'[+]':'') . ' %{MyTabLabel(' . (i+1) . ')} '
   endfor
   let s .= '%#TabLineFill#%T'
-  if tabpagenr('$') > 1 
-    let s .= '%=%#TabLine#%999Xclose'
-  endif
   return s
 endfunction
 set tabline=%!MyTabLine()
@@ -657,7 +661,6 @@ nnoremap <silent> [unite]p :Unite bookmark -default-action=cd -no-start-insert<C
 nnoremap <silent> [unite]j :Unite jump<CR>
 " Explore home dir
 nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file -input='. $HOME .'/<CR>'
-nnoremap <silent> <expr> <C-h> ':UniteWithInput -buffer-name=files file -input='. $HOME .'/<CR>'
 nnoremap <silent> <Leader>l :Unite buffer_tab -no-start-insert<CR>
 nnoremap <silent> [unite]l :Unite line<CR>
 nnoremap <expr> [unite]g ':Unite grep:'. expand("%:h") . ':-r'
@@ -871,7 +874,7 @@ nnoremap <Leader>x :VimShellTab<CR>
 let g:vimshell_user_prompt = 'getcwd()'
 autocmd MyAutoCmd FileType vimshell call s:vimshell_my_settings()
 function! s:vimshell_my_settings()"{{{
-  imap <silent><buffer> <C-j> <Plug>(vimshell_exit)
+  imap <silent><buffer> <C-j> <Plug>(vimshell_exit):q<CR>
 endfunction"}}}
 
 "}}}
