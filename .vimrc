@@ -651,17 +651,17 @@ nnoremap <silent> [unite]u :Unite -buffer-name=files file<CR>
 nnoremap <silent> [unite]m :Unite -buffer-name=file file_mru<CR>
 nnoremap <silent> [unite]r :Unite file_rec<CR>
 nnoremap [unite]R :Unite ref/
-nnoremap <silent> [unite]b :UniteWithBufferDir -buffer-name=files file<CR>
-nnoremap <silent> [unite]c :UniteWithCurrentDir -buffer-name=files file<CR>
+nnoremap <silent> [unite]b :UniteWithBufferDir -buffer-name=files file file/new<CR>
+nnoremap <silent> [unite]c :UniteWithCurrentDir -buffer-name=files file file/new<CR>
 nnoremap <silent> [unite]t :Unite tab<CR>
 nnoremap <silent> [unite]T :Unite tag<CR>
 nnoremap <silent> [unite]y :Unite register<CR>
 nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
 nnoremap <silent> [unite]p :Unite bookmark -default-action=cd -no-start-insert<CR>
-nnoremap <silent> [unite]j :Unite jump<CR>
+"nnoremap <silent> [unite]j :Unite jump<CR>
 " Explore home dir
-nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file -input='. $HOME .'/<CR>'
-nnoremap <silent> <Leader>l :Unite buffer_tab -no-start-insert<CR>
+nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file file/new -input='. $HOME .'/<CR>'
+nnoremap <silent> <Leader>j :Unite buffer_tab -no-start-insert<CR>
 nnoremap <silent> [unite]l :Unite line<CR>
 nnoremap <expr> [unite]g ':Unite grep:'. expand("%:h") . ':-r'
 nnoremap <silent> [unite]* :UniteWithCursorWord line<CR>
