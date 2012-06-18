@@ -22,8 +22,6 @@ NeoBundle 'thinca/vim-ref.git'
 NeoBundle 'thinca/vim-qfreplace.git'
 NeoBundle 'fuenor/qfixhowm'
 NeoBundle 'othree/eregex.vim.git'
-NeoBundle 'motemen/git-vim.git'
-NeoBundle 'mbriggs/mark.vim.git'
 NeoBundle 'Shougo/neobundle.vim.git'
 NeoBundle 'Shougo/unite.vim.git'
 NeoBundle 'Shougo/unite-build.git'
@@ -34,9 +32,7 @@ NeoBundle 'Shougo/vimproc.git'
 NeoBundle 'Shougo/vim-vcs.git'
 NeoBundle 'Shougo/neocomplcache-snippets-complete.git'
 NeoBundle 'h1mesuke/unite-outline.git'
-NeoBundle 'sgur/unite-qf.git'
 NeoBundle 'kmnk/vim-unite-svn.git'
-" NeoBundle 'ujihisa/unite-locate.git'
 NeoBundle 'kana/vim-smartchr.git'
 NeoBundle 'kana/vim-altercmd'
 NeoBundle 'Sixeight/unite-grep.git'
@@ -165,8 +161,8 @@ set nowritebackup
 set shiftround
 " tags
 if has('path_extra')
-"  set tags+=.;
-"  set tags+=tags;
+"set tags+=.;
+"set tags+=tags;
 endif
 set notagbsearch
 " Show full taginfo
@@ -262,7 +258,7 @@ hi PmenuSbar ctermbg=0 ctermfg=white
 hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=darkred
 hi MatchParen term=NONE cterm=NONE ctermfg=NONE ctermbg=red guifg=NONE guibg=red
 hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
-let g:hi_insert = 'highlight StatusLine ctermfg=white ctermbg=blue cterm=none'
+let g:hi_insert = 'highlight StatusLine ctermfg=white ctermbg=138 cterm=none'
 
 if has('syntax')
   augroup InsertHook
@@ -274,11 +270,11 @@ endif
 
 " change cursor shape
 if &term == "xterm-256color"
-    let &t_SI .= "\eP\e[5 q\e\\"
-    let &t_EI .= "\eP\e[1 q\e\\"
+    "let &t_SI .= "\eP\e[5 q\e\\"
+    "let &t_EI .= "\eP\e[1 q\e\\"
 elseif &term == "xterm"
-    let &t_SI .= "\e[5 q"
-    let &t_EI .= "\e[1 q"
+    "let &t_SI .= "\e[5 q"
+    "let &t_EI .= "\e[1 q"
 endif
 
 let s:slhlcmd = ''
@@ -661,7 +657,7 @@ nnoremap <silent> [unite]p :Unite bookmark -default-action=cd -no-start-insert<C
 "nnoremap <silent> [unite]j :Unite jump<CR>
 " Explore home dir
 nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file file/new -input='. $HOME .'/<CR>'
-nnoremap <silent> <Leader>j :Unite buffer_tab -no-start-insert<CR>
+nnoremap <silent> [unite]j :Unite buffer_tab -no-start-insert<CR>
 nnoremap <silent> [unite]l :Unite line<CR>
 nnoremap <expr> [unite]g ':Unite grep:'. expand("%:h") . ':-r'
 nnoremap <silent> [unite]* :UniteWithCursorWord line<CR>
@@ -701,19 +697,6 @@ function! s:unite_my_settings()"{{{
   nmap <silent><buffer> <C-j> <Plug>(unite_exit)
   inoremap <silent><buffer> <SPACE> _
   inoremap <silent><buffer> _ <SPACE>
-
-  call unite#set_substitute_pattern('file', '[^~.]\zs/', '*/*', 20)
-  call unite#set_substitute_pattern('file', '/\ze[^*]', '/*', 10)
-
-  call unite#set_substitute_pattern('file', '^@@', '\=fnamemodify(expand("#"), ":p:h")."/*"', 2)
-  call unite#set_substitute_pattern('file', '^@', '\=getcwd()."/*"', 1)
-  call unite#set_substitute_pattern('file', '^\\', '~/*')
-
-  call unite#set_substitute_pattern('file', '\*\*\+', '*', -1)
-
-  call unite#set_substitute_pattern('file', '\\\@<! ', '\\ ', -20)
-  call unite#set_substitute_pattern('file', '\\ \@!', '/', -30)
-  call unite#custom_max_candidates('file_rec', 100)
 endfunction "}}}
 "}}}
 
@@ -946,6 +929,14 @@ function! s:scala_my_settings()
   setlocal noexpandtab
   compiler scalac
   nmap <buffer> [make] :<C-u>make %<CR>
+endfunction"}}}
+
+" python  "{{{
+autocmd MyAutoCmd FileType python call s:python_my_settings()
+function! s:python_my_settings()
+  setlocal ts=4
+  setlocal sw=4
+  setlocal expandtab
 endfunction"}}}
 
 autocmd MyAutoCmd FileType help call s:help_my_settings() "{{{
