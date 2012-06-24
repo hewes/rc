@@ -883,6 +883,16 @@ nnoremap <C-g> :Gtags<SPACE>
 "=============================================================
 " for language
 "=============================================================
+function! s:sysid_match(sys_ids)
+  let l:sysid = synIDattr(synID(line('.'), col('.'), 0), 'name')
+  for tmp in a:sys_ids
+    if l:sysid == tmp
+      return 1
+    endif
+  endfor
+  return 0
+endfunction
+
 " Java {{{
 autocmd MyAutoCmd FileType java call s:java_my_settings()
 function! s:java_my_settings()
@@ -893,6 +903,7 @@ endfunction"}}}
 
 " ruby {{{
 autocmd MyAutoCmd FileType ruby call s:ruby_my_settings()
+
 function! s:ruby_my_settings()
   compiler ruby
   nmap <buffer> [make] :<C-u>make -c %<CR>
@@ -903,10 +914,12 @@ function! s:ruby_my_settings()
         \ : search('\(*\<bar>!\)\%#', 'bcn') ? '= '
         \ : smartchr#one_of(' = ', '=', ' == ',  '===', '=')
   inoremap <buffer> <expr> ~ smartchr#loop('~', ' =~ ', ' !~ ')
-  inoremap <buffer> <expr> > smartchr#loop(' > ', ' => ', ' >> ', '>')
-  inoremap <buffer> <expr> < smartchr#one_of(' < ', ' << ', '<')
-  inoremap <buffer> <expr> + smartchr#one_of(' + ', ' += ', '+')
-  inoremap <buffer> <expr> - smartchr#one_of(' - ', ' -= ', '-')
+  inoremap <buffer> <expr> > <SID>sysid_match(["rubyString", "rubyStringDelimiter"]) ? ">" : smartchr#loop(' > ', ' => ', ' >> ', '>')
+  inoremap <buffer> <expr> < <SID>sysid_match(["rubyString", "rubyStringDelimiter"]) ? "<" : smartchr#one_of(' < ', ' << ', '<')
+  inoremap <buffer> <expr> + <SID>sysid_match(["rubyString", "rubyStringDelimiter"]) ? "+" : smartchr#one_of(' + ', ' += ', '+')
+  inoremap <buffer> <expr> - <SID>sysid_match(["rubyString", "rubyStringDelimiter"]) ? "-" : smartchr#one_of(' - ', ' -= ', '-')
+  inoremap <buffer> <expr> # <SID>sysid_match(["rubyString", "rubyStringDelimiter"]) ? "#{}\<LEFT>" : "#"
+  inoremap <buffer> <expr> " smartchr#one_of('"', "\"\"\<LEFT>")
   let b:buffer_sticky = {
         \"#" : "#{}\<LEFT>", "(" : "()\<LEFT>", 
         \"{" : "{}\<LEFT>", "[" : "[]\<LEFT>", 
