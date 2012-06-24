@@ -258,7 +258,7 @@ hi CursorColumn term=reverse cterm=none ctermbg=233
 "hi PmenuSbar ctermbg=0 ctermfg=6
 hi MatchParen term=NONE cterm=NONE ctermfg=NONE ctermbg=52 guifg=NONE guibg=red
 hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
-hi StatusLineInsert term=NONE cterm=NONE ctermfg=white ctermbg=140
+hi StatusLineInsert term=NONE cterm=NONE ctermfg=4 ctermbg=229
 hi StatusLineNormal term=NONE cterm=NONE ctermfg=white ctermbg=darkred
 hi! link StatusLine StatusLineNormal
 
