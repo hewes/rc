@@ -1,6 +1,10 @@
 hardstatus alwayslastline "%{= wk} %-w%{=bu dr}%n %t%{-}%+w %= %{=b wb}%y/%m/%d %{=b wb}%c"
-escape ^Tt
+escape ^Zz
 bind l windowlist -b
 startup_message off
 #vbell off
 #autodetach on
+maptimeout 5
+defbce             on
+term               xterm-256color
+termcapinfo xterm* 'Co#256:pa#32767:AB=\E[48;5;%dm:AF=\E[38;5;%dm:'
