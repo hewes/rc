@@ -253,13 +253,14 @@ colorscheme wombat256mod
 
 hi CursorLine term=reverse cterm=none ctermbg=233
 hi CursorColumn term=reverse cterm=none ctermbg=233
-hi Pmenu ctermbg=darkgrey ctermfg=white
-hi PmenuSel ctermbg=grey ctermfg=black
-hi PmenuSbar ctermbg=0 ctermfg=white
-hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=darkred
-hi MatchParen term=NONE cterm=NONE ctermfg=NONE ctermbg=red guifg=NONE guibg=red
+"hi Pmenu ctermbg=darkgrey ctermfg=white
+"hi PmenuSel ctermbg=grey ctermfg=black
+"hi PmenuSbar ctermbg=0 ctermfg=6
+hi MatchParen term=NONE cterm=NONE ctermfg=NONE ctermbg=52 guifg=NONE guibg=red
 hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
-let g:hi_insert = 'highlight StatusLine ctermfg=white ctermbg=138 cterm=none'
+hi StatusLineInsert term=NONE cterm=NONE ctermfg=white ctermbg=140
+hi StatusLineNormal term=NONE cterm=NONE ctermfg=white ctermbg=darkred
+hi! link StatusLine StatusLineNormal
 
 if has('syntax')
   augroup InsertHook
@@ -281,11 +282,9 @@ endif
 let s:slhlcmd = ''
 function! s:StatusLine(mode)
   if a:mode == 'Enter'
-    silent! let s:slhlcmd = 'highlight ' . s:GetHighlight('StatusLine')
-    silent exec g:hi_insert
+    hi! link StatusLine StatusLineInsert
   else
-    highlight clear StatusLine
-    silent exec s:slhlcmd
+    hi! link StatusLine StatusLineNormal
   endif
 endfunction
 
