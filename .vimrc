@@ -231,7 +231,6 @@ cnoremap <C-e> <END>
 cnoremap <C-a> <HOME>
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
-cnoremap <ESC> <ESC>
 
 vnoremap $ $h
 vnoremap { "zdi{<C-R>z}<ESC>
