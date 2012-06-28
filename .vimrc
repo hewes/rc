@@ -208,6 +208,7 @@ inoremap <C-f> <Right>
 inoremap <C-b> <Left>
 inoremap jj <ESC>
 inoremap <ESC> <ESC>
+inoremap <C-l> <C-o>w
 
 " normal
 nnoremap <silent> <Leader><Leader> :bnext<CR>
@@ -258,9 +259,8 @@ hi CursorColumn term=reverse cterm=none ctermbg=233
 "hi PmenuSbar ctermbg=0 ctermfg=6
 hi MatchParen term=NONE cterm=NONE ctermfg=NONE ctermbg=52 guifg=NONE guibg=red
 hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
-hi StatusLineInsert term=NONE cterm=NONE ctermfg=4 ctermbg=229
-hi StatusLineNormal term=NONE cterm=NONE ctermfg=white ctermbg=darkred
-hi! link StatusLine StatusLineNormal
+hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=darkred
+let g:hi_insert  =  'highlight StatusLine ctermfg = white ctermbg = 138 cterm = none'
 
 if has('syntax')
   augroup InsertHook
@@ -282,9 +282,11 @@ endif
 let s:slhlcmd = ''
 function! s:StatusLine(mode)
   if a:mode == 'Enter'
-    hi! link StatusLine StatusLineInsert
+    silent! let s:slhlcmd = 'highlight ' . s:GetHighlight('StatusLine')
+    silent exec g:hi_insert
   else
-    hi! link StatusLine StatusLineNormal
+    highlight clear StatusLine
+    silent exec s:slhlcmd
   endif
 endfunction
 
@@ -907,9 +909,9 @@ autocmd MyAutoCmd FileType ruby call s:ruby_my_settings()
 function! s:ruby_my_settings()
   compiler ruby
   nmap <buffer> [make] :<C-u>make -c %<CR>
-  set ts=2
-  set sw=2
-  set expandtab
+  setlocal ts=2
+  setlocal sw=2
+  setlocal expandtab
   inoremap <buffer> <expr> = search('\(&\<bar><bar>\<bar>+\<bar>-\<bar>/\<bar>>\<bar><\) \%#', 'bcn')? '<bs>= '
         \ : search('\(*\<bar>!\)\%#', 'bcn') ? '= '
         \ : smartchr#one_of(' = ', '=', ' == ',  '===', '=')
