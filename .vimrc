@@ -506,11 +506,17 @@ else
   function! MyTabLabel(n)
     let buflist  =  tabpagebuflist(a:n)
     let winnr  =  tabpagewinnr(a:n)
+    let bufname = bufname(buflist[winnr - 1])
+    if empty(bufname)
+      let path_tcwd  = ""
+    else
+      let path_tcwd = substitute(fnamemodify(bufname, ":p"), gettabvar(a:n, "cwd") . "/", "", "g")
+    endif
     let project = gettabvar(a:n, "project")
     if !empty(project)
-      return  project . ' ' .  bufname(buflist[winnr - 1]) 
+      return  project . ' ' .  path_tcwd
     else
-      return bufname(buflist[winnr - 1]) 
+      return path_tcwd
     end
   endfunction
 end
