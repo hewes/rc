@@ -176,8 +176,8 @@ set vb t_vb=
 " Spell check language
 set spelllang=en_us
 " Completion setting.
-"set completeopt=menuone,preview
-set completeopt=menuone
+set completeopt=menuone,preview
+"set completeopt=menuone
 " Don't complete from other buffer.
 set complete=.
 " Set popup menu max height.
@@ -223,6 +223,13 @@ nnoremap <expr> sw ':%s/\<' . expand('<cword>') .'\>/'
 "nnoremap <C-l> <C-g>
 nnoremap <C-h> gT
 nnoremap <C-l> gt
+
+" tag shortcut
+nnoremap t <Nop>
+nnoremap tt <C-]>
+nnoremap tj <C-u>:tag<CR>
+nnoremap tk <C-u>:pop<CR>
+nnoremap tl <C-u>:tags<CR>
 
 " bash like key-bind at cmdline
 cnoremap <C-h> <BS>
@@ -321,23 +328,28 @@ function! s:GetCDProjectName()
   return ''
 endfunction
 
+let g:default_currend_dir = $HOME
+
 " :TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 call altercmd#load()
 command! -complete=dir -nargs=? TabpageCD
       \ execute 'cd' fnameescape(<q-args>)
-      \| let t:cwd  =  getcwd()
-      \| let t:project  =  s:GetCDProjectName()
+      \| call s:InitTabpage(getcwd(), 1)
+
+function! s:InitTabpage(chdir, force)
+  if !exists('t:cwd') || a:force
+    let t:cwd = a:chdir
+  endif
+  if !exists('t:project') || a:force
+    let t:project = s:GetCDProjectName()
+  endif
+endfunction
 
 AlterCommand cd TabpageCD
 command! -nargs=0 CD silent execute 'TabpageCD' unite#util#path2project_directory(expand('%:p'))
 
 autocmd VimEnter,TabEnter *
-      \ if !exists('t:cwd')
-      \| let t:cwd = getcwd()
-      \| endif
-      \| if !exists('t:project')
-      \| let t:project = s:GetCDProjectName()
-      \| endif
+      \ call s:InitTabpage(g:default_currend_dir, 0)
       \| execute 'cd' fnameescape(t:cwd)
 "}}}
 
@@ -567,6 +579,7 @@ endfunction
 " neocomplcache prefix
 nmap <Leader>c [neocomplcache]
 nnoremap [neocomplcache]e :<C-u>NeoComplCacheEditSnippets<CR>
+inoremap <expr><C-l> neocomplcache#complete_common_string()
 " }}}
 
 " snippets directory
@@ -654,7 +667,7 @@ nnoremap <silent> [unite]u :Unite -buffer-name=files file<CR>
 nnoremap <silent> [unite]m :Unite -buffer-name=file file_mru<CR>
 nnoremap <silent> [unite]r :Unite file_rec<CR>
 nnoremap [unite]R :Unite ref/
-nnoremap <silent> [unite]b :UniteWithBufferDir -buffer-name=files file file/new<CR>
+nnoremap <silent> [unite]b :UniteWithBufferDir -no-split -buffer-name=files file file/new<CR>
 nnoremap <silent> [unite]c :UniteWithCurrentDir -buffer-name=files file file/new<CR>
 nnoremap <silent> [unite]t :Unite tab<CR>
 nnoremap <silent> [unite]T :Unite tag<CR>
@@ -668,7 +681,7 @@ nnoremap <silent> [unite]j :Unite buffer_tab -no-start-insert<CR>
 nnoremap <silent> [unite]l :Unite line<CR>
 nnoremap <expr> [unite]g ':Unite grep:'. expand("%:h") . ':-r'
 nnoremap <silent> [unite]* :UniteWithCursorWord line<CR>
-nnoremap <silent> [unite]o :Unite -buffer-name=outline outline<CR>
+nnoremap <silent> [unite]o :Unite -buffer-name=outline -no-split outline<CR>
 nnoremap <silent> [unite]q :Unite qf -no-start-insert<CR>
 nnoremap [unite]s<SPACE> :Unite svn/
 nnoremap <silent> [unite]sd :Unite svn/diff<CR>
@@ -959,12 +972,11 @@ function! s:python_my_settings()
   setlocal expandtab
 endfunction"}}}
 
-autocmd MyAutoCmd FileType help call s:help_my_settings() "{{{
+" help "{{{
+autocmd MyAutoCmd FileType help call s:help_my_settings()
 function! s:help_my_settings()
   nnoremap <buffer> <TAB> <C-w>w
-  nnoremap <silent> <buffer> <SPACE> :bd<CR>
-  nnoremap <buffer> j 5j
-  nnoremap <buffer> k 5k
+  nnoremap <silent> <buffer> qq :bd<CR>
 endfunction"}}}
 
 "=============================================================
