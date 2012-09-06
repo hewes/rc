@@ -310,6 +310,9 @@ endfunction
 " misc setting
 "==============================================================
 function! s:GetCDProjectName()
+  if fnamemodify(t:cwd, ":p") == fnamemodify("~/", ":p")
+    return "[home]"
+  endif
   if !exists('g:unite_source_bookmark_directory')
     return ''
   endif
@@ -328,7 +331,7 @@ function! s:GetCDProjectName()
   return ''
 endfunction
 
-let g:default_currend_dir = $HOME
+let g:default_current_dir = $HOME
 
 " :TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 call altercmd#load()
@@ -349,7 +352,7 @@ AlterCommand cd TabpageCD
 command! -nargs=0 CD silent execute 'TabpageCD' unite#util#path2project_directory(expand('%:p'))
 
 autocmd VimEnter,TabEnter *
-      \ call s:InitTabpage(g:default_currend_dir, 0)
+      \ call s:InitTabpage(g:default_current_dir, 0)
       \| execute 'cd' fnameescape(t:cwd)
 "}}}
 
