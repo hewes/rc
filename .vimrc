@@ -9,7 +9,7 @@ if has('vim_starting')
   set rtp+=~/.vim/bundle/neobundle.vim/
   call neobundle#rc('~/.vim/bundle/')
 endif
-" NeoBundle 'vim-ruby/vim-ruby.git'
+NeoBundle 'vim-ruby/vim-ruby.git'
 NeoBundle 'm2ym/rsense.git'
 NeoBundle 'scrooloose/nerdcommenter.git'
 NeoBundle 'tpope/vim-surround'
@@ -194,6 +194,9 @@ if exists('&ambiwidth')
   set ambiwidth=double
 endif
 
+"  window of quick fix preview
+set previewheight=32
+
 autocmd FileType * set formatoptions-=ro
 scriptencoding  utf-8
 highlight Zenkaku cterm=underline ctermfg=Green guifg=Green
@@ -309,6 +312,8 @@ endfunction
 "==============================================================
 " misc setting
 "==============================================================
+
+" project name related to the current directory {{
 function! s:GetCDProjectName()
   if fnamemodify(t:cwd, ":p") == fnamemodify("~/", ":p")
     return "[home]"
@@ -330,6 +335,8 @@ function! s:GetCDProjectName()
   endfor
   return ''
 endfunction
+
+"}}
 
 let g:default_current_dir = $HOME
 
@@ -469,7 +476,7 @@ endif
 " status line format
 if v:version < 703
   function! Dirname()
-    let project = ProjectName()
+    let project = get(t:, 'project', "")
     if !empty(project)
       let project = project . "\ "
     end
@@ -481,14 +488,6 @@ else
   endfunction
 end
 
-function! ProjectName()
-  if exists("t:project") && ! empty(t:project)
-    return t:project
-  else
-    return ""
-  end
-endfunction
-
 function! MyStatusLine()
   return "\%{fugitive#statusline()}". Dirname(). "\ %m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]"
 endfunction
@@ -496,28 +495,22 @@ endfunction
 set statusline=%!MyStatusLine()
 "set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]
 
+function! BufnameOnTab(tab_num)
+  let buflist  =  tabpagebuflist(a:tab_num)
+  let winnr  =  tabpagewinnr(a:tab_num)
+  return bufname(buflist[winnr - 1]) 
+endfunction
+
 if v:version < 703
   function! MyTabLabel(n)
-    let buflist  =  tabpagebuflist(a:n)
-    let winnr  =  tabpagewinnr(a:n)
-    return bufname(buflist[winnr - 1]) 
+    return BufnameOnTab(a:n)
   endfunction
 else
   function! MyTabLabel(n)
-    let buflist  =  tabpagebuflist(a:n)
-    let winnr  =  tabpagewinnr(a:n)
-    let bufname = bufname(buflist[winnr - 1])
-    if empty(bufname)
-      let path_tcwd  = ""
-    else
-      let path_tcwd = substitute(fnamemodify(bufname, ":p"), gettabvar(a:n, "cwd") . "/", "", "g")
-    endif
-    let project = gettabvar(a:n, "project")
-    if !empty(project)
-      return  project . ' ' .  path_tcwd
-    else
-      return path_tcwd
-    end
+    let bufname   = BufnameOnTab(a:n)
+    let path_tcwd = empty(bufname) ? "" : substitute(fnamemodify(bufname, ":p"), gettabvar(a:n, "cwd") . "/", "", "g")
+    let project   = gettabvar(a:n, "project")
+    return empty(project) ? path_tcwd : project . ' ' .  path_tcwd
   endfunction
 end
 
@@ -901,12 +894,17 @@ nnoremap <C-g> :Gtags<SPACE>
 "---------------------------------------------------------------------
 " eskk.vim"{{{
 "---------------------------------------------------------------------
-"let g:eskk#directory  =  "~/.vim/.eskk"
-"let g:eskk#dictionary  =  { 'path': "~/.vim/dict/skk.dict",  'sorted': 0,  'encoding': 'utf-8',  }
-"let g:eskk#large_dictionary  =  { 'path': "~/.vim/dict/skkl.dict",  'sorted': 0,  'encoding': 'utf-8',  }
-"let g:eskk#enable_completion = 1
-"let g:eskk_map_normal_keys = 1
-"let g:eskk#use_cursor_color = 1
+if !exists('g:eskk#disable') || !g:eskk#disable
+  let g:eskk#directory  =  "~/.vim/.eskk"
+  "let g:eskk#dictionary  =  { 'path': "~/.vim/dict/skk.dict",  'sorted': 0,  'encoding': 'utf-8',  }
+  let g:eskk#large_dictionary  =  { 'path': "~/SKK-JISYO.L",  'sorted': 1,  'encoding': 'euc-jp',  }
+  let g:eskk#enable_completion = 1
+  let g:eskk#start_completion_length = 2
+  let g:eskk_map_normal_keys = 1
+  let g:eskk#use_cursor_color = 1
+  let g:eskk#show_annotation = 1
+  let g:eskk#keep_state = 0
+endif
 "}}}
 
 "=============================================================
