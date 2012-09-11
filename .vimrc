@@ -1,8 +1,6 @@
 
+" NeoBundle {{{
 "=============================================================-
-" NeoBundle
-"=============================================================-
-
 set nocompatible
 filetype off
 if has('vim_starting')
@@ -47,6 +45,7 @@ NeoBundle 'vim-scripts/wombat256.vim.git'
 NeoBundle 'rosstimson/scala-vim-support.git'
 
 filetype plugin indent on
+" }}}
 
 "=============================================================-
 " basic setting
@@ -200,7 +199,7 @@ set previewheight=32
 autocmd FileType * set formatoptions-=ro
 scriptencoding  utf-8
 highlight Zenkaku cterm=underline ctermfg=Green guifg=Green
-au BufRead,BufNew * match Zenkaku /ã/
+au BufRead,BufNew * match Zenkaku /�/
 
 "=============================================================-
 " key mapping
@@ -255,8 +254,7 @@ cmap <C-x> <C-r>=expand('%:p:h')<CR>/
 " expand file (not ext)
 cmap <C-z> <C-r>=expand('%:p:r')<CR>
 
-"-------------------------------------------------------
-" color
+" color {{{
 "-------------------------------------------------------
 set t_Co=256
 set background=dark
@@ -308,12 +306,13 @@ function! s:GetHighlight(hi)
   let hl = substitute(hl, 'xxx', '', '')
   return hl
 endfunction
+" }}}
 
 "==============================================================
 " misc setting
 "==============================================================
 
-" project name related to the current directory {{
+" project name related to the current directory {{{
 function! s:GetCDProjectName()
   if fnamemodify(t:cwd, ":p") == fnamemodify("~/", ":p")
     return "[home]"
@@ -336,9 +335,8 @@ function! s:GetCDProjectName()
   return ''
 endfunction
 
-"}}
-
 let g:default_current_dir = $HOME
+" }}}
 
 " :TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 call altercmd#load()
@@ -363,7 +361,6 @@ autocmd VimEnter,TabEnter *
       \| execute 'cd' fnameescape(t:cwd)
 "}}}
 
-"-------------------------------------------------------
 " kill line from current to eol "{{{
 func! s:kill_line()
     let curcol = col('.')
@@ -378,19 +375,56 @@ inoremap <C-k>  <C-o>:<C-u>call <SID>kill_line()<CR>
 cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 "}}}
 
-"-------------------------------------------------------
 " kill buffer, not close window {{{
 " http://nanasi.jp/articles/vim/kwbd_vim.html
 :com! Kwbd let kwbd_bn= bufnr("%")|enew|exe "bdel ".kwbd_bn|unlet kwbd_bn 
 nnoremap <C-k>  :Kwbd<CR>
 "}}}
 
-"-------------------------------------------------------
 " rename current file command {{{
 command! -nargs=1 -bang -bar -complete=file Rename saveas<bang> <args> | call delete(expand('#:p'))
 "}}}
 
-"-------------------------------------------------------
+" auto highlight current word {{{
+function! s:EscapeText( text )
+	return substitute( escape(a:text, '\' . '^$.*[~'), "\n", '\\n', 'ge' )
+endfunction
+
+function! s:GetCurrentWord()
+  let l:cword = expand('<cword>')
+  if !empty(l:cword)
+    let l:regexp = s:EscapeText(l:cword)
+    " The star command only creates a \<whole word\> search pattern if the
+    " <cword> actually only consists of keyword characters. 
+    if l:cword =~# '^\k\+$'
+      let l:regexp = '\<' . l:regexp . '\>'
+    endif
+    let l:expr = ((&ignorecase && l:cword !~# '\\\@<!\\C') ? '\c' . l:cword : l:cword)
+    return l:expr
+  else
+    return ''
+  endif
+endfunction
+
+highlight CurrentWord term=NONE ctermbg=DarkMagenta ctermfg=White guifg=NONE guibg=red
+
+function! s:HighlightCurrentWord()
+  let l:word = s:GetCurrentWord()
+  if !empty(l:word)
+    if exists("w:current_match")
+      call matchdelete(w:current_match)
+    endif
+    let w:current_match = matchadd('CurrentWord', l:word, 0)
+  endif
+endfunction
+
+command! -bar MarkCurrent call s:HighlightCurrentWord()
+autocmd CursorHold * call s:HighlightCurrentWord()
+" set time to highlight as 1000msec, but this is not recommended.. (has effect to creation of swap file..)
+set updatetime=1000
+" }}}
+
+
 " The automatic recognition of the character code."{{{
 if !exists('did_encoding_settings') && has('iconv')
     let s:enc_euc = 'euc-jp'
