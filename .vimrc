@@ -462,6 +462,7 @@ augroup MyAutoCmd
     autocmd!
 augroup END
 
+" source vimrc when write {{{
 if !has('gui_running') && !(has('win32') || has('win64'))
     autocmd MyAutoCmd BufWritePost $MYVIMRC nested source $MYVIMRC
 else
@@ -469,9 +470,9 @@ else
                 \if has('gui_running') | source $MYGVIMRC  
     autocmd MyAutoCmd BufWritePost $MYGVIMRC if has('gui_running') | source $MYGVIMRC
 endif
+" }}}
 
-"-------------------------------------------------------
-" tab line setting
+" Status line setting {{{
 "-------------------------------------------------------
 " status line format
 if v:version < 703
@@ -494,7 +495,9 @@ endfunction
 
 set statusline=%!MyStatusLine()
 "set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]
+"}}}
 
+" tab label setting {{{ 
 function! BufnameOnTab(tab_num)
   let buflist  =  tabpagebuflist(a:tab_num)
   let winnr  =  tabpagewinnr(a:tab_num)
@@ -529,8 +532,8 @@ function! MyTabLine()
   return s
 endfunction
 set tabline=%!MyTabLine()
+" }}}
 
-"-------------------------------------------------------
 " sticky shift."{{{
 "-------------------------------------------------------
 inoremap <expr> ;  <SID>sticky_func()
@@ -574,7 +577,6 @@ endfunction
 "=============================================================
 " Plugins
 "=============================================================
-"---------------------------------------------------------------------
 " neocomplcache.vim {{{
 "---------------------------------------------------------------------
 " keymapping {{{
@@ -654,7 +656,6 @@ endif
 "autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
 "}}}
 
-"---------------------------------------------------------------------
 " unite.vim "{{{
 "---------------------------------------------------------------------
 " map ff as default f
@@ -680,10 +681,10 @@ nnoremap <silent> [unite]p :Unite bookmark -default-action=cd -no-start-insert<C
 " Explore home dir
 nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file file/new -input='. $HOME .'/<CR>'
 nnoremap <silent> [unite]j :Unite buffer_tab -no-start-insert<CR>
-nnoremap <silent> [unite]l :Unite line<CR>
+nnoremap <silent> [unite]l :Unite -auto-preview -no-split line<CR>
 nnoremap <expr> [unite]g ':Unite grep:'. expand("%:h") . ':-r'
 nnoremap <silent> [unite]* :UniteWithCursorWord line<CR>
-nnoremap <silent> [unite]o :Unite -buffer-name=outline -no-split outline<CR>
+nnoremap <silent> [unite]o :Unite -buffer-name=outline -auto-preview -no-split outline<CR>
 nnoremap <silent> [unite]q :Unite qf -no-start-insert<CR>
 nnoremap [unite]s<SPACE> :Unite svn/
 nnoremap <silent> [unite]sd :Unite svn/diff<CR>
@@ -722,7 +723,6 @@ function! s:unite_my_settings()"{{{
 endfunction "}}}
 "}}}
 
-"---------------------------------------------------------------------
 " smartchr.vim"{{{
 "---------------------------------------------------------------------
 inoremap <expr> , smartchr#one_of(', ', ',')
@@ -764,7 +764,6 @@ augroup MyAutoCmd
 augroup END
 "}}}
 
-"---------------------------------------------------------------------
 " q: Quickfix "{{{
 "---------------------------------------------------------------------
 
@@ -826,7 +825,6 @@ nnoremap [Quickfix]wg q:lgrep<Space>
 "}}}
 "}}}
 
-"---------------------------------------------------------------------
 " vimfiler.vim"{{{
 "---------------------------------------------------------------------
 "nmap <Leader>v <Plug>(vimfiler_switch)
@@ -872,7 +870,6 @@ function! s:vimfiler_my_settings()"{{{
 endfunction"}}}
 "}}}
 
-"---------------------------------------------------------------------
 " vimshell.vim"{{{
 "---------------------------------------------------------------------
 nnoremap <Leader>x :VimShellTab<CR>
@@ -884,14 +881,12 @@ endfunction"}}}
 
 "}}}
 
-"---------------------------------------------------------------------
 " gtags.vim"{{{
 "---------------------------------------------------------------------
 nnoremap <C-j> :GtagsCursor<CR>
 nnoremap <C-g> :Gtags<SPACE>
 "}}}
 
-"---------------------------------------------------------------------
 " eskk.vim"{{{
 "---------------------------------------------------------------------
 if !exists('g:eskk#disable') || !g:eskk#disable
