@@ -63,6 +63,7 @@ let s:has_win = has('win32') || has('win64')
 if s:has_win
     set shellslash
 endif
+set shell=zsh
 
 " abosorb difference between windows and Linux
 let dotvim = $HOME . "/.vim"
