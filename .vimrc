@@ -394,13 +394,10 @@ function! s:GetCurrentWord()
   let l:cword = expand('<cword>')
   if !empty(l:cword)
     let l:regexp = s:EscapeText(l:cword)
-    " The star command only creates a \<whole word\> search pattern if the
-    " <cword> actually only consists of keyword characters. 
     if l:cword =~# '^\k\+$'
       let l:regexp = '\<' . l:regexp . '\>'
     endif
-    let l:expr = ((&ignorecase && l:cword !~# '\\\@<!\\C') ? '\c' . l:cword : l:cword)
-    return l:expr
+    return l:regexp
   else
     return ''
   endif
@@ -423,7 +420,6 @@ autocmd CursorHold * call s:HighlightCurrentWord()
 " set time to highlight as 1000msec, but this is not recommended.. (has effect to creation of swap file..)
 set updatetime=1000
 " }}}
-
 
 " The automatic recognition of the character code."{{{
 if !exists('did_encoding_settings') && has('iconv')
