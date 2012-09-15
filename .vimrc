@@ -387,15 +387,17 @@ command! -nargs=1 -bang -bar -complete=file Rename saveas<bang> <args> | call de
 "}}}
 
 " auto highlight current word {{{
+let g:enable_current_highlight = 1
+highlight CurrentWord term=NONE ctermbg=52 ctermfg=NONE guifg=NONE guibg=red
+
 function! s:EscapeText( text )
-	return substitute( escape(a:text, '\' . '^$.*[~'), "\n", '\\n', 'ge' )
+  return substitute( escape(a:text, '\' . '^$.*[~'), "\n", '\\n', 'ge' )
 endfunction
 
-function! s:GetCurrentWord()
-  let l:cword = expand('<cword>')
-  if !empty(l:cword)
-    let l:regexp = s:EscapeText(l:cword)
-    if l:cword =~# '^\k\+$'
+function! s:GetCurrentWordPattern(cwd)
+  if !empty(a:cwd)
+    let l:regexp = s:EscapeText(a:cwd)
+    if a:cwd =~# '^\k\+$'
       let l:regexp = '\<' . l:regexp . '\>'
     endif
     return l:regexp
@@ -404,22 +406,71 @@ function! s:GetCurrentWord()
   endif
 endfunction
 
-highlight CurrentWord term=NONE ctermbg=52 ctermfg=NONE guifg=NONE guibg=red
+fun! s:GetMatchitPattern(cwd)
+  if !exists('b:match_words')
+    return ''
+  endif
+  if !exists('b:mw')
+    call s:InitMatchit()
+  endif
+  for pat in b:mw
+    if a:cwd =~# pat 
+      let l:cmw = pat
+      break
+    endif
+  endfor
+  if !exists("l:cmw")
+    return ''
+  endif
 
-let g:enable_current_highlight = 1
+  " if cwd is one of b:match_words pattern highlight match words
+  let lcs = []
+  " store position of matchit words on lcs
+  let wsv = winsaveview()
+  while 1
+    exe 'normal %'
+    let lc = {'line': line('.'), 'col': col('.')}
+    if len(lcs) > 0 && lc.line == lcs[0].line && lc.col == lcs[0].col
+      break
+    endif
+    call add(lcs, lc)
+  endwhile
+  call winrestview(wsv)
+
+  call map(lcs, '"\\%" . v:val.line . "l\\%" . v:val.col . "c"')
+  let lcre = join(lcs, '\|')
+  " final \& part of the regexp is a hack to improve html
+  return '.*\%(' . lcre . '\).*\&' . b:mwre
+  "return '.*\%(' . lcre . '\).*\&' . b:mwre . '\&\% (<\_[^>]\+>\|.*\)'
+endfun
+
+function! s:InitMatchit()
+  if !exists('b:match_words')
+    return
+  endif
+  let b:mw = split(b:match_words, ',\|:')
+  let l:mw = filter(b:mw, 'v:val !~ "^[(){}[\\]]$"')
+  let mwre = '\%(' . join(l:mw, '\|') . '\)'
+  let b:mwre = substitute(mwre, "'", "''", 'g')
+endfunction
+
 function! s:HighlightCurrentWord()
   if !get(g:, "enable_current_highlight", 0)
     return
   endif
-  let l:word = s:GetCurrentWord()
-  if get(w:, "current_pattern", '') == l:word || empty(l:word)
+  let l:cwd = expand("<cword>")
+  let l:pattern = s:GetMatchitPattern(l:cwd)
+  if empty(l:pattern)
+    let l:pattern = s:GetCurrentWordPattern(l:cwd)
+  endif
+  if get(w:, "current_pattern", '') == l:pattern || empty(l:pattern)
     return
   endif
   if exists("w:current_match")
     call matchdelete(w:current_match)
   endif
-  let w:current_pattern = l:word
-  let w:current_match = matchadd('CurrentWord', l:word, 0)
+  let w:current_pattern = l:pattern
+  let w:current_match = matchadd('CurrentWord', l:pattern, 0)
 endfunction
 
 command! -bar MarkCurrent call s:HighlightCurrentWord()
