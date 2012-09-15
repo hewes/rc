@@ -199,8 +199,6 @@ set previewheight=32
 
 autocmd FileType * set formatoptions-=ro
 scriptencoding  utf-8
-highlight Zenkaku cterm=underline ctermfg=Green guifg=Green
-au BufRead,BufNew * match Zenkaku /¿/
 
 "=============================================================-
 " key mapping
