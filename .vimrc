@@ -404,22 +404,29 @@ function! s:GetCurrentWord()
   endif
 endfunction
 
-highlight CurrentWord term=NONE ctermbg=DarkMagenta ctermfg=White guifg=NONE guibg=red
+highlight CurrentWord term=NONE ctermbg=52 ctermfg=NONE guifg=NONE guibg=red
 
+let g:enable_current_highlight = 1
 function! s:HighlightCurrentWord()
-  let l:word = s:GetCurrentWord()
-  if !empty(l:word)
-    if exists("w:current_match")
-      call matchdelete(w:current_match)
-    endif
-    let w:current_match = matchadd('CurrentWord', l:word, 0)
+  if !get(g:, "enable_current_highlight", 0)
+    return
   endif
+  let l:word = s:GetCurrentWord()
+  if get(w:, "current_pattern", '') == l:word || empty(l:word)
+    return
+  endif
+  if exists("w:current_match")
+    call matchdelete(w:current_match)
+  endif
+  let w:current_pattern = l:word
+  let w:current_match = matchadd('CurrentWord', l:word, 0)
 endfunction
 
 command! -bar MarkCurrent call s:HighlightCurrentWord()
-autocmd CursorHold * call s:HighlightCurrentWord()
-" set time to highlight as 1000msec, but this is not recommended.. (has effect to creation of swap file..)
-set updatetime=1000
+augroup HighlightCurrent
+  autocmd!
+  autocmd CursorMoved,CursorMovedI * call s:HighlightCurrentWord()
+augroup END
 " }}}
 
 " The automatic recognition of the character code."{{{
