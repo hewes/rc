@@ -215,7 +215,14 @@ inoremap <C-l> <C-o>w
 " ---- normal mode {{{
 nnoremap <silent> <Leader><Leader> :bnext<CR>
 nnoremap <Leader>a :Ref<SPACE>alc<SPACE>
+
+nnoremap <Space> <Nop>
 nnoremap <SPACE><SPACE> <C-^>
+" Quick save and quit.
+nnoremap <silent> <Space>w :<C-u>update<CR>
+nnoremap <silent> <Space>W :<C-u>update!<CR>
+nnoremap <silent> <Space>q :<C-u>quit<CR>
+nnoremap <silent> <Space>Q :<C-u>quit!<CR>
 nnoremap ,t :tabnew<SPACE>
 nnoremap Y y$
 nnoremap + <C-w>+
@@ -639,13 +646,30 @@ endfunction
 "}}}
 " }}}
 " ======== Plugin Settings {{{
-" neocomplcache.vim {{{
-"---------------------------------------------------------------------
+" ----- neocomplcache.vim {{{
 " keymapping {{{
 " neocomplcache prefix
 nmap <Leader>c [neocomplcache]
 nnoremap [neocomplcache]e :<C-u>NeoComplCacheEditSnippets<CR>
 inoremap <expr><C-l> neocomplcache#complete_common_string()
+" Plugin key-mappings.
+inoremap <expr><C-g> neocomplcache#undo_completion()
+inoremap <expr><C-c> neocomplcache#complete_common_string()
+
+" expand snippets by TAB
+imap <silent> <expr> <Tab> <SID>tab_wrapper()
+smap  <TAB> <Plug>(neocomplcache_snippets_expand)
+function! s:tab_wrapper()
+  if neocomplcache#sources#snippets_complete#expandable()
+    return "\<Plug>(neocomplcache_snippets_jump)"
+  elseif pumvisible()
+    return "\<C-y>"
+  elseif (!exists('b:smart_expandtab') || b:smart_expandtab) &&
+  \   !&l:expandtab && !search('^\s*\%#', 'nc')
+    return repeat(' ', &l:tabstop - (virtcol('.') - 1) % &l:tabstop)
+  endif
+  return "\<Tab>"
+endfunction
 " }}}
 
 " snippets directory
@@ -661,9 +685,19 @@ let g:neocomplcache_enable_smart_case = 1
 let g:neocomplcache_enable_camel_case_completion = 1
 " Use underbar completion.
 let g:neocomplcache_enable_underbar_completion = 1
+let g:neocomplcache_max_list = 10000
+let g:neocomplcache_max_keyword_width = 100
+let g:neocomplcache_enable_prefetch = 1
 " Set minimum syntax keyword length.
 let g:neocomplcache_min_syntax_length = 3
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+let g:neocomplcache_auto_completion_start_length = 1
+let g:neocomplcache_plugin_completion_length_list = {
+\   'snippets_complete' : 1,
+\   'buffer_complete' : 2,
+\   'syntax_complete' : 2,
+\   'tags_complete' : 3,
+\ }
 
 let g:neocomplcache_vim_completefuncs = {
       \ 'Ref' : 'ref#complete',
@@ -688,21 +722,12 @@ let g:neocomplcache_omni_functions = {
       \ }
 
 
-" Plugin key-mappings.
-inoremap <expr><C-g> neocomplcache#undo_completion()
-inoremap <expr><C-c> neocomplcache#complete_common_string()
-nnoremap <Leader>es :NeoComplCacheEditSnippets<CR>
-
-" expand snippets by TAB
-imap  <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : "\<TAB>"
-smap  <TAB> <Plug>(neocomplcache_snippets_expand)
-
 " Enable omni completion.
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+autocmd MyAutoCmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd MyAutoCmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd MyAutoCmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd MyAutoCmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd MyAutoCmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 " Enable heavy omni completion.
 if !exists('g:neocomplcache_omni_patterns')
