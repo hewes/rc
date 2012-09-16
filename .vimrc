@@ -644,6 +644,15 @@ function! s:sticky_func()
     endif
 endfunction
 "}}}
+
+" ---- reopen/write file with specified encoding {{{
+command! -bang -complete=file -nargs=? Utf8 edit<bang> ++enc=utf-8 <args>
+command! -bang -complete=file -nargs=? Sjis edit<bang> ++enc=cp932 <args>
+command! -bang -complete=file -nargs=? Euc edit<bang> ++enc=eucjp <args>
+command! -bang -complete=file -nargs=? WUtf8 write<bang> ++enc=utf-8 <args>
+command! -bang -complete=file -nargs=? WSjis write<bang> ++enc=cp932 <args>
+command! -bang -complete=file -nargs=? WEuc write<bang> ++enc=eucjp <args>
+" }}}
 " }}}
 " ======== Plugin Settings {{{
 " ----- neocomplcache.vim {{{
