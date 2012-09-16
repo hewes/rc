@@ -1,6 +1,4 @@
-
-" NeoBundle {{{
-"=============================================================-
+" ======== NeoBundle Setting {{{
 set nocompatible
 filetype off
 if has('vim_starting')
@@ -45,47 +43,31 @@ NeoBundle 'rosstimson/scala-vim-support.git'
 
 filetype plugin indent on
 " }}}
-
-"=============================================================-
-" basic setting
-"=============================================================-
-
-" Map Leader {{{
-let mapleader= ','
-let g:mapleader = ','
-let g:maplocalleader = 'm'
-"}}}
+" ======== Basic Setting {{{
+" Set my vimrc augroup.
+augroup MyAutoCmd
+    autocmd!
+augroup END
 
 let s:has_win = has('win32') || has('win64')
 
 " Exchange path separator.
 if s:has_win
-    set shellslash
+  set shellslash
 endif
 set shell=zsh
 
 " abosorb difference between windows and Linux
 let dotvim = $HOME . "/.vim"
 
-set title
-set noruler
-
 " split window direction {{{
 set splitbelow
 set splitright
 " }}}
 
-syntax on
 set hidden
 
-" set cursolline only focused window
-augroup cch
-  autocmd! cch
-  autocmd WinLeave * set nocursorline
-  autocmd WinEnter,BufRead * set cursorline
-augroup END
-
-" indent setting{{{
+" default indent setting{{{
 set autoindent
 set cindent
 " tab setting
@@ -96,28 +78,13 @@ set smarttab
 set smartindent
 "}}}
 
-" cursor hilight setting{{{
-set cursorline
-set nocursorcolumn
-" }}}
-
 set browsedir=buffer
 set backspace=indent,eol,start
 set clipboard=unnamed
-set showcmd
-"set number
-set relativenumber
-
-" list chars
-set list
-set listchars=eol:$,tab:>\ ,extends:<
 
 " scroll
 "set scroll=5
 set scrolloff=0
-
-set showmatch
-set laststatus=2
 
 "search settings {{{
 set smartcase
@@ -134,8 +101,6 @@ set iminsert=1
 set imsearch=1
 "}}}
 
-" always show tab
-set showtabline=2
 " beyond line 
 set whichwrap=b,s,h,l,<,>,[,]
 " No auto return
@@ -193,16 +158,52 @@ if exists('&ambiwidth')
   set ambiwidth=double
 endif
 
-"  window of quick fix preview
-set previewheight=32
+autocmd MyAutoCmd FileType * set formatoptions-=ro
 
-autocmd FileType * set formatoptions-=ro
+" ------ The encoding setting {{{
+" Use utf-8.
+if &encoding !=? 'utf-8'
+  let &termencoding = &encoding
+  set encoding=utf-8
+endif
+
+" Must after set of 'encoding'.
+scriptencoding utf-8
+
+if has('guess_encode')
+  set fileencodings=ucs-bom,iso-2022-jp,guess,euc-jp,cp932
+else
+  set fileencodings=ucs-bom,iso-2022-jp,euc-jp,cp932
+endif
+
+augroup vimrc-fileencoding
+  autocmd!
+  autocmd BufReadPost * if &modifiable && !search('[^\x00-\x7F]', 'cnw')
+  \                   |   setlocal fileencoding=
+  \                   | endif
+augroup END
+
+" scriptencoding setting must be after encoding setting
 scriptencoding  utf-8
 
-"=============================================================-
-" key mapping
-"=============================================================-
-" insert
+"}}}
+
+" ------- Default fileformat. {{{
+set fileformat=unix
+" Automatic recognition of a new line cord.
+set fileformats=unix,dos,mac
+" A fullwidth character is displayed in vim properly.
+set ambiwidth=double
+" }}}
+
+" }}}
+" ======== Key mappings {{{
+" Map Leader {{{
+let mapleader= ','
+let g:mapleader = ','
+let g:maplocalleader = 'm'
+"}}}
+" ---- insert mode {{{
 "inoremap <C-l> <ESC>
 inoremap <C-e> <END>
 inoremap <C-f> <Right>
@@ -210,8 +211,8 @@ inoremap <C-b> <Left>
 inoremap jj <ESC>
 inoremap <ESC> <ESC>
 inoremap <C-l> <C-o>w
-
-" normal
+" }}}
+" ---- normal mode {{{
 nnoremap <silent> <Leader><Leader> :bnext<CR>
 nnoremap <Leader>a :Ref<SPACE>alc<SPACE>
 nnoremap <SPACE><SPACE> <C-^>
@@ -230,7 +231,8 @@ nnoremap tt <C-]>
 nnoremap tj <C-u>:tag<CR>
 nnoremap tk <C-u>:pop<CR>
 nnoremap tl <C-u>:tags<CR>
-
+" }}}
+" ---- command mode {{{
 " bash like key-bind at cmdline
 cnoremap <C-h> <BS>
 cnoremap <C-l> <ESC>
@@ -239,34 +241,71 @@ cnoremap <C-e> <END>
 cnoremap <C-a> <HOME>
 cnoremap <C-p> <Up>
 cnoremap <C-n> <Down>
-
+" expand path
+cmap <C-x> <C-r>=expand('%:p:h')<CR>/
+" expand file (not ext)
+cmap <C-z> <C-r>=expand('%:p:r')<CR>
+" }}}
+" ---- visual mode {{{
 vnoremap $ $h
 vnoremap { "zdi{<C-R>z}<ESC>
 vnoremap [ "zdi[<C-R>z]<ESC>
 vnoremap ( "zdi(<C-R>z)<ESC>
 vnoremap " "zdi"<C-R>z"<ESC>
 vnoremap ' "zdi'<C-R>z'<ESC>
+" }}}
+" }}}
+" ======== Appearence Setting {{{
+set title
+set noruler
 
-" expand path
-cmap <C-x> <C-r>=expand('%:p:h')<CR>/
-" expand file (not ext)
-cmap <C-z> <C-r>=expand('%:p:r')<CR>
+" always show tab
+set showtabline=2
+syntax on
 
-" color {{{
-"-------------------------------------------------------
+" set cursolline only focused window
+augroup cch
+  autocmd! cch
+  autocmd WinLeave * set nocursorline
+  autocmd WinEnter,BufRead * set cursorline
+augroup END
+
+" cursor hilight setting
+set cursorline
+set nocursorcolumn
+
+"set number
+set relativenumber
+
+" list chars
+set list
+set listchars=eol:$,tab:>\ ,extends:<
+
+set showcmd
+set showmatch
+set laststatus=2
+
+"  window of quick fix preview
+set previewheight=32
+
+" ----- color {{{
 set t_Co=256
 set background=dark
-colorscheme wombat256mod
 
-hi CursorLine term=reverse cterm=none ctermbg=233
-hi CursorColumn term=reverse cterm=none ctermbg=233
-"hi Pmenu ctermbg=darkgrey ctermfg=white
-"hi PmenuSel ctermbg=grey ctermfg=black
-"hi PmenuSbar ctermbg=0 ctermfg=6
-hi MatchParen term=NONE cterm=NONE ctermfg=NONE ctermbg=52 guifg=NONE guibg=red
-hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
-hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=darkred
-let g:hi_insert  =  'highlight StatusLine ctermfg = white ctermbg = 138 cterm = none'
+function! s:set_highlight()
+  hi CursorLine term=reverse cterm=none ctermbg=233
+  hi CursorColumn term=reverse cterm=none ctermbg=233
+  "hi Pmenu ctermbg=darkgrey ctermfg=white
+  "hi PmenuSel ctermbg=grey ctermfg=black
+  "hi PmenuSbar ctermbg=0 ctermfg=6
+  hi MatchParen term=NONE cterm=NONE ctermfg=NONE ctermbg=52 guifg=NONE guibg=red
+  hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
+  hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=darkred
+endfunction
+
+autocmd MyAutoCmd ColorScheme * call s:set_highlight()
+
+colorscheme wombat256mod
 
 if has('syntax')
   augroup InsertHook
@@ -286,6 +325,7 @@ elseif &term == "xterm"
 endif
 
 let s:slhlcmd = ''
+let g:hi_insert  =  'highlight StatusLine ctermfg = white ctermbg = 138 cterm = none'
 function! s:StatusLine(mode)
   if a:mode == 'Enter'
     silent! let s:slhlcmd = 'highlight ' . s:GetHighlight('StatusLine')
@@ -306,12 +346,84 @@ function! s:GetHighlight(hi)
 endfunction
 " }}}
 
-"==============================================================
-" misc setting
-"==============================================================
+" ----- Status line setting {{{
+" status line format
+if v:version < 703
+  function! Dirname()
+    let project = get(t:, 'project', "")
+    if !empty(project)
+      let project = project . "\ "
+    end
+    return project . "%f"
+  endfunction
+else
+  function! Dirname()
+    return "%f"
+  endfunction
+end
 
-" project name related to the current directory {{{
-function! s:GetCDProjectName()
+function! MyStatusLine()
+  return "\%{fugitive#statusline()}". Dirname(). "\ %m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]"
+endfunction
+
+set statusline=%!MyStatusLine()
+"set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]
+"}}}
+
+" ----- Tab label setting {{{ 
+function! BufnameOnTab(tab_num)
+  let buflist  =  tabpagebuflist(a:tab_num)
+  let winnr  =  tabpagewinnr(a:tab_num)
+  return bufname(buflist[winnr - 1]) 
+endfunction
+
+if v:version < 703
+  function! MyTabLabel(n)
+    return BufnameOnTab(a:n)
+  endfunction
+else
+  function! MyTabLabel(n)
+    let bufname   = BufnameOnTab(a:n)
+    let path_tcwd = empty(bufname) ? "" : substitute(fnamemodify(bufname, ":p"), gettabvar(a:n, "cwd") . "/", "", "g")
+    let project   = gettabvar(a:n, "project")
+    return empty(project) ? path_tcwd : project . ' ' .  path_tcwd
+  endfunction
+end
+
+function! MyTabLine()
+  let s = ''
+  for i in range(tabpagenr('$'))
+    if i + 1 == tabpagenr()
+      let s .= '%#TabLineSel#'
+    else
+      let s .= '%#TabLine#'
+    endif
+    let s .= '%' . (i+1) . 'T' 
+    let s .= ' ' . (i+1) . (1==getwinvar(i+1,'&modified')?'[+]':'') . ' %{MyTabLabel(' . (i+1) . ')} '
+  endfor
+  let s .= '%#TabLineFill#%T'
+  return s
+endfunction
+set tabline=%!MyTabLine()
+" }}}
+
+" ----- Input Japanese:"{{{
+if has('multi_byte_ime')
+    " Settings of default ime condition.
+    set iminsert=0 imsearch=0
+    " Don't save ime condition.
+    autocmd MyAutoCmd InsertLeave * set iminsert=0 imsearch=0
+    nnoremap / :<C-u>set imsearch=0<CR>/
+    xnoremap / :<C-u>set imsearch=0<CR>/
+    nnoremap ? :<C-u>set imsearch=0<CR>?
+    xnoremap ? :<C-u>set imsearch=0<CR>?
+    highlight Cursor ctermfg=NONE ctermbg=Green
+    highlight CursorIM ctermfg=NONE ctermbg=Yellow
+endif
+"}}}
+" }}}
+" ======== My Misc Setting {{{
+function! s:GetCDProjectName() " project name related to the current directory {{{
   if fnamemodify(t:cwd, ":p") == fnamemodify("~/", ":p")
     return "[home]"
   endif
@@ -359,7 +471,7 @@ autocmd VimEnter,TabEnter *
       \| execute 'cd' fnameescape(t:cwd)
 "}}}
 
-" kill line from current to eol "{{{
+" Insert Mode <C-k> -- kill line from current to eol "{{{
 func! s:kill_line()
     let curcol = col('.')
     if curcol == col('$')
@@ -373,13 +485,13 @@ inoremap <C-k>  <C-o>:<C-u>call <SID>kill_line()<CR>
 cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 "}}}
 
-" kill buffer, not close window {{{
+" Normal Mode <C-k> -- kill buffer, not close window {{{
 " http://nanasi.jp/articles/vim/kwbd_vim.html
 :com! Kwbd let kwbd_bn= bufnr("%")|enew|exe "bdel ".kwbd_bn|unlet kwbd_bn 
 nnoremap <C-k>  :Kwbd<CR>
 "}}}
 
-" rename current file command {{{
+" :Rename -- rename current file command {{{
 command! -nargs=1 -bang -bar -complete=file Rename saveas<bang> <args> | call delete(expand('#:p'))
 "}}}
 
@@ -477,63 +589,7 @@ augroup HighlightCurrent
 augroup END
 " }}}
 
-" The encoding setting {{{
-" Use utf-8.
-if &encoding !=? 'utf-8'
-  let &termencoding = &encoding
-  set encoding=utf-8
-endif
-
-" Must after set of 'encoding'.
-scriptencoding utf-8
-
-if has('guess_encode')
-  set fileencodings=ucs-bom,iso-2022-jp,guess,euc-jp,cp932
-else
-  set fileencodings=ucs-bom,iso-2022-jp,euc-jp,cp932
-endif
-
-augroup vimrc-fileencoding
-  autocmd!
-  autocmd BufReadPost * if &modifiable && !search('[^\x00-\x7F]', 'cnw')
-  \                   |   setlocal fileencoding=
-  \                   | endif
-augroup END
-"}}}
-
-"-------------------------------------------------------
-" Default fileformat.
-"-------------------------------------------------------
-set fileformat=unix
-" Automatic recognition of a new line cord.
-set fileformats=unix,dos,mac
-" A fullwidth character is displayed in vim properly.
-set ambiwidth=double
-
-"---------------------------------------------------------------------------
-" Input Japanese:"{{{
-if has('multi_byte_ime')
-    " Settings of default ime condition.
-    set iminsert=0 imsearch=0
-    " Don't save ime condition.
-    autocmd InsertLeave * set iminsert=0 imsearch=0
-    nnoremap / :<C-u>set imsearch=0<CR>/
-    xnoremap / :<C-u>set imsearch=0<CR>/
-    nnoremap ? :<C-u>set imsearch=0<CR>?
-    xnoremap ? :<C-u>set imsearch=0<CR>?
-    highlight Cursor ctermfg=NONE ctermbg=Green
-    highlight CursorIM ctermfg=NONE ctermbg=Yellow
-endif
-"}}}
-
-"-------------------------------------------------------
-" Set augroup.
-"-------------------------------------------------------
-augroup MyAutoCmd
-    autocmd!
-augroup END
-
-" source vimrc when write {{{
+" ----- source vimrc when write {{{
 if !has('gui_running') && !(has('win32') || has('win64'))
     autocmd MyAutoCmd BufWritePost $MYVIMRC nested source $MYVIMRC
 else
@@ -543,70 +599,7 @@ else
 endif
 " }}}
 
-" Status line setting {{{
-"-------------------------------------------------------
-" status line format
-if v:version < 703
-  function! Dirname()
-    let project = get(t:, 'project', "")
-    if !empty(project)
-      let project = project . "\ "
-    end
-    return project . "%f"
-  endfunction
-else
-  function! Dirname()
-    return "%f"
-  endfunction
-end
-
-function! MyStatusLine()
-  return "\%{fugitive#statusline()}". Dirname(). "\ %m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]"
-endfunction
-
-set statusline=%!MyStatusLine()
-"set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]
-"}}}
-
-" tab label setting {{{ 
-function! BufnameOnTab(tab_num)
-  let buflist  =  tabpagebuflist(a:tab_num)
-  let winnr  =  tabpagewinnr(a:tab_num)
-  return bufname(buflist[winnr - 1]) 
-endfunction
-
-if v:version < 703
-  function! MyTabLabel(n)
-    return BufnameOnTab(a:n)
-  endfunction
-else
-  function! MyTabLabel(n)
-    let bufname   = BufnameOnTab(a:n)
-    let path_tcwd = empty(bufname) ? "" : substitute(fnamemodify(bufname, ":p"), gettabvar(a:n, "cwd") . "/", "", "g")
-    let project   = gettabvar(a:n, "project")
-    return empty(project) ? path_tcwd : project . ' ' .  path_tcwd
-  endfunction
-end
-
-function! MyTabLine()
-  let s = ''
-  for i in range(tabpagenr('$'))
-    if i + 1 == tabpagenr()
-      let s .= '%#TabLineSel#'
-    else
-      let s .= '%#TabLine#'
-    endif
-    let s .= '%' . (i+1) . 'T' 
-    let s .= ' ' . (i+1) . (1==getwinvar(i+1,'&modified')?'[+]':'') . ' %{MyTabLabel(' . (i+1) . ')} '
-  endfor
-  let s .= '%#TabLineFill#%T'
-  return s
-endfunction
-set tabline=%!MyTabLine()
-" }}}
-
-" sticky shift."{{{
-"-------------------------------------------------------
+" ---- sticky shift "{{{
 inoremap <expr> ;  <SID>sticky_func()
 cnoremap <expr> ;  <SID>sticky_func()
 snoremap <expr> ;  <SID>sticky_func()
@@ -644,10 +637,8 @@ function! s:sticky_func()
     endif
 endfunction
 "}}}
-
-"=============================================================
-" Plugins
-"=============================================================
+" }}}
+" ======== Plugin Settings {{{
 " neocomplcache.vim {{{
 "---------------------------------------------------------------------
 " keymapping {{{
@@ -972,10 +963,8 @@ if !exists('g:eskk#disable') || !g:eskk#disable
   let g:eskk#keep_state = 0
 endif
 "}}}
-
-"=============================================================
-" for language
-"=============================================================
+" }}}
+" ======== Each Language Setting {{{
 function! s:sysid_match(sys_ids)
   let l:sysid = synIDattr(synID(line('.'), col('.'), 0), 'name')
   for tmp in a:sys_ids
@@ -992,7 +981,7 @@ function! s:java_my_settings()
   let g:java_highlight_functions = 'style'
   let g:java_highlight_all = 1
   let g:java_allow_cpp_keywords = 1
-endfunction"}}}
+endfunction "}}}
 
 " ruby {{{
 autocmd MyAutoCmd FileType ruby call s:ruby_my_settings()
@@ -1017,7 +1006,7 @@ function! s:ruby_my_settings()
         \"#" : "#{}\<LEFT>", "(" : "()\<LEFT>", 
         \"{" : "{}\<LEFT>", "[" : "[]\<LEFT>", 
         \}
-endfunction"}}}
+endfunction "}}}
 
 " c  "{{{
 autocmd MyAutoCmd FileType c call s:clang_my_settings()
@@ -1025,7 +1014,7 @@ function! s:clang_my_settings()
   setlocal ts=8
   setlocal sw=4
   setlocal noexpandtab
-endfunction"}}}
+endfunction "}}}
 
 " scala  "{{{
 autocmd MyAutoCmd FileType scala call s:scala_my_settings()
@@ -1035,7 +1024,7 @@ function! s:scala_my_settings()
   setlocal noexpandtab
   compiler scalac
   nmap <buffer> [make] :<C-u>make %<CR>
-endfunction"}}}
+endfunction "}}}
 
 " python  "{{{
 autocmd MyAutoCmd FileType python call s:python_my_settings()
@@ -1043,21 +1032,20 @@ function! s:python_my_settings()
   setlocal ts=4
   setlocal sw=4
   setlocal expandtab
-endfunction"}}}
+endfunction "}}}
 
 " help "{{{
 autocmd MyAutoCmd FileType help call s:help_my_settings()
 function! s:help_my_settings()
   nnoremap <buffer> <TAB> <C-w>w
   nnoremap <silent> <buffer> qq :bd<CR>
-endfunction"}}}
-
-"=============================================================
-" post processing
-"=============================================================
+endfunction "}}}
+"}}}
+" ======== Post Process Setting {{{
 " source localized vimrc"{{{
 if filereadable('~/.vimrc.local')
   source '~/.vimrc.local'
 endif
 "}}}
+" }}}
 
