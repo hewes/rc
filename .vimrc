@@ -33,7 +33,6 @@ NeoBundle 'h1mesuke/unite-outline.git'
 NeoBundle 'kmnk/vim-unite-svn.git'
 NeoBundle 'kana/vim-smartchr.git'
 NeoBundle 'kana/vim-altercmd'
-NeoBundle 'mattn/zencoding-vim.git'
 NeoBundle 'Sixeight/unite-grep.git'
 NeoBundle 'tsukkee/unite-tag.git'
 NeoBundle 'tsukkee/unite-help'
@@ -199,8 +198,6 @@ set previewheight=32
 
 autocmd FileType * set formatoptions-=ro
 scriptencoding  utf-8
-highlight Zenkaku cterm=underline ctermfg=Green guifg=Green
-au BufRead,BufNew * match Zenkaku /¿/
 
 "=============================================================-
 " key mapping
@@ -388,7 +385,7 @@ command! -nargs=1 -bang -bar -complete=file Rename saveas<bang> <args> | call de
 
 " auto highlight current word {{{
 let g:enable_current_highlight = 1
-highlight CurrentWord term=NONE ctermbg=52 ctermfg=NONE guifg=NONE guibg=red
+highlight CurrentWord term=NONE ctermbg=52 ctermfg=NONE
 
 function! s:EscapeText( text )
   return substitute( escape(a:text, '\' . '^$.*[~'), "\n", '\\n', 'ge' )
@@ -480,43 +477,28 @@ augroup HighlightCurrent
 augroup END
 " }}}
 
-" The automatic recognition of the character code."{{{
-if !exists('did_encoding_settings') && has('iconv')
-    let s:enc_euc = 'euc-jp'
-    let s:enc_jis = 'iso-2022-jp'
-
-    " Does iconv support JIS X 0213?
-    if iconv("\x87\x64\x87\x6a", 'cp932', 'euc-jisx0213') ==# "\xad\xc5\xad\xcb"
-        let s:enc_euc = 'euc-jisx0213,euc-jp'
-        let s:enc_jis = 'iso-2022-jp-3'
-    endif
- 
-    " Build encodings.
-    let &fileencodings = 'ucs-bom'
-    if &encoding !=# 'utf-8'
-        let &fileencodings = &fileencodings . ',' . 'ucs-2le'
-        let &fileencodings = &fileencodings . ',' . 'ucs-2'
-    endif
-    let &fileencodings = &fileencodings . ',' . s:enc_jis
-
-    if &encoding ==# 'utf-8'
-        let &fileencodings = &fileencodings . ',' . s:enc_euc
-        let &fileencodings = &fileencodings . ',' . 'cp932'
-    elseif &encoding =~# '^euc-\%(jp\|jisx0213\)$'
-        let &encoding = s:enc_euc
-        let &fileencodings = &fileencodings . ',' . 'utf-8'
-        let &fileencodings = &fileencodings . ',' . 'cp932'
-    else  " cp932
-        let &fileencodings = &fileencodings . ',' . 'utf-8'
-        let &fileencodings = &fileencodings . ',' . s:enc_euc
-                                              endif
-    let &fileencodings = &fileencodings . ',' . &encoding
-
-    unlet s:enc_euc
-    unlet s:enc_jis
-
-    let did_encoding_settings = 1
+" The encoding setting {{{
+" Use utf-8.
+if &encoding !=? 'utf-8'
+  let &termencoding = &encoding
+  set encoding=utf-8
 endif
+
+" Must after set of 'encoding'.
+scriptencoding utf-8
+
+if has('guess_encode')
+  set fileencodings=ucs-bom,iso-2022-jp,guess,euc-jp,cp932
+else
+  set fileencodings=ucs-bom,iso-2022-jp,euc-jp,cp932
+endif
+
+augroup vimrc-fileencoding
+  autocmd!
+  autocmd BufReadPost * if &modifiable && !search('[^\x00-\x7F]', 'cnw')
+  \                   |   setlocal fileencoding=
+  \                   | endif
+augroup END
 "}}}
 
 "-------------------------------------------------------
