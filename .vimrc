@@ -12,7 +12,6 @@ NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'tpope/vim-repeat.git'
 NeoBundle 'tsaleh/vim-align.git'
-NeoBundle 'tsaleh/vim-matchit.git'
 NeoBundle 'thinca/vim-quickrun.git'
 NeoBundle 'thinca/vim-ref.git'
 NeoBundle 'thinca/vim-qfreplace.git'
@@ -27,7 +26,7 @@ NeoBundle 'Shougo/vimfiler.git'
 NeoBundle 'Shougo/vimproc.git'
 NeoBundle 'Shougo/vim-vcs.git'
 NeoBundle 'Shougo/neocomplcache-snippets-complete.git'
-NeoBundle 'h1mesuke/unite-outline.git'
+NeoBundle 'Shougo/unite-outline.git'
 NeoBundle 'kmnk/vim-unite-svn.git'
 NeoBundle 'kana/vim-smartchr.git'
 NeoBundle 'kana/vim-altercmd'
@@ -42,6 +41,11 @@ NeoBundle 'vim-scripts/wombat256.vim.git'
 NeoBundle 'rosstimson/scala-vim-support.git'
 
 filetype plugin indent on
+" }}}
+" ======== Source Macro {{{
+if filereadable($VIMRUNTIME . "/macros/matchit.vim")
+  source $VIMRUNTIME/macros/matchit.vim
+endif
 " }}}
 " ======== Util Function {{{
 function! s:mkdir(file, ...)
