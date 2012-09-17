@@ -395,8 +395,18 @@ else
   endfunction
 end
 
+function! GetVCSInfo()
+  "if exists("g:loaded_vcs")
+    "return vcs#info("(%s)-[%b]", "(%s)-[%b|%a]")
+  "else
+  if exists("g:loaded_fugitive")
+    return fugitive#statusline()
+  endif
+  "endif
+endfunction
+
 function! MyStatusLine()
-  return "\%{fugitive#statusline()}". Dirname(). "\ %m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]"
+  return "\%{GetVCSInfo()}". Dirname(). "\ %m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]"
 endfunction
 
 set statusline=%!MyStatusLine()
