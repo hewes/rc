@@ -43,8 +43,27 @@ NeoBundle 'rosstimson/scala-vim-support.git'
 
 filetype plugin indent on
 " }}}
+" ======== Util Function {{{
+function! s:mkdir(file, ...)
+  let f = a:0 ? fnamemodify(a:file, a:1) : a:file
+  if !isdirectory(f)
+    call mkdir(f, 'p')
+  endif
+endfunction
+
+function! s:sysid_match(sys_ids)
+  let l:sysid = synIDattr(synID(line('.'), col('.'), 0), 'name')
+  for tmp in a:sys_ids
+    if l:sysid == tmp
+      return 1
+    endif
+  endfor
+  return 0
+endfunction
+
+"}}}
 " ======== Basic Setting {{{
-" Set my vimrc augroup.
+" Initialize my vimrc augroup.
 augroup MyAutoCmd
     autocmd!
 augroup END
@@ -60,14 +79,13 @@ set shell=zsh
 " abosorb difference between windows and Linux
 let dotvim = $HOME . "/.vim"
 
-" split window direction {{{
+" split window direction
 set splitbelow
 set splitright
-" }}}
 
 set hidden
 
-" default indent setting{{{
+" default indent setting
 set autoindent
 set cindent
 " tab setting
@@ -76,7 +94,6 @@ set shiftwidth=2
 set expandtab
 set smarttab
 set smartindent
-"}}}
 
 set browsedir=buffer
 set backspace=indent,eol,start
@@ -86,20 +103,16 @@ set clipboard=unnamed
 "set scroll=5
 set scrolloff=0
 
-"search settings {{{
-set smartcase
-set ignorecase
-set wrapscan
-set incsearch
-set hlsearch
-"}}}
+"search settings
+set ignorecase smartcase wrapscan incsearch hlsearch grepprg=internal
+" use ack for grep
+" set grepprg=ack\ -a
 
-"Japanese input etc settings {{{
+"Japanese input etc settings
 set noimdisable
 set noimcmdline
 set iminsert=1
 set imsearch=1
-"}}}
 
 " beyond line 
 set whichwrap=b,s,h,l,<,>,[,]
@@ -111,18 +124,29 @@ set wildmode=list:full
 " Virtual edit always
 set virtualedit=all
 set foldenable
-set nrformats-=octal
+set nrformats& nrformats-=octal
 
-" swp file dir
-set directory-=.
-if v:version >= 703
-  set undofile
-  let &undodir=&directory
+" Backup.
+set backup
+set backupdir=./.backup,~/.backup
+" Paths of swap file and backup file.
+if $TMP !=# ''
+  execute 'set backupdir+=' . escape(expand($TMP), ' \')
+elseif has('unix')
+  set backupdir+=/tmp
 endif
+let &directory = &backupdir
+if has('persistent_undo')
+  set undodir=~/.backup
+  augroup vimrc-undofile
+    autocmd!
+    autocmd BufReadPre ~/* setlocal undofile
+  augroup END
+endif
+set backupcopy=yes
 
-" Backupfile dir
-set nobackup
-set nowritebackup
+call s:mkdir(expand('~/.backup'))
+
 " Round tab width
 set shiftround
 " tags
@@ -146,12 +170,12 @@ set completeopt=menuone,preview
 set complete=.
 " Set popup menu max height.
 set pumheight=20
-" use ack for grep
-set grepprg=ack\ -a
 " use help for K
 set keywordprg=:help
 
 set foldmethod=marker
+
+set modeline
 
 set display=lastline
 if exists('&ambiwidth')
@@ -430,6 +454,12 @@ endif
 "}}}
 " }}}
 " ======== My Misc Setting {{{
+" diff commands --- {{{
+command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
+command! -bar Diff if &diff | execute 'windo diffoff'  | else
+\                           | execute 'windo diffthis' | endif
+" }}}
+
 function! s:GetCDProjectName() " project name related to the current directory {{{
   if fnamemodify(t:cwd, ":p") == fnamemodify("~/", ":p")
     return "[home]"
@@ -498,8 +528,52 @@ cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 nnoremap <C-k>  :Kwbd<CR>
 "}}}
 
-" :Rename -- rename current file command {{{
-command! -nargs=1 -bang -bar -complete=file Rename saveas<bang> <args> | call delete(expand('#:p'))
+" :Rename, :Move, :Delete -- operate current file command {{{
+command! -nargs=1 -bang -bar -complete=file Rename
+\        call s:move(<q-args>, <q-bang>, expand('%:h'))
+command! -nargs=1 -bang -bar -complete=file Move
+\        call s:move(<q-args>, <q-bang>, getcwd())
+function! s:move(file, bang, base)
+  let pwd = getcwd()
+  cd `=a:base`
+  try
+    let from = expand('%:p')
+    let to = simplify(expand(a:file))
+    let bang = a:bang
+    if isdirectory(to)
+      let to .= '/' . fnamemodify(from, ':t')
+    endif
+    if filereadable(to) && !bang
+      echo '"' . to . '" is exists. Overwrite? [yN]'
+      if nr2char(getchar()) !=? 'y'
+        echo 'Cancelled.'
+        return
+      endif
+      let bang = '!'
+    endif
+    let dir = fnamemodify(to, ':h')
+    call s:mkdir(dir)
+    execute 'saveas' . bang '`=to`'
+    call delete(from)
+  finally
+    cd `=pwd`
+  endtry
+endfunction
+
+command! -nargs=? -bang -bar -complete=file Delete
+\ call s:delete_with_confirm(<q-args>, <bang>0)
+function! s:delete_with_confirm(file, force)
+  let file = a:file ==# '' ? expand('%') : a:file
+  if !a:force
+    echo 'Delete "' . file . '"? [y/N]:'
+  endif
+  if a:force || nr2char(getchar()) ==? 'y'
+    call delete(file)
+    echo 'Deleted "' . file . '"!'
+  else
+    echo 'Cancelled.'
+  endif
+endfunction
 "}}}
 
 " auto highlight current word {{{
@@ -546,8 +620,10 @@ fun! s:GetMatchitPattern(cwd)
   while 1
     exe 'normal %'
     let lc = {'line': line('.'), 'col': col('.')}
-    if len(lcs) > 0 && lc.line == lcs[0].line && lc.col == lcs[0].col
-      break
+    if len(lcs) > 0
+      if (lc.line == lcs[0].line && lc.col == lcs[0].col)  || (lc.line == lcs[-1].line && lc.col == lcs[-1].col)
+        break
+      endif
     endif
     call add(lcs, lc)
   endwhile
@@ -653,6 +729,7 @@ command! -bang -complete=file -nargs=? WUtf8 write<bang> ++enc=utf-8 <args>
 command! -bang -complete=file -nargs=? WSjis write<bang> ++enc=cp932 <args>
 command! -bang -complete=file -nargs=? WEuc write<bang> ++enc=eucjp <args>
 " }}}
+
 " }}}
 " ======== Plugin Settings {{{
 " ----- neocomplcache.vim {{{
@@ -753,7 +830,6 @@ endif
 "}}}
 
 " unite.vim "{{{
-"---------------------------------------------------------------------
 " map ff as default f
 nnoremap ff f
 " map f as unite prefix key
@@ -820,7 +896,6 @@ endfunction "}}}
 "}}}
 
 " smartchr.vim"{{{
-"---------------------------------------------------------------------
 inoremap <expr> , smartchr#one_of(', ', ',')
 inoremap <expr> ? smartchr#one_of('?', '? ')
 
@@ -841,27 +916,21 @@ augroup MyAutoCmd
         \| inoremap <buffer> <expr> \ smartchr#loop('\ ', '\')
         \| inoremap <buffer> <expr> : smartchr#loop(':', ' :: ', ' : ')
         \| inoremap <buffer> <expr> . smartchr#loop('.', ' . ', '..')
-
   autocmd FileType sh,bash,vim,zsh
         \ inoremap = =
         \| inoremap , ,
-
   autocmd FileType scala
         \ inoremap <buffer> <expr> - smartchr#loop('-', ' -> ', ' <- ')
         \| inoremap <buffer> <expr> = smartchr#loop(' = ', '=', ' => ')
         \| inoremap <buffer> <expr> : smartchr#loop(': ', ':', ' :: ')
         \| inoremap <buffer> <expr> . smartchr#loop('.', ' => ')
-
   autocmd FileType eruby,yaml
         \ inoremap <buffer> <expr> > smartchr#loop('>', '%>')
         \| inoremap <buffer> <expr> < smartchr#loop('<', '<%', '<%=')
-
-
 augroup END
 "}}}
 
 " q: Quickfix "{{{
-"---------------------------------------------------------------------
 
 " use Q for q
 nnoremap Q q
@@ -922,7 +991,6 @@ nnoremap [Quickfix]wg q:lgrep<Space>
 "}}}
 
 " vimfiler.vim"{{{
-"---------------------------------------------------------------------
 "nmap <Leader>v <Plug>(vimfiler_switch)
 "nnoremap <silent> <Leader>v :<C-u>VimFiler `=<SID>GetBufferDirectory()`<CR>
 nnoremap <silent> <Leader>v :<C-u>VimFiler<CR>
@@ -967,24 +1035,16 @@ endfunction"}}}
 "}}}
 
 " vimshell.vim"{{{
-"---------------------------------------------------------------------
 nnoremap <Leader>x :VimShellTab<CR>
 let g:vimshell_user_prompt = 'getcwd()'
-autocmd MyAutoCmd FileType vimshell call s:vimshell_my_settings()
-function! s:vimshell_my_settings()"{{{
-  imap <silent><buffer> <C-j> <Plug>(vimshell_exit):q<CR>
-endfunction"}}}
-
 "}}}
 
 " gtags.vim"{{{
-"---------------------------------------------------------------------
 nnoremap <C-j> :GtagsCursor<CR>
 nnoremap <C-g> :Gtags<SPACE>
 "}}}
 
 " eskk.vim"{{{
-"---------------------------------------------------------------------
 if !exists('g:eskk#disable') || !g:eskk#disable
   let g:eskk#directory  =  "~/.vim/.eskk"
   "let g:eskk#dictionary  =  { 'path': "~/.vim/dict/skk.dict",  'sorted': 0,  'encoding': 'utf-8',  }
@@ -999,16 +1059,6 @@ endif
 "}}}
 " }}}
 " ======== Each Language Setting {{{
-function! s:sysid_match(sys_ids)
-  let l:sysid = synIDattr(synID(line('.'), col('.'), 0), 'name')
-  for tmp in a:sys_ids
-    if l:sysid == tmp
-      return 1
-    endif
-  endfor
-  return 0
-endfunction
-
 " Java {{{
 autocmd MyAutoCmd FileType java call s:java_my_settings()
 function! s:java_my_settings()
@@ -1074,6 +1124,12 @@ function! s:help_my_settings()
   nnoremap <buffer> <TAB> <C-w>w
   nnoremap <silent> <buffer> qq :bd<CR>
 endfunction "}}}
+" vimshell {{{
+autocmd MyAutoCmd FileType vimshell call s:vimshell_my_settings()
+function! s:vimshell_my_settings()
+  imap <silent><buffer> <C-j> <Plug>(vimshell_exit):q<CR>
+endfunction"}}}
+
 "}}}
 " ======== Post Process Setting {{{
 " source localized vimrc"{{{
@@ -1082,4 +1138,3 @@ if filereadable('~/.vimrc.local')
 endif
 "}}}
 " }}}
-
