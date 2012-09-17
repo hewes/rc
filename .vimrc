@@ -5,7 +5,6 @@ if has('vim_starting')
   set rtp+=~/.vim/bundle/neobundle.vim/
   call neobundle#rc('~/.vim/bundle/')
 endif
-NeoBundle 'vim-ruby/vim-ruby.git'
 NeoBundle 'm2ym/rsense.git'
 NeoBundle 'scrooloose/nerdcommenter.git'
 NeoBundle 'tpope/vim-surround'
