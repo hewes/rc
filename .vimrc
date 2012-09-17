@@ -670,18 +670,38 @@ function! s:HighlightCurrentWord()
   if get(w:, "current_pattern", '') == l:pattern || empty(l:pattern)
     return
   endif
-  if exists("w:current_match")
-    call matchdelete(w:current_match)
-  endif
+  call s:ClearHighlight()
   let w:current_pattern = l:pattern
   let w:current_match = matchadd('CurrentWord', l:pattern, 0)
 endfunction
 
+function! s:ToggleCurrentHighlight()
+  let g:enable_current_highlight = !get(g:, "enable_current_highlight", 0)
+  call s:CheckEnableHighlightCurrentWord()
+endfunction
+
+function! s:ClearHighlight()
+  if exists("w:current_match")
+    call matchdelete(w:current_match)
+    unlet w:current_match
+    unlet w:current_pattern
+  endif
+endfunction
+
+function! s:CheckEnableHighlightCurrentWord()
+  if !g:enable_current_highlight
+    call s:ClearHighlight()
+  endif
+endfunction
+
+command! -bar ToggleCurrentHighlight call s:ToggleCurrentHighlight()
 command! -bar MarkCurrent call s:HighlightCurrentWord()
 augroup HighlightCurrent
   autocmd!
-  autocmd CursorMoved,CursorMovedI * call s:HighlightCurrentWord()
+  autocmd WinEnter,BufEnter * call s:CheckEnableHighlightCurrentWord()
+  autocmd CursorHold,CursorHoldI * call s:HighlightCurrentWord()
 augroup END
+set updatetime=1000
 " }}}
 
 " ----- source vimrc when write {{{
@@ -772,7 +792,6 @@ endfunction
 
 " snippets directory
 let g:neocomplcache_snippets_dir = $HOME. '/.vim/snippets'
-
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
 " Use neocomplcache.
