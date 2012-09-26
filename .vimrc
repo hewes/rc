@@ -55,12 +55,11 @@ endfunction
 
 function! s:sysid_match(sys_ids)
   let l:sysid = synIDattr(synID(line('.'), col('.'), 0), 'name')
-  for tmp in a:sys_ids
-    if l:sysid == tmp
-      return 1
-    endif
-  endfor
-  return 0
+  if index(a:sys_ids, l:sysid) >= 0
+    return 1
+  else
+    return 0
+  endif
 endfunction
 
 "}}}
@@ -334,6 +333,7 @@ function! s:set_highlight()
   hi MatchParen term=NONE cterm=NONE ctermfg=NONE ctermbg=52 guifg=NONE guibg=red
   hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
   hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=darkred
+  highlight CurrentWord term=NONE ctermbg=52 ctermfg=NONE guibg=darkred
 endfunction
 
 autocmd MyAutoCmd ColorScheme * call s:set_highlight()
@@ -590,7 +590,6 @@ endfunction
 
 " auto highlight current word {{{
 let g:enable_current_highlight = 1
-highlight CurrentWord term=NONE ctermbg=52 ctermfg=NONE
 
 function! s:EscapeText( text )
   return substitute( escape(a:text, '\' . '^$.*[~'), "\n", '\\n', 'ge' )
@@ -612,18 +611,12 @@ fun! s:GetMatchitPattern(cwd)
   if !exists('b:match_words')
     return ''
   endif
-  if !exists('b:mw')
+  if !exists('b:predef_regexp')
     call s:InitMatchit()
   endif
-  for pat in b:mw
-    if a:cwd =~# pat 
-      let l:cmw = pat
-      break
-    endif
-  endfor
-  if !exists("l:cmw")
+  if a:cwd !~ b:predef_regexp
     return ''
-  endif
+  end
 
   " if cwd is one of b:match_words pattern highlight match words
   let lcs = []
@@ -632,10 +625,8 @@ fun! s:GetMatchitPattern(cwd)
   while 1
     exe 'normal %'
     let lc = {'line': line('.'), 'col': col('.')}
-    if len(lcs) > 0
-      if (lc.line == lcs[0].line && lc.col == lcs[0].col)  || (lc.line == lcs[-1].line && lc.col == lcs[-1].col)
-        break
-      endif
+    if index(lcs, lc) >= 0
+      break
     endif
     call add(lcs, lc)
   endwhile
@@ -652,14 +643,18 @@ function! s:InitMatchit()
   if !exists('b:match_words')
     return
   endif
-  let b:mw = split(b:match_words, ',\|:')
-  let l:mw = filter(b:mw, 'v:val !~ "^[(){}[\\]]$"')
+  let l:mw = filter(split(b:match_words, ',\|:'), 'v:val !~ "^[(){}[\\]]$"')
   let mwre = '\%(' . join(l:mw, '\|') . '\)'
+  let b:predef_regexp = join(l:mw, '\|')
   let b:mwre = substitute(mwre, "'", "''", 'g')
 endfunction
 
+let g:ignore_cwd_highlight = ["", "unite", "txt", "tmp"]
 function! s:HighlightCurrentWord()
   if !get(g:, "enable_current_highlight", 0)
+    return
+  endif
+  if index(get(g:, 'ignore_cwd_highlight', []), &filetype) >= 0
     return
   endif
   let l:cwd = expand("<cword>")
@@ -893,6 +888,7 @@ nnoremap [unite]s<SPACE> :Unite svn/
 nnoremap <silent> [unite]sd :Unite svn/diff<CR>
 nnoremap <silent> [unite]sb :Unite svn/blame<CR>
 nnoremap <silent> [unite]ss :Unite svn/status<CR>
+
 let g:unite_enable_ignore_case = 1
 noremap [unite]] :<C-u>Unite -immediately -no-start-insert tag:<C-r>=expand('<cword>')<CR><CR>
 let g:unite_enable_smart_case = 1
