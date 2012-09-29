@@ -13,7 +13,6 @@ NeoBundle 'tpope/vim-repeat.git'
 NeoBundle 'h1mesuke/vim-alignta.git'
 NeoBundle 'thinca/vim-quickrun.git'
 NeoBundle 'thinca/vim-ref.git'
-NeoBundle 'thinca/vim-qfreplace.git'
 NeoBundle 'fuenor/qfixhowm'
 NeoBundle 'othree/eregex.vim.git'
 NeoBundle 'Shougo/neobundle.vim.git'
@@ -34,7 +33,6 @@ NeoBundle 'tsukkee/unite-help'
 NeoBundle 'tyru/eskk.vim'
 NeoBundle 'ujihisa/unite-colorscheme.git'
 NeoBundle 'vim-scripts/DrawIt.git'
-NeoBundle 'vim-scripts/wombat256.vim.git'
 NeoBundle 'rosstimson/scala-vim-support.git'
 
 filetype plugin indent on
@@ -324,21 +322,14 @@ set t_Co=256
 set background=dark
 
 function! s:set_highlight()
-  hi CursorLine term=reverse cterm=none ctermbg=233
-  hi CursorColumn term=reverse cterm=none ctermbg=233
-  "hi Pmenu ctermbg=darkgrey ctermfg=white
-  "hi PmenuSel ctermbg=grey ctermfg=black
-  "hi PmenuSbar ctermbg=0 ctermfg=6
-  hi MatchParen term=NONE cterm=NONE ctermfg=NONE ctermbg=52 guifg=NONE guibg=red
-  hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
-  hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=darkred
+  " define particular highlight
   highlight CurrentWord term=NONE ctermbg=52 ctermfg=NONE guibg=darkred
   highlight Indent term=NONE ctermbg=238 ctermfg=NONE guibg=#444444 guifg=NONE
 endfunction
 
 autocmd MyAutoCmd ColorScheme * call s:set_highlight()
 
-colorscheme wombat256mod
+colorscheme capybara
 
 if has('syntax')
   augroup InsertHook
