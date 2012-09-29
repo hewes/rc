@@ -358,7 +358,7 @@ elseif &term == "xterm"
 endif
 
 let s:slhlcmd = ''
-let g:hi_insert  =  'highlight StatusLine ctermfg = white ctermbg = 138 cterm = none'
+let g:hi_insert  =  'highlight StatusLine ctermfg=white ctermbg=21 cterm=none'
 function! s:StatusLine(mode)
   if a:mode == 'Enter'
     silent! let s:slhlcmd = 'highlight ' . s:GetHighlight('StatusLine')
