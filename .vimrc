@@ -1003,7 +1003,7 @@ function! s:result2unite(source, result)
   if empty(a:result)
     return []
   endif
-  return map(split(a:result, '\r\n\|\r\|\n'),
+  return map(split(a:result, '\<NL>'),
         \ 'extend(s:format[g:unite_source_gtags_result_option].func(v:val), {"source" : a:source})')
 endfunction
 
