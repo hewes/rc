@@ -296,18 +296,18 @@ set showtabline=2
 syntax on
 
 " set cursolline only focused window
-augroup cch
-  autocmd! cch
-  autocmd WinLeave * set nocursorline
-  autocmd WinEnter,BufRead * set cursorline
-augroup END
+"augroup cch
+  "autocmd! cch
+  "autocmd WinLeave * set nocursorline
+  "autocmd WinEnter,BufRead * set cursorline
+"augroup END
 
 " cursor hilight setting
-set cursorline
+set nocursorline
 set nocursorcolumn
 
-"set number
-set relativenumber
+set number
+"set relativenumber
 
 " list chars
 set list
@@ -334,6 +334,7 @@ function! s:set_highlight()
   hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
   hi StatusLine term=NONE cterm=NONE ctermfg=white ctermbg=darkred
   highlight CurrentWord term=NONE ctermbg=52 ctermfg=NONE guibg=darkred
+  highlight Indent term=NONE ctermbg=238 ctermfg=NONE guibg=#444444 guifg=NONE
 endfunction
 
 autocmd MyAutoCmd ColorScheme * call s:set_highlight()
@@ -588,44 +589,155 @@ function! s:delete_with_confirm(file, force)
 endfunction
 "}}}
 
-" auto highlight current word {{{
-let g:enable_current_highlight = 1
+" ---- auto highlight{{{
+" init var {{{
+let g:auto_highlights = {}
+let g:auto_highlight_disable_file_type = ["", "unite", "txt", "tmp"]
+let g:enable_auto_highlight = 1
+"}}}
 
+" util var {{{
 function! s:EscapeText( text )
   return substitute( escape(a:text, '\' . '^$.*[~'), "\n", '\\n', 'ge' )
 endfunction
 
-function! s:GetCurrentWordPattern(cwd)
-  if !empty(a:cwd)
-    let l:regexp = s:EscapeText(a:cwd)
-    if a:cwd =~# '^\k\+$'
-      let l:regexp = '\<' . l:regexp . '\>'
+function! s:compare_source(i1, i2)
+  return a:i1.priority == a:i2.priority ? 0 : a:i1.priority > a:i2.priority ? 1 : -1
+endfunction
+"}}}
+
+function! s:init_window_auto_highlight()
+  let l:info = {}
+  for highlight_kind in keys(g:auto_highlights)
+    let l:info[highlight_kind] ={
+          \ 'current_match_pattern' : '',
+          \ 'current_match_id' : -1,
+          \}
+  endfor
+  return l:info
+endfunction
+
+function! s:define_source(src)
+  if !has_key(g:auto_highlights, a:src.highlight)
+    let g:auto_highlights[a:src.highlight] = {
+          \ 'enable' : 1,
+          \ 'sources' : [],
+          \}
+  endif
+  call add(g:auto_highlights[a:src.highlight].sources, a:src)
+  call sort(g:auto_highlights[a:src.highlight].sources, 's:compare_source')
+endfunction
+
+function! s:start_highlight()
+  if !get(g:, "enable_auto_highlight", 0) || index(get(g:, 'auto_highlight_disable_file_type', []), &filetype) >= 0
+    return
+  endif
+  if !exists('w:auto_highlight_info')
+    let w:auto_highlight_info = s:init_window_auto_highlight()
+  endif
+  for [item, value] in items(g:auto_highlights)
+    for src in value.sources
+      let l:pattern = src.pattern()
+      if !empty(l:pattern)
+        let l:target = w:auto_highlight_info[item]
+        if l:target['current_match_pattern'] != l:pattern
+          call s:ClearHighlight(item)
+          let l:target['current_match_pattern'] = l:pattern
+          let l:target['current_match_id'] = matchadd(item, l:pattern, 0)
+        endif
+        break
+      endif
+    endfor
+  endfor
+endfunction
+
+function! s:toggle_auto_highlight()
+  let g:enable_auto_highlight = !get(g:, "enable_auto_highlight", 0)
+  call s:CheckEnableHighlightCurrentWord()
+endfunction
+
+function! s:ClearHighlight(kind)
+  if exists('w:auto_highlight_info')
+    if w:auto_highlight_info[a:kind].current_match_id >= 0
+      call matchdelete(w:auto_highlight_info[a:kind].current_match_id)
+      let w:auto_highlight_info[a:kind].current_match_id = -1
+      let w:auto_highlight_info[a:kind].current_match_pattern = ''
     endif
-    return l:regexp
-  else
-    return ''
   endif
 endfunction
 
-fun! s:GetMatchitPattern(cwd)
+function! s:CheckEnableHighlightCurrentWord()
+  if !g:enable_auto_highlight
+    for kind in keys(g:auto_highlights)
+      call s:ClearHighlight(kind)
+  endfor
+  endif
+endfunction
+
+" commands {{{
+command! -bar ToggleCurrentHighlight call s:toggle_auto_highlight()
+command! -bar CurrentHighlight call s:start_highlight()
+
+augroup HighlightCurrent
+  autocmd!
+  autocmd WinEnter,BufEnter * call s:CheckEnableHighlightCurrentWord()
+  autocmd CursorHold,CursorHoldI * call s:start_highlight()
+augroup END
+"}}}
+
+" define sourcers {{{
+" current word highlight {{{
+let s:cword_highlight = {
+      \ 'name': 'current_word',
+      \ 'highlight': 'CurrentWord',
+      \ 'priority': 10,
+      \}
+
+function! s:cword_highlight.pattern()
+  let l:cwd = expand('<cword>')
+  if empty(l:cwd)
+    return ''
+  else
+    let l:regexp = s:EscapeText(l:cwd)
+    return l:cwd =~# '^\k\+$' ? '\<' . l:regexp . '\>' : l:regexp
+  endif
+endfunction
+call s:define_source(s:cword_highlight)
+" }}}
+
+" matchit highlight {{{
+let s:matchit_highlight = {
+      \ 'name': 'matchit',
+      \ 'highlight': 'CurrentWord', 
+      \ 'priority': 9,
+      \}
+
+function! s:InitMatchit()
+  if !exists('b:match_words')
+    return
+  endif
+  let l:mw = filter(split(b:match_words, ',\|:'), 'v:val !~ "^[(){}[\\]]$"')
+  let b:reserved_regexp = join(l:mw, '\|')
+  let mwre = '\%(' . b:reserved_regexp . '\)'
+  let b:mwre = substitute(mwre, "'", "''", 'g')
+endfunction
+
+function! s:matchit_highlight.pattern()
   if !exists('b:match_words')
     return ''
   endif
-  if !exists('b:predef_regexp')
+  if !exists('b:reserved_regexp')
     call s:InitMatchit()
   endif
-  if a:cwd !~ b:predef_regexp
+  if expand("<cword>") !~ b:reserved_regexp
     return ''
-  end
-
-  " if cwd is one of b:match_words pattern highlight match words
+  endif
   let lcs = []
-  " store position of matchit words on lcs
   let wsv = winsaveview()
   while 1
     exe 'normal %'
     let lc = {'line': line('.'), 'col': col('.')}
-    if index(lcs, lc) >= 0
+    if len(lcs) > 0 && (lcs[0] == lc || lcs[-1] == lc)
       break
     endif
     call add(lcs, lc)
@@ -637,65 +749,30 @@ fun! s:GetMatchitPattern(cwd)
   " final \& part of the regexp is a hack to improve html
   return '.*\%(' . lcre . '\).*\&' . b:mwre
   "return '.*\%(' . lcre . '\).*\&' . b:mwre . '\&\% (<\_[^>]\+>\|.*\)'
-endfun
-
-function! s:InitMatchit()
-  if !exists('b:match_words')
-    return
-  endif
-  let l:mw = filter(split(b:match_words, ',\|:'), 'v:val !~ "^[(){}[\\]]$"')
-  let mwre = '\%(' . join(l:mw, '\|') . '\)'
-  let b:predef_regexp = join(l:mw, '\|')
-  let b:mwre = substitute(mwre, "'", "''", 'g')
 endfunction
+call s:define_source(s:matchit_highlight)
+" }}}
 
-let g:ignore_cwd_highlight = ["", "unite", "txt", "tmp"]
-function! s:HighlightCurrentWord()
-  if !get(g:, "enable_current_highlight", 0)
-    return
-  endif
-  if index(get(g:, 'ignore_cwd_highlight', []), &filetype) >= 0
-    return
-  endif
-  let l:cwd = expand("<cword>")
-  let l:pattern = s:GetMatchitPattern(l:cwd)
-  if empty(l:pattern)
-    let l:pattern = s:GetCurrentWordPattern(l:cwd)
-  endif
-  if get(w:, "current_pattern", '') == l:pattern || empty(l:pattern)
-    return
-  endif
-  call s:ClearHighlight()
-  let w:current_pattern = l:pattern
-  let w:current_match = matchadd('CurrentWord', l:pattern, 0)
-endfunction
+" indent highlight {{{
+let s:indent_highlight = {
+      \ 'name': 'indent',
+      \ 'highlight': 'Indent', 
+      \ 'priority': 10,
+      \}
 
-function! s:ToggleCurrentHighlight()
-  let g:enable_current_highlight = !get(g:, "enable_current_highlight", 0)
-  call s:CheckEnableHighlightCurrentWord()
-endfunction
-
-function! s:ClearHighlight()
-  if exists("w:current_match")
-    call matchdelete(w:current_match)
-    unlet w:current_match
-    unlet w:current_pattern
+function! s:indent_highlight.pattern()
+  let l:line = getline('.')
+  let l:indent = matchstr(l:line, '^\zs\s\+\ze\S')
+  let l:len = len(l:indent) - 1
+  if l:len > 0
+    return '^\s\{'. l:len . '}\zs\s\ze'
+  else
+    return '^\zs\s\ze'
   endif
 endfunction
-
-function! s:CheckEnableHighlightCurrentWord()
-  if !g:enable_current_highlight
-    call s:ClearHighlight()
-  endif
-endfunction
-
-command! -bar ToggleCurrentHighlight call s:ToggleCurrentHighlight()
-command! -bar MarkCurrent call s:HighlightCurrentWord()
-augroup HighlightCurrent
-  autocmd!
-  autocmd WinEnter,BufEnter * call s:CheckEnableHighlightCurrentWord()
-  autocmd CursorHold,CursorHoldI * call s:HighlightCurrentWord()
-augroup END
+call s:define_source(s:indent_highlight)
+" }}}
+"}}}
 set updatetime=1000
 " }}}
 
@@ -756,7 +833,6 @@ command! -bang -complete=file -nargs=? WUtf8 write<bang> ++enc=utf-8 <args>
 command! -bang -complete=file -nargs=? WSjis write<bang> ++enc=cp932 <args>
 command! -bang -complete=file -nargs=? WEuc write<bang> ++enc=eucjp <args>
 " }}}
-
 " }}}
 " ======== Plugin Settings {{{
 " ----- neocomplcache.vim {{{
@@ -1160,8 +1236,8 @@ endfunction"}}}
 "}}}
 " ======== Post Process Setting {{{
 " source localized vimrc"{{{
-if filereadable('~/.vimrc.local')
-  source '~/.vimrc.local'
+if filereadable(expand('~/.vimrc.local'))
+  source ~/.vimrc.local
 endif
 "}}}
 " }}}
