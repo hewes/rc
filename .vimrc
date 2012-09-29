@@ -1168,6 +1168,9 @@ function! s:java_my_settings()
   let g:java_highlight_functions = 'style'
   let g:java_highlight_all = 1
   let g:java_allow_cpp_keywords = 1
+  setlocal ts=4
+  setlocal sw=4
+  setlocal noexpandtab
 endfunction "}}}
 
 " ruby {{{
@@ -1198,7 +1201,7 @@ endfunction "}}}
 " c  "{{{
 autocmd MyAutoCmd FileType c call s:clang_my_settings()
 function! s:clang_my_settings()
-  setlocal ts=8
+  setlocal ts=4
   setlocal sw=4
   setlocal noexpandtab
 endfunction "}}}
