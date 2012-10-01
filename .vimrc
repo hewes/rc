@@ -459,7 +459,7 @@ endif
 " ======== My Misc Setting {{{
 " diff commands --- {{{
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
-command! -bar Diff if &diff | execute 'windo diffoff'  | else
+command! -bar ToggleDiff if &diff | execute 'windo diffoff'  | else
 \                           | execute 'windo diffthis' | endif
 " }}}
 
@@ -719,7 +719,7 @@ function! s:matchit_highlight.pattern()
   if !exists('b:reserved_regexp')
     call s:InitMatchit()
   endif
-  if expand("<cword>") !~ b:reserved_regexp
+  if expand("<cword>") !~ b:reserved_regexp || empty(b:reserved_regexp)
     return ''
   endif
   let lcs = []
@@ -888,7 +888,7 @@ function! s:context_source.gather_candidates(args, context)
     return []
   endif
   let l:option = "--from-here=\"" . line('.') . ":" . expand("%") . "\""
-  return s:result2unite('gtags/def', s:ExecGlobal('', l:option, l:pattern))
+  return s:result2unite('gtags/context', s:ExecGlobal('', l:option, l:pattern))
 endfunction
 
 function! s:context_source.hooks.on_syntax(args, context)
@@ -968,7 +968,7 @@ function! s:ExecGlobal(option, long_option, pattern)
   if a:long_option != ''
     let l:option = a:long_option . ' '
   endif
-  let l:option = "-q" . a:option
+  let l:option = l:option . "-q" . a:option
   if l:isfile == 1
     let l:cmd = s:global_cmd . ' ' . l:option . ' ' . s:unite_source_shell_quote . a:pattern . s:unite_source_shell_quote
   else
@@ -1003,7 +1003,7 @@ function! s:result2unite(source, result)
   if empty(a:result)
     return []
   endif
-  return map(split(a:result, '\<NL>'),
+  return map(split(a:result, '[\n\r]'),
         \ 'extend(s:format[g:unite_source_gtags_result_option].func(v:val), {"source" : a:source})')
 endfunction
 
@@ -1437,7 +1437,7 @@ function! s:python_my_settings()
 endfunction "}}}
 
 " help "{{{
-autocmd MyAutoCmd FileType help call s:help_my_settings()
+autocmd MyAutoCmd FileType help,ref-* call s:help_my_settings()
 function! s:help_my_settings()
   nnoremap <buffer> <TAB> <C-w>w
   nnoremap <silent> <buffer> qq :bd<CR>
