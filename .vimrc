@@ -42,6 +42,11 @@ filetype plugin indent on
 if filereadable($VIMRUNTIME . "/macros/matchit.vim")
   source $VIMRUNTIME/macros/matchit.vim
 endif
+" rsense.vim {{{
+if !exists('g:loaded_rsense') && filereadable(expand('~/.vim/bundle/rsense/etc/rsense.vim'))
+  source ~/.vim/bundle/rsense/etc/rsense.vim
+endif
+"}}}
 " }}}
 " ======== Util Function {{{
 function! s:mkdir(file, ...)
@@ -316,7 +321,7 @@ set showmatch
 set laststatus=2
 
 "  window of quick fix preview
-set previewheight=32
+"set previewheight=32
 
 " ----- color {{{
 set t_Co=256
@@ -828,7 +833,7 @@ command! -bang -complete=file -nargs=? WUtf8 write<bang> ++enc=utf-8 <args>
 command! -bang -complete=file -nargs=? WSjis write<bang> ++enc=cp932 <args>
 command! -bang -complete=file -nargs=? WEuc write<bang> ++enc=eucjp <args>
 " }}}
-
+"}}}
 " ======== Plugin Settings {{{
 " ----- neocomplcache.vim {{{
 " keymapping {{{
@@ -872,14 +877,14 @@ let g:neocomplcache_max_list = 10000
 let g:neocomplcache_max_keyword_width = 100
 let g:neocomplcache_enable_prefetch = 1
 " Set minimum syntax keyword length.
-let g:neocomplcache_min_syntax_length = 3
+let g:neocomplcache_min_syntax_length = 1
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 let g:neocomplcache_auto_completion_start_length = 1
 let g:neocomplcache_plugin_completion_length_list = {
 \   'snippets_complete' : 1,
 \   'buffer_complete' : 2,
 \   'syntax_complete' : 2,
-\   'tags_complete' : 3,
+\   'tags_complete' : 2,
 \ }
 
 let g:neocomplcache_vim_completefuncs = {
@@ -904,7 +909,6 @@ let g:neocomplcache_omni_functions = {
       \ 'ruby' : 'rubycomplete#Complete',
       \ }
 
-
 " Enable omni completion.
 autocmd MyAutoCmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd MyAutoCmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
@@ -916,14 +920,14 @@ autocmd MyAutoCmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 if !exists('g:neocomplcache_omni_patterns')
   let g:neocomplcache_omni_patterns = {}
 endif
-let g:rsenseUseOmniFunc = 1
-if filereadable(expand('~/.vim/bundle/rsense/bin/rsense'))
-  let g:rsenseHome = expand('~/.vim/bundle/rsense/bin/rsense')
 
+" enable rsense
+if exists('g:loaded_rsense') && filereadable(expand('~/.vim/bundle/rsense/bin/rsense'))
+  let g:rsenseUseOmniFunc = 1
+  let g:rsenseHome = expand('~/.vim/bundle/rsense/bin/rsense')
+  let g:neocomplcache_omni_functions['ruby'] = 'RSenseCompleteFunction'
   let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 endif
-"let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
-"autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
 "}}}
 
 " unite.vim "{{{
@@ -1155,6 +1159,7 @@ endif
 
 " python-mode {{{
 "}}}
+
 " }}}
 " ======== Each Language Setting {{{
 " Java {{{
