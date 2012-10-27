@@ -13,7 +13,8 @@ NeoBundle 'tpope/vim-repeat.git'
 NeoBundle 'h1mesuke/vim-alignta.git'
 NeoBundle 'thinca/vim-quickrun.git'
 NeoBundle 'thinca/vim-ref.git'
-NeoBundle 'fuenor/qfixhowm'
+"NeoBundle 'fuenor/qfixhowm'
+NeoBundle 'fuenor/qfixgrep'
 NeoBundle 'othree/eregex.vim.git'
 NeoBundle 'Shougo/neobundle.vim.git'
 NeoBundle 'Shougo/unite.vim.git'
@@ -34,7 +35,7 @@ NeoBundle 'tyru/eskk.vim'
 NeoBundle 'ujihisa/unite-colorscheme.git'
 NeoBundle 'vim-scripts/DrawIt.git'
 NeoBundle 'rosstimson/scala-vim-support.git'
-
+NeoBundle 'hewes/unite-gtags.git'
 filetype plugin indent on
 " }}}
 " ======== Source Macro {{{
@@ -417,10 +418,14 @@ if v:version < 703
   endfunction
 else
   function! MyTabLabel(n)
-    let bufname   = BufnameOnTab(a:n)
-    let path_tcwd = empty(bufname) ? "" : substitute(fnamemodify(bufname, ":p"), gettabvar(a:n, "cwd") . "/", "", "g")
     let project   = gettabvar(a:n, "project")
-    return empty(project) ? path_tcwd : project . ' ' .  path_tcwd
+    if empty(project) || project == '[home]'
+      let bufname   = BufnameOnTab(a:n)
+      let path_tcwd = empty(bufname) ? "" : substitute(fnamemodify(bufname, ":p"), gettabvar(a:n, "cwd") . "/", "", "g")
+      return empty(project) ? path_tcwd : project . ' ' .  path_tcwd
+    else
+      return project
+    endif
   endfunction
 end
 
@@ -824,231 +829,6 @@ command! -bang -complete=file -nargs=? WSjis write<bang> ++enc=cp932 <args>
 command! -bang -complete=file -nargs=? WEuc write<bang> ++enc=eucjp <args>
 " }}}
 
-" define unite gtags source{{{
-" Initialize variable {{{
-let s:global_cmd = empty($GTAGSGLOBAL) ? "global" : $GTAGSGLOBAL
-
-if !exists("s:unite_source_shell_quote")
-  if has("win32") || has("win16") || has("win95")
-    let s:unite_source_shell_quote = '"'
-  else
-    let s:unite_source_shell_quote = "'"
-  endif
-endif
-" }}}
-
-" global cmd result option formats {{{
-let s:format = {
-      \ "ctags-x" : {},
-      \ "ctags-mod" : {}
-      \ }
-
-function! s:format["ctags-x"].func(line)
-  let l:items = matchlist(a:line, '\(\d\+\)\s\+\(.*\.\S\+\) \(.*\)$')
-  return {
-        \  "kind": "jump_list",
-        \  "word" : l:items[0],
-        \  "action__path" : l:items[2],
-        \  "action__line" : l:items[1],
-        \  "action__text" : l:items[3],
-        \}
-endfunction
-
-function! s:format["ctags-mod"].func(line)
-  let l:items = matchlist(a:line, '^\([^	]\+\)[	]\+\(\d\+\)[	]\+\(.\+\)$')
-  return {
-        \  "kind": "jump_list",
-        \  "word" : l:items[0],
-        \  "action__path" : l:items[1],
-        \  "action__line" : l:items[2],
-        \  "action__text" : l:items[3],
-        \}
-endfunction
-" }}}
-
-" define sources {{{
-let s:def_source  = {
-      \ 'name'       : 'gtags/def',
-      \ 'description': 'candidates from heading list',
-      \ 'syntax' : 'uniteSource__Gtags',
-      \ 'hooks'      : {}, 'action_table': {}, 'alias_table': {}, 'default_action': {},
-      \ }
-let s:ref_source = copy(s:def_source)
-let s:context_source = copy(s:def_source)
-
-" gtags/context source {{{
-let s:context_source.name = 'gtags/context'
-function! s:context_source.gather_candidates(args, context)
-  if empty(a:args)
-    let l:pattern = expand("<cword>")
-  else
-    let l:pattern = a:args[0]
-  endif
-  if empty(l:pattern)
-    return []
-  endif
-  let l:option = "--from-here=\"" . line('.') . ":" . expand("%") . "\""
-  return s:result2unite('gtags/context', s:ExecGlobal('', l:option, l:pattern))
-endfunction
-
-function! s:context_source.hooks.on_syntax(args, context)
-  return s:on_syntax(a:args, a:context)
-endfunction
-"}}}
-
-" gtags/def source {{{
-let s:def_source.name = 'gtags/def'
-function! s:def_source.gather_candidates(args, context)
-  if empty(a:args)
-    let l:pattern = expand("<cword>")
-  else
-    let l:pattern = a:args[0]
-  endif
-  if empty(l:pattern)
-    return []
-  endif
-  return s:result2unite('gtags/def', s:ExecGlobal('d', '', l:pattern))
-endfunction
-
-function! s:def_source.hooks.on_syntax(args, context)
-  return s:on_syntax(a:args, a:context)
-endfunction
-"}}}
-
-" gtags/ref source {{{
-let s:ref_source.name = 'gtags/ref'
-function! s:ref_source.gather_candidates(args, context)
-  let l:pattern = expand("<cword>")
-  if empty(l:pattern)
-    return []
-  endif
-  return s:result2unite('gtags/ref', s:ExecGlobal('r', '', l:pattern))
-endfunction
-
-function! s:ref_source.hooks.on_syntax(args, context)
-  return s:on_syntax(a:args, a:context)
-endfunction
-" }}}
-
-" gtags/completion source {{{
-let s:symbol_source  = {
-      \  'name'       : 'gtags/symbol',
-      \  'description': 'candidates from heading list',
-      \  'hooks'      : {},  'alias_table': {},
-      \ }
-function! s:symbol_source.gather_candidates(args, context)
-  let l:symbols = split(s:ExecGlobal('c', '', ''), '\n')
-  return map(l:symbols, '{
-        \   "source" : "gtags/symbol",
-        \   "kind"   : "gtags_symbol",
-        \   "word"   : v:val,
-        \ }')
-endfunction
-
-call unite#define_source(s:def_source)
-call unite#define_source(s:ref_source)
-call unite#define_source(s:context_source)
-call unite#define_source(s:symbol_source)
-" }}}
-"}}}
-
-" common function{{{
-function! s:ExecGlobal(option, long_option, pattern)
-  " Execute global(1) command and write the result to a temporary file.
-  let l:isfile = 0
-  let l:option = ''
-
-  if a:option =~ 'f'
-    let l:isfile = 1
-    if filereadable(a:pattern) == 0
-      call unite#util#print_error('File ' . a:pattern . ' not found.')
-      return []
-    endif
-  endif
-  if a:long_option != ''
-    let l:option = a:long_option . ' '
-  endif
-  let l:option = l:option . "-q" . a:option
-  if l:isfile == 1
-    let l:cmd = s:global_cmd . ' ' . l:option . ' ' . s:unite_source_shell_quote . a:pattern . s:unite_source_shell_quote
-  else
-    let l:cmd = s:global_cmd . ' ' . l:option . 'e ' . s:unite_source_shell_quote . a:pattern . s:unite_source_shell_quote
-  endif
-  let options = exists("g:unite_source_gtags_result_option") ? [g:unite_source_gtags_result_option] : ["ctags-mod", "ctags-x"]
-  for result_option in options
-    let l:exe_cmd = l:cmd . " --result=" . result_option
-    let l:result = system(l:exe_cmd)
-    if v:shell_error != 0
-      if v:shell_error == 2
-        " not supported option try next option
-        continue
-      elseif v:shell_error == 3
-        call unite#util#print_error('GTAGS not found.')
-      else
-        call unite#util#print_error('global command failed. command line: ' . l:cmd)
-      endif
-      return ''
-    endif
-    if !empty(l:result)
-      if !empty(l:result) && !exists("g:unite_source_gtags_result_option")
-        let g:unite_source_gtags_result_option = result_option
-      endif
-      return l:result
-    endif
-  endfor
-  return ''
-endfunction
-
-function! s:result2unite(source, result)
-  if empty(a:result)
-    return []
-  endif
-  return map(split(a:result, '[\n\r]'),
-        \ 'extend(s:format[g:unite_source_gtags_result_option].func(v:val), {"source" : a:source})')
-endfunction
-
-function! s:on_syntax(args, context)
-  syntax match uniteSource__Gtags_Line /\zs\d\+\ze\s\{2,}.\+$/
-        \ contained containedin=uniteSource__Gtags
-  highlight default link uniteSource__Gtags_Line Number
-  syntax match uniteSource__Gtags_Path /\zs.\+\ze\s\{2}\d\+/
-        \ contained containedin=uniteSource__Gtags
-  highlight default link uniteSource__Gtags_Path Statement
-endfunction
-
-
-let s:kind = {
-      \ 'name' : 'gtags_symbol',
-      \ 'default_action' : 'list_definitions',
-      \ 'action_table': {},
-      \}
-
-" Actions
-let s:kind.action_table.list_refereces = {
-      \ 'description' : 'Unite gtags/ref',
-      \ 'is_selectable' : 0,
-      \ }
-
-function! s:kind.action_table.list_refereces.func(candidate)
-  echomsg string(a:candidate)
-  execute 'Unite gtags/ref:'. a:candidate.word
-endfunction
-
-let s:kind.action_table.list_definitions = {
-      \ 'description' : 'Unite gtags/def',
-      \ 'is_selectable' : 0,
-      \ }
-
-function! s:kind.action_table.list_definitions.func(candidate)
-  echomsg string(a:candidate)
-  execute 'Unite gtags/def:'. a:candidate.word . ' -immediately'
-endfunction
-
-call unite#define_kind(s:kind)
-" }}}
-
-" }}}
-"}}}
 " ======== Plugin Settings {{{
 " ----- neocomplcache.vim {{{
 " keymapping {{{
@@ -1170,16 +950,17 @@ nnoremap <silent> [unite]p :Unite bookmark -default-action=cd -no-start-insert<C
 " Explore home dir
 nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file file/new -input='. $HOME .'/<CR>'
 nnoremap <silent> [unite]j :Unite buffer_tab -no-start-insert<CR>
-nnoremap <silent> [unite]l :Unite -auto-preview -no-split line<CR>
+"nnoremap <silent> [unite]l :Unite -auto-preview -no-split line<CR>
+nnoremap <silent> [unite]l :Unite -auto-preview line<CR>
 nnoremap <expr> [unite]g ':Unite grep:'. expand("%:h") . ':-r'
 nnoremap <silent> [unite]* :UniteWithCursorWord line<CR>
-nnoremap <silent> [unite]o :Unite -buffer-name=outline -auto-preview -no-split outline<CR>
+nnoremap <silent> [unite]o :Unite -buffer-name=outline -no-split outline<CR>
 nnoremap <silent> [unite]q :Unite qf -no-start-insert<CR>
 nnoremap [unite]s<SPACE> :Unite svn/
 nnoremap <silent> [unite]sd :Unite svn/diff<CR>
 nnoremap <silent> [unite]sb :Unite svn/blame<CR>
 nnoremap <silent> [unite]ss :Unite svn/status<CR>
-nnoremap <C-j> :Unite gtags/context -auto-preview<CR>
+nnoremap <C-j> :Unite gtags/context<CR>
 
 let g:unite_enable_ignore_case = 1
 noremap [unite]] :<C-u>Unite -immediately -no-start-insert tag:<C-r>=expand('<cword>')<CR><CR>
@@ -1370,6 +1151,9 @@ if !exists('g:eskk#disable') || !g:eskk#disable
   let g:eskk#show_annotation = 1
   let g:eskk#keep_state = 0
 endif
+"}}}
+
+" python-mode {{{
 "}}}
 " }}}
 " ======== Each Language Setting {{{
