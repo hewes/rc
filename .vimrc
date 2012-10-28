@@ -230,7 +230,6 @@ let g:mapleader = ','
 let g:maplocalleader = 'm'
 "}}}
 " ---- insert mode {{{
-"inoremap <C-l> <ESC>
 inoremap <C-e> <END>
 inoremap <C-f> <Right>
 inoremap <C-b> <Left>
@@ -922,7 +921,7 @@ endif
 " enable rsense
 if exists('g:loaded_rsense') && filereadable(expand('~/.vim/bundle/rsense/bin/rsense'))
   let g:rsenseUseOmniFunc = 1
-  let g:rsenseHome = expand('~/.vim/bundle/rsense/bin/rsense')
+  let g:rsenseHome = expand('~/.vim/bundle/rsense')
   let g:neocomplcache_omni_functions['ruby'] = 'RSenseCompleteFunction'
   let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 endif
