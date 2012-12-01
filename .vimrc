@@ -19,6 +19,7 @@ NeoBundle 'Shougo/neobundle.vim.git'
 NeoBundle 'Shougo/unite.vim.git'
 NeoBundle 'Shougo/unite-build.git'
 NeoBundle 'Shougo/neocomplcache.git'
+NeoBundle 'ujihisa/neco-look.git'
 NeoBundle 'Shougo/vimshell.git'
 NeoBundle 'Shougo/vimfiler.git'
 NeoBundle 'Shougo/vimproc.git'
@@ -904,6 +905,11 @@ let g:neocomplcache_dictionary_filetype_lists = {
 let g:neocomplcache_omni_functions = {
       \ 'python' : 'pythoncomplete#Complete',
       \ 'ruby' : 'rubycomplete#Complete',
+      \ }
+
+let g:neocomplcache_text_mode_filetypes = {
+      \ 'txt' :1,
+      \ 'md' :1,
       \ }
 
 " Enable omni completion.
