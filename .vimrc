@@ -29,12 +29,14 @@ NeoBundle 'Shougo/unite-outline.git'
 NeoBundle 'kmnk/vim-unite-svn.git'
 NeoBundle 'kana/vim-smartchr.git'
 NeoBundle 'kana/vim-altercmd'
+NeoBundle 'kana/vim-smartinput'
 NeoBundle 'tsukkee/unite-help'
 NeoBundle 'tyru/eskk.vim'
 NeoBundle 'ujihisa/unite-colorscheme.git'
 NeoBundle 'vim-scripts/DrawIt.git'
 NeoBundle 'rosstimson/scala-vim-support.git'
 NeoBundle 'hewes/unite-gtags.git'
+NeoBundle 'kien/ctrlp.vim.git'
 filetype plugin indent on
 " }}}
 " ======== Source Macro {{{
