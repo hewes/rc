@@ -419,15 +419,15 @@ function! BufnameOnTab(tab_num)
 endfunction
 
 if v:version < 703
-  function! MyTabLabel(n)
-    return BufnameOnTab(a:n)
+  function! MyTabLabel(tab_number)
+    return BufnameOnTab(a:tab_number)
   endfunction
 else
-  function! MyTabLabel(n)
-    let project   = gettabvar(a:n, "project")
+  function! MyTabLabel(tab_number)
+    let project   = gettabvar(a:tab_number, "project")
     if empty(project) || project == '[home]'
-      let bufname   = BufnameOnTab(a:n)
-      let path_tcwd = empty(bufname) ? "" : substitute(fnamemodify(bufname, ":p"), gettabvar(a:n, "cwd") . "/", "", "g")
+      let bufname   = BufnameOnTab(a:tab_number)
+      let path_tcwd = empty(bufname) ? "" : substitute(fnamemodify(bufname, ":p"), gettabvar(a:tab_number, "cwd") . "/", "", "g")
       return empty(project) ? path_tcwd : project . ' ' .  path_tcwd
     else
       return project
@@ -443,8 +443,7 @@ function! MyTabLine()
     else
       let s .= '%#TabLine#'
     endif
-    let s .= '%' . (i+1) . 'T' 
-    let s .= ' ' . (i+1) . (1==getwinvar(i+1,'&modified')?'[+]':'') . ' %{MyTabLabel(' . (i+1) . ')} '
+    let s .= '%T ' . (i+1) . ' %{MyTabLabel(' . (i+1) . ')} '
   endfor
   let s .= '%#TabLineFill#%T'
   return s
