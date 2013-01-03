@@ -37,6 +37,7 @@ NeoBundle 'vim-scripts/DrawIt.git'
 NeoBundle 'rosstimson/scala-vim-support.git'
 NeoBundle 'hewes/unite-gtags.git'
 NeoBundle 'kien/ctrlp.vim.git'
+NeoBundle 'abudden/taghighlight'
 filetype plugin indent on
 " }}}
 " ======== Source Macro {{{
