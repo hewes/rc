@@ -5,7 +5,7 @@ if has('vim_starting')
   set rtp+=~/.vim/bundle/neobundle.vim/
   call neobundle#rc('~/.vim/bundle/')
 endif
-NeoBundle 'm2ym/rsense.git'
+NeoBundleLazy 'm2ym/rsense.git'
 NeoBundle 'scrooloose/nerdcommenter.git'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-fugitive'
@@ -1199,6 +1199,7 @@ endfunction "}}}
 autocmd MyAutoCmd FileType ruby call s:ruby_my_settings()
 
 function! s:ruby_my_settings()
+  NeoBundleSource 'rsense'
   compiler ruby
   nmap <buffer> [make] :<C-u>make -c %<CR>
   setlocal ts=2
