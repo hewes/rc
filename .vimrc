@@ -85,8 +85,7 @@ set shell=zsh
 let dotvim = $HOME . "/.vim"
 
 " split window direction
-set splitbelow
-set splitright
+set splitbelow splitright
 
 set hidden
 
@@ -96,8 +95,7 @@ set cindent
 " tab setting
 set tabstop=2
 set shiftwidth=2
-set expandtab
-set smarttab
+set expandtab smarttab
 set smartindent
 
 set browsedir=buffer
@@ -114,10 +112,8 @@ set ignorecase smartcase wrapscan incsearch hlsearch grepprg=internal
 " set grepprg=ack\ -a
 
 "Japanese input etc settings
-set noimdisable
-set noimcmdline
-set iminsert=1
-set imsearch=1
+set noimdisable noimcmdline
+set iminsert=1 imsearch=1
 
 " beyond line 
 set whichwrap=b,s,h,l,<,>,[,]
@@ -976,15 +972,13 @@ nnoremap [unite]R :Unite ref/
 nnoremap <silent> [unite]b :UniteWithBufferDir -no-split -buffer-name=files file file/new<CR>
 nnoremap <silent> [unite]c :UniteWithCurrentDir -buffer-name=files file file/new<CR>
 nnoremap <silent> [unite]t :Unite tab<CR>
-nnoremap <silent> [unite]T :Unite tag<CR>
 nnoremap <silent> [unite]y :Unite register<CR>
 nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
 nnoremap <silent> [unite]p :Unite bookmark -default-action=cd -no-start-insert<CR>
-"nnoremap <silent> [unite]j :Unite jump<CR>
 " Explore home dir
 nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file file/new -input='. $HOME .'/<CR>'
+nnoremap <silent> [unite]H :<C-u>Unite history/yank<CR>
 nnoremap <silent> [unite]j :Unite buffer_tab -no-start-insert<CR>
-"nnoremap <silent> [unite]l :Unite -auto-preview -no-split line<CR>
 nnoremap <silent> [unite]l :Unite -auto-preview line<CR>
 nnoremap <expr> [unite]g ':Unite grep:'. expand("%:h") . ':-r'
 nnoremap <silent> [unite]* :UniteWithCursorWord line<CR>
@@ -1007,6 +1001,7 @@ let g:unite_source_file_rec_max_depth = 10
 let g:unite_kind_openable_cd_command = 'TabpageCD'
 let g:unite_kind_openable_lcd_command = 'TabpageCD'
 let g:unite_winheight = 20
+let g:unite_source_history_yank_enable = 1
 
 autocmd FileType unite call s:unite_my_settings()
 function! s:unite_my_settings()"{{{
@@ -1272,3 +1267,4 @@ if filereadable(expand('~/.vimrc.local'))
 endif
 "}}}
 " }}}
+
