@@ -332,7 +332,11 @@ endfunction
 
 autocmd MyAutoCmd ColorScheme * call s:set_highlight()
 
-colorscheme capybara
+try
+  colorscheme capybara
+catch /E185/
+  colorscheme torte
+endtry
 
 if has('syntax')
   augroup InsertHook
