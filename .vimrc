@@ -1222,6 +1222,9 @@ if !exists('g:eskk#disable') || !g:eskk#disable
   let g:eskk#show_annotation = 1
   let g:eskk#keep_state = 0
 endif
+
+" overwrite other plugin setting (e.g.) smartinput)
+imap <C-j> <Plug>(eskk:toggle)
 "}}}
 
 " }}}
