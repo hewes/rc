@@ -5,7 +5,12 @@ if has('vim_starting')
   set rtp+=~/.vim/bundle/neobundle.vim/
   call neobundle#rc('~/.vim/bundle/')
 endif
-NeoBundleLazy 'm2ym/rsense.git'
+NeoBundleLazy 'm2ym/rsense.git', {
+      \ 'autoload' : {'filetypes' : ['ruby'] }
+      \ }
+NeoBundleLazy 'taichouchou2/vim-rsense.git',{
+      \ 'autoload' : {'filetypes' : ['ruby'] }
+      \ }
 NeoBundle 'scrooloose/nerdcommenter.git'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-fugitive'
@@ -48,11 +53,6 @@ filetype plugin indent on
 if filereadable($VIMRUNTIME . "/macros/matchit.vim")
   source $VIMRUNTIME/macros/matchit.vim
 endif
-" rsense.vim {{{
-if !exists('g:loaded_rsense') && filereadable(expand('~/.vim/bundle/rsense/etc/rsense.vim'))
-  source ~/.vim/bundle/rsense/etc/rsense.vim
-endif
-"}}}
 " }}}
 " ======== Util Function {{{
 function! s:mkdir(file, ...)
@@ -999,15 +999,6 @@ if !exists('g:neocomplcache_omni_patterns')
   let g:neocomplcache_omni_patterns = {}
 endif
 
-" enable rsense
-if exists('g:loaded_rsense') && filereadable(expand('~/.vim/bundle/rsense/bin/rsense'))
-  let g:rsenseUseOmniFunc = 1
-  let g:rsenseHome = expand('~/.vim/bundle/rsense')
-  let g:neocomplcache_omni_functions['ruby'] = 'RSenseCompleteFunction'
-  let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
-endif
-"}}}
-
 " unite.vim "{{{
 " map ff as default f
 nnoremap ff f
@@ -1251,7 +1242,14 @@ endfunction "}}}
 autocmd MyAutoCmd FileType ruby call s:ruby_my_settings()
 
 function! s:ruby_my_settings()
-  NeoBundleSource 'rsense'
+  " enable rsense
+  if exists('g:loaded_rsense') && filereadable(expand('~/.vim/bundle/rsense/bin/rsense'))
+    let g:rsenseUseOmniFunc = 1
+    let g:rsenseHome = expand('~/.vim/bundle/rsense')
+    let g:neocomplcache_omni_functions['ruby'] = 'RSenseCompleteFunction'
+    let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+  endif
+
   compiler ruby
   nmap <buffer> [make] :<C-u>make -c %<CR>
   setlocal ts=2
