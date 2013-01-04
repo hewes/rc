@@ -67,6 +67,14 @@ function! s:sysid_match(sys_ids)
   endif
 endfunction
 
+function! s:sum(array)
+  let sum = 0
+  for i in a:array
+    let sum += i
+  endfor
+  return sum
+endfunction
+
 "}}}
 " ======== Basic Setting {{{
 " Initialize my vimrc augroup.
@@ -324,11 +332,11 @@ set laststatus=2
 set t_Co=256
 set background=dark
 
-function! s:set_highlight()
-  " define particular highlight
-  highlight CurrentWord term=NONE ctermbg=52 ctermfg=NONE guibg=darkred
-  highlight Indent term=NONE ctermbg=238 ctermfg=NONE guibg=#444444 guifg=NONE
+function! s:set_highlight() " color setting {{{
+  highlight CurrentWord term=NONE ctermbg=52  ctermfg=NONE guibg=darkred
+  highlight Indent      term=NONE ctermbg=238 ctermfg=NONE guibg=#444444 guifg=NONE
 endfunction
+" }}}
 
 autocmd MyAutoCmd ColorScheme * call s:set_highlight()
 
@@ -424,7 +432,7 @@ if v:version < 703
   endfunction
 else
   function! MyTabLabel(tab_number)
-    let project   = gettabvar(a:tab_number, "project")
+    let project = gettabvar(a:tab_number, "project")
     if empty(project) || project == '[home]'
       let bufname   = BufnameOnTab(a:tab_number)
       let path_tcwd = empty(bufname) ? "" : substitute(fnamemodify(bufname, ":p"), gettabvar(a:tab_number, "cwd") . "/", "", "g")
@@ -435,15 +443,55 @@ else
   endfunction
 end
 
+function! s:suitable_tab_indice(length_a, cur_tab)
+  let l:win_width = winwidth(0)
+  if a:length_a[a:cur_tab] > l:win_width
+    return [a:cur_tab, a:cur_tab]
+  endif
+  let l:start_index = a:cur_tab
+  if a:cur_tab > 0
+    if s:sum(a:length_a[a:cur_tab-1:a:cur_tab]) < l:win_width
+      let l:start_index -= 1
+    endif
+  endif
+  let l:length = a:length_a[l:start_index]
+  let l:end_index = l:start_index
+  let l:element_num = len(a:length_a) - 1
+  while 1
+    let l:tmp = l:end_index + 1
+    if (l:tmp > l:element_num) || (l:length + a:length_a[l:tmp] > l:win_width)
+      break
+    endif
+    let l:end_index += 1
+    let l:length += a:length_a[l:end_index]
+  endwhile
+  while 1
+    let l:tmp = l:start_index - 1
+    if (l:tmp < 0 ) || (l:length + a:length_a[l:tmp] > l:win_width)
+      break
+    endif
+    let l:start_index -= 1
+    let l:length += a:length_a[l:start_index]
+  endwhile
+  return [l:start_index, l:end_index]
+endfunction
+
 function! MyTabLine()
-  let s = ''
+  let label_a = []
+  let length_a = []
   for i in range(1, tabpagenr('$'))
-    let s .= (i == tabpagenr()) ? '%#TabLineSel#' : '%#TabLine#'
-    let s .= '%'. i . 'T ' . i . ' %{MyTabLabel(' . i . ')} '
+    let label = ' '. i . ' ' . MyTabLabel(i)
+    call add(label_a, (i == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#') . '%' .  i . 'T' . label)
+    call add(length_a, len(label))
   endfor
-  let info = fnamemodify(getcwd(),"~:") . ' '
-  let s .= '%#TabLineFill#%T' . '%=' . info
-  return s
+  if s:sum(length_a) > winwidth(0)
+    let indice = s:suitable_tab_indice(length_a, tabpagenr() - 1)
+    " number of showing tabs
+    let l:show = len(length_a) . 'tabs'
+    return join(label_a[indice[0]:indice[1]]) .'%#TabLineFill#%T%='. l:show
+  else
+    return join(label_a, '') .'%#TabLineFill#%T'
+  endif
 endfunction
 set tabline=%!MyTabLine()
 " }}}
@@ -839,7 +887,6 @@ function! s:skip_position()
     " if delimeter is not found at the current line
     let l:eol_col = len(getline('.'))
     if l:eol_col == pos[2] && pos[3] > 0
-      echomsg "hoge"
       " if caret is at eol, feed next line, and move to right
       let pos[1] += 1
       let pos[2] = 0
