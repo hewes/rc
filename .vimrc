@@ -22,7 +22,11 @@ NeoBundle 'Shougo/neocomplcache.git'
 NeoBundle 'ujihisa/neco-look.git'
 NeoBundle 'Shougo/vimshell.git'
 NeoBundle 'Shougo/vimfiler.git'
-NeoBundle 'Shougo/vimproc.git'
+NeoBundle 'Shougo/vimproc.git' , { 'build' : {
+      \ 'mingw' : 'make -f make_mingw.mak',
+      \ 'mac'   : 'make -f make_mac.mak',
+      \ 'unix'  : 'make -f make_unix.mak',
+      \ }, }
 NeoBundle 'Shougo/vim-vcs.git'
 NeoBundle 'Shougo/neosnippet.git'
 NeoBundle 'Shougo/unite-outline.git'
