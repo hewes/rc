@@ -437,15 +437,12 @@ end
 
 function! MyTabLine()
   let s = ''
-  for i in range(tabpagenr('$'))
-    if i + 1 == tabpagenr()
-      let s .= '%#TabLineSel#'
-    else
-      let s .= '%#TabLine#'
-    endif
-    let s .= '%T ' . (i+1) . ' %{MyTabLabel(' . (i+1) . ')} '
+  for i in range(1, tabpagenr('$'))
+    let s .= (i == tabpagenr()) ? '%#TabLineSel#' : '%#TabLine#'
+    let s .= '%'. i . 'T ' . i . ' %{MyTabLabel(' . i . ')} '
   endfor
-  let s .= '%#TabLineFill#%T'
+  let info = fnamemodify(getcwd(),"~:") . ' '
+  let s .= '%#TabLineFill#%T' . '%=' . info
   return s
 endfunction
 set tabline=%!MyTabLine()
