@@ -426,7 +426,7 @@ set statusline=%!MyStatusLine()
 " ----- Tab label setting {{{ 
 function! BufnameOnTab(tab_num)
   let buflist  =  tabpagebuflist(a:tab_num)
-  let winnr  =  tabpagewinnr(a:tab_num)
+  let winnr    =  tabpagewinnr(a:tab_num)
   return bufname(buflist[winnr - 1]) 
 endfunction
 
@@ -453,10 +453,8 @@ function! s:suitable_tab_indice(length_a, cur_tab)
     return [a:cur_tab, a:cur_tab]
   endif
   let l:start_index = a:cur_tab
-  if a:cur_tab > 0
-    if s:sum(a:length_a[a:cur_tab-1:a:cur_tab]) < l:win_width
-      let l:start_index -= 1
-    endif
+  if (a:cur_tab > 0) && (a:length_a[a:cur_tab-1] + a:length_a[a:cur_tab] < l:win_width)
+    let l:start_index -= 1
   endif
   let l:length = a:length_a[l:start_index]
   let l:end_index = l:start_index
@@ -484,7 +482,7 @@ function! MyTabLine()
   let label_a = []
   let length_a = []
   for i in range(1, tabpagenr('$'))
-    let label = ' '. i . ' ' . MyTabLabel(i)
+    let label = ' '. i . ' ' . MyTabLabel(i) . ' '
     call add(label_a, (i == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#') . '%' .  i . 'T' . label)
     call add(length_a, len(label))
   endfor
@@ -998,6 +996,7 @@ autocmd MyAutoCmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 if !exists('g:neocomplcache_omni_patterns')
   let g:neocomplcache_omni_patterns = {}
 endif
+" }}}
 
 " unite.vim "{{{
 " map ff as default f
