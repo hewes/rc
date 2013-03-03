@@ -1060,7 +1060,7 @@ function! s:unite_my_settings()"{{{
   inoremap <silent><buffer> <C-f> <C-o>:call unite#mappings#do_action('preview')<CR>
   " I hope to use <C-o> and return to the selected item after action...
   imap <silent><buffer> <C-j> <Plug>(unite_exit)
-  nmap <silent><buffer> <C-j> <Plug>(unite_exit)
+  nmap <silent><buffer> <C-j> <Plug>(unite_all_exit)
   inoremap <silent><buffer> <SPACE> _
   inoremap <silent><buffer> _ <SPACE>
 endfunction "}}}
