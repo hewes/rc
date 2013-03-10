@@ -883,25 +883,25 @@ command! -bang -complete=file -nargs=? WEuc write<bang> ++enc=eucjp <args>
 
 " ---- move caret to next delimiter {{{
 function! s:skip_position()
-  let match = search('[,(){}\[\]"]', '', line('.'))
   let pos = getpos('.')
-  if match == 0
-    " if delimeter is not found at the current line
-    let l:eol_col = len(getline('.'))
-    if l:eol_col == pos[2] && pos[3] > 0
-      " if caret is at eol, feed next line, and move to right
-      let pos[1] += 1
-      let pos[2] = 0
-      let pos[3] = 0
-    else
-      " if not match delimeter, move to eol
+  let l:eol_col = len(getline('.'))
+  if l:eol_col == pos[2] && pos[3] > 0
+    " if caret is at eol, feed next line, and move to right
+    let pos[1] += 1
+    let pos[2] = 0
+    let pos[3] = 0
+  else
+    let match = search('[,(){}\[\]"]', 'c', line('.'))
+    let pos = getpos('.')
+    if match == 0
+      " if delimeter is not found at the current line, move to eol
       let pos[2] = l:eol_col + 1
       let pos[3] = 0
-    end
-  else
-    " if delimeter is found, move caret to next col of the delimeter
-    let pos[2] += 1
-    let pos[3] = 0
+    else
+      " if delimeter is found, move caret to next col of the delimeter
+      let pos[2] += 1
+      let pos[3] = 0
+    endif
   endif
   call setpos('.', pos)
   return
