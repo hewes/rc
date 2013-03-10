@@ -1024,7 +1024,7 @@ nnoremap <silent> [unite]j :Unite buffer_tab -no-start-insert<CR>
 nnoremap <silent> [unite]l :Unite -auto-preview line<CR>
 nnoremap <expr> [unite]g ':Unite grep:'. expand("%:h") . ':-r'
 nnoremap <silent> [unite]* :UniteWithCursorWord line<CR>
-nnoremap <silent> [unite]o :Unite -buffer-name=outline -no-split outline<CR>
+nnoremap <silent> [unite]o :Unite -buffer-name=outline outline<CR>
 nnoremap <silent> [unite]q :Unite qf -no-start-insert<CR>
 nnoremap [unite]s<SPACE> :Unite svn/
 nnoremap <silent> [unite]sd :Unite svn/diff<CR>
