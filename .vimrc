@@ -1009,9 +1009,9 @@ xnoremap [unite] <Nop>
 " mapping for Unite functions
 nnoremap <silent> [unite]u :Unite -buffer-name=files file<CR>
 nnoremap <silent> [unite]m :Unite -buffer-name=file file_mru<CR>
-nnoremap <silent> [unite]r :Unite file_rec<CR>
+nnoremap <silent> [unite]r :UniteResume<CR>
 nnoremap [unite]R :Unite ref/
-nnoremap <silent> [unite]b :UniteWithBufferDir -no-split -buffer-name=files file file/new<CR>
+nnoremap <silent> [unite]b :UniteWithBufferDir -buffer-name=files file file/new<CR>
 nnoremap <silent> [unite]c :UniteWithCurrentDir -buffer-name=files file file/new<CR>
 nnoremap <silent> [unite]t :Unite tab<CR>
 nnoremap <silent> [unite]y :Unite register<CR>
