@@ -707,6 +707,7 @@ init_elements
 init_error
 init_rows
 initgroups
+initialize
 initialize_copy
 initialize_input
 initialize_tracer
