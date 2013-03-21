@@ -925,8 +925,8 @@ inoremap <expr><C-c> neocomplcache#complete_common_string()
 imap <silent> <expr> <Tab> <SID>tab_wrapper()
 smap  <TAB> <Plug>(neocomplcache_snippets_expand)
 function! s:tab_wrapper()
-  if neocomplcache#sources#snippets_complete#expandable()
-    return "\<Plug>(neocomplcache_snippets_jump)"
+  if neosnippet#expandable_or_jumpable()
+    return "\<Plug>(neosnippet_expand_or_jump)"
   endif
   return "\<Plug>(skip_position)""
 endfunction
