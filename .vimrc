@@ -548,22 +548,29 @@ let g:default_current_dir = $HOME
 call altercmd#load()
 command! -complete=dir -nargs=? TabpageCD
       \ execute 'cd' fnameescape(<q-args>)
-      \| call s:InitTabpage(getcwd(), 1)
+      \| call s:init_tab_page(getcwd(), 1)
 
-function! s:InitTabpage(chdir, force)
+function! s:init_tab_page(chdir, force)
   if !exists('t:cwd') || a:force
     let t:cwd = a:chdir
   endif
   if !exists('t:project') || a:force
     let t:project = s:get_cd_project_name()
   endif
+  if !exists('t:local_setting') || a:force
+    let t:local_setting = 1
+    if exists("g:localrc_name") && filereadable(t:cwd. "/" . g:localrc_name)
+      execute "source " . t:cwd . "/" . g:localrc_name
+    endif
+  endif
 endfunction
+let g:localrc_name = ".vimrc.local"
 
 AlterCommand cd TabpageCD
 command! -nargs=0 CD silent execute 'TabpageCD' unite#util#path2project_directory(expand('%:p'))
 
 autocmd VimEnter,TabEnter *
-      \ call s:InitTabpage(g:default_current_dir, 0)
+      \ call s:init_tab_page(g:default_current_dir, 0)
       \| execute 'cd' fnameescape(t:cwd)
 "}}}
 
