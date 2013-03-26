@@ -564,7 +564,7 @@ function! s:init_tab_page(chdir, force)
     endif
   endif
 endfunction
-let g:localrc_name = ".vimrc.local"
+let g:localrc_name = ".project.vimrc"
 
 AlterCommand cd TabpageCD
 command! -nargs=0 CD silent execute 'TabpageCD' unite#util#path2project_directory(expand('%:p'))
