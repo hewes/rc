@@ -45,7 +45,7 @@ NeoBundle 'ujihisa/unite-colorscheme.git'
 NeoBundle 'vim-scripts/DrawIt.git'
 NeoBundle 'rosstimson/scala-vim-support.git'
 NeoBundle 'hewes/unite-gtags.git'
-NeoBundle 'hewes/cwordhl.git'
+NeoBundle 'hewes/cwordhl.vim.git'
 NeoBundle 'kien/ctrlp.vim.git'
 NeoBundle 'abudden/TagHighlight'
 filetype plugin indent on
@@ -355,8 +355,8 @@ endtry
 if has('syntax')
   augroup InsertHook
     autocmd!
-    autocmd InsertEnter * call s:StatusLine('Enter')
-    autocmd InsertLeave * call s:StatusLine('Leave')
+    autocmd InsertEnter * call s:change_status_line('Enter')
+    autocmd InsertLeave * call s:change_status_line('Leave')
   augroup END
 endif
 
@@ -371,9 +371,9 @@ endif
 
 let s:slhlcmd = ''
 let g:hi_insert  =  'highlight StatusLine ctermfg=white ctermbg=21 cterm=none'
-function! s:StatusLine(mode)
+function! s:change_status_line(mode)
   if a:mode == 'Enter'
-    silent! let s:slhlcmd = 'highlight ' . s:GetHighlight('StatusLine')
+    silent! let s:slhlcmd = 'highlight ' . s:get_highlight('StatusLine')
     silent exec g:hi_insert
   else
     highlight clear StatusLine
@@ -381,7 +381,7 @@ function! s:StatusLine(mode)
   endif
 endfunction
 
-function! s:GetHighlight(hi)
+function! s:get_highlight(hi)
   redir => hl
   exec 'highlight '.a:hi
   redir END
@@ -394,7 +394,7 @@ endfunction
 " ----- Status line setting {{{
 " status line format
 if v:version < 703
-  function! Dirname()
+  function! s:my_dir_name()
     let project = get(t:, 'project', "")
     if !empty(project)
       let project = project . "\ "
@@ -402,7 +402,7 @@ if v:version < 703
     return project . "%f"
   endfunction
 else
-  function! Dirname()
+  function! s:my_dir_name()
     return "%f"
   endfunction
 end
@@ -418,7 +418,7 @@ function! GetVCSInfo()
 endfunction
 
 function! MyStatusLine()
-  return "\%{GetVCSInfo()}". Dirname(). "\ %m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]"
+  return "\%{GetVCSInfo()}". s:my_dir_name(). "\ %m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c][TAB:". tabpagenr() . "/". tabpagenr('$') .  "]"
 endfunction
 
 set statusline=%!MyStatusLine()
@@ -426,25 +426,25 @@ set statusline=%!MyStatusLine()
 "}}}
 
 " ----- Tab label setting {{{ 
-function! BufnameOnTab(tab_num)
+function! s:buf_name_on_tab(tab_num)
   let buflist  =  tabpagebuflist(a:tab_num)
   let winnr    =  tabpagewinnr(a:tab_num)
   return bufname(buflist[winnr - 1]) 
 endfunction
 
 if v:version < 703
-  function! MyTabLabel(tab_number)
-    return BufnameOnTab(a:tab_number)
+  function! s:my_tab_label(tab_number)
+    return s:buf_name_on_tab(a:tab_number)
   endfunction
 else
-  function! MyTabLabel(tab_number)
-    let project = gettabvar(a:tab_number, "project")
-    if empty(project) || project == '[home]'
-      let bufname   = BufnameOnTab(a:tab_number)
+  function! s:my_tab_label(tab_number)
+    let l:project = gettabvar(a:tab_number, "project")
+    if empty(l:project) || l:project == '[home]'
+      let bufname   = s:buf_name_on_tab(a:tab_number)
       let path_tcwd = empty(bufname) ? "" : substitute(fnamemodify(bufname, ":p"), gettabvar(a:tab_number, "cwd") . "/", "", "g")
-      return empty(project) ? path_tcwd : project . ' ' .  path_tcwd
+      return empty(l:project) ? path_tcwd : l:project . ' ' .  path_tcwd
     else
-      return project
+      return l:project
     endif
   endfunction
 end
@@ -484,18 +484,18 @@ function! MyTabLine()
   let label_a = []
   let length_a = []
   for i in range(1, tabpagenr('$'))
-    let label = ' '. i . ' ' . MyTabLabel(i) . ' '
+    let label = ' '. i . ' ' . s:my_tab_label(i) . ' '
     call add(label_a, (i == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#') . '%' .  i . 'T' . label)
     call add(length_a, len(label))
   endfor
   if s:sum(length_a) > winwidth(0)
     let indice = s:suitable_tab_indice(length_a, tabpagenr() - 1)
     " number of showing tabs
-    let l:show = len(length_a) . 'tabs'
-    return join(label_a[indice[0]:indice[1]]) .'%#TabLineFill#%T%='. l:show
+    let l:show = join(label_a[indice[0]:indice[1]])
   else
-    return join(label_a, '') .'%#TabLineFill#%T'
+    let l:show = join(label_a, '')
   endif
+  return l:show . '%#TabLineFill#%T'
 endfunction
 set tabline=%!MyTabLine()
 " }}}
@@ -522,7 +522,7 @@ command! -bar ToggleDiff if &diff | execute 'windo diffoff'  | else
 \                           | execute 'windo diffthis' | endif
 " }}}
 
-function! s:GetCDProjectName() " project name related to the current directory {{{
+function! s:get_cd_project_name() " project name related to the current directory {{{
   if fnamemodify(t:cwd, ":p") == fnamemodify("~/", ":p")
     return "[home]"
   endif
@@ -558,7 +558,7 @@ function! s:InitTabpage(chdir, force)
     let t:cwd = a:chdir
   endif
   if !exists('t:project') || a:force
-    let t:project = s:GetCDProjectName()
+    let t:project = s:get_cd_project_name()
   endif
 endfunction
 
