@@ -207,9 +207,6 @@ if &encoding !=? 'utf-8'
   set encoding=utf-8
 endif
 
-" Must after set of 'encoding'.
-scriptencoding utf-8
-
 if has('guess_encode')
   set fileencodings=ucs-bom,iso-2022-jp,guess,euc-jp,cp932
 else
