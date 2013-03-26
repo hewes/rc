@@ -850,9 +850,42 @@ nnoremap <silent> [unite]sd :Unite svn/diff<CR>
 nnoremap <silent> [unite]sb :Unite svn/blame<CR>
 nnoremap <silent> [unite]ss :Unite svn/status<CR>
 nnoremap <C-j> :Unite gtags/context<CR>
+for key_number in [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  execute printf('nnoremap <silent> [unite]%d :<C-u> call UniteCurrentProjectShortcut(%d)<CR>', key_number, key_number)
+endfor
+
+function! UniteCurrentProjectShortcut(key)
+  if exists("t:local_unite") && has_key(t:local_unite, a:key)
+    execute t:local_unite[a:key]
+  else
+    echo "ERROR: t:local_unite is not defined or not has key: ". a:key
+  endif
+endfunction
+let s:local_unite_source = {
+      \ "name"        : "local", 
+      \ "description" : 'Unite commands defined at t:local_unite', 
+      \ }
+function! s:local_unite_source.gather_candidates(args, context)
+  let l:candidates = []
+  if exists("t:local_unite")
+    for key in sort(keys(t:local_unite))
+      let l:candidate = {
+            \ 'word'            : key . ': ' . t:local_unite[key],
+            \ 'kind'            : 'command',
+            \ 'action__command' : t:local_unite[key] . ' ',
+            \ 'source__command' : ':'. t:local_unite[key],
+            \ }
+      call add(l:candidates, l:candidate)
+    endfor
+  else
+    call unite#print_message("[unite-local] Warning: t:local_unite is not defined")
+  endif
+  return l:candidates
+endfunction
+call unite#define_source(s:local_unite_source)
+nnoremap [unite]<SPACE> :Unite local<CR>
 
 let g:unite_enable_ignore_case = 1
-noremap [unite]] :<C-u>Unite -immediately -no-start-insert tag:<C-r>=expand('<cword>')<CR><CR>
 let g:unite_enable_smart_case = 1
 let g:unite_enable_start_insert = 1
 let g:unite_enable_split_vertically  =  0
