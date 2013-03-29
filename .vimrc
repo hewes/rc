@@ -12,6 +12,7 @@ NeoBundleLazy 'taichouchou2/vim-rsense.git',{
       \ 'autoload' : {'filetypes' : ['ruby'] }
       \ }
 NeoBundle 'scrooloose/nerdcommenter.git'
+NeoBundle 'scrooloose/syntastic.git'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'tpope/vim-repeat.git'
