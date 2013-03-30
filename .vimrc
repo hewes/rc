@@ -1165,6 +1165,12 @@ function! s:vimshell_my_settings()
   imap <silent><buffer> <C-j> <Plug>(vimshell_exit):q<CR>
 endfunction"}}}
 
+" log, config {{{
+autocmd MyAutoCmd FileType log,conf call s:log_config_my_settings()
+function! s:log_config_my_settings()
+  setlocal nomodeline
+endfunction"}}}
+
 "}}}
 " ======== Post Process Setting {{{
 " source localized vimrc"{{{
