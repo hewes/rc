@@ -51,6 +51,7 @@ NeoBundle 'vim-scripts/DrawIt.git'
 NeoBundle 'rosstimson/scala-vim-support.git'
 NeoBundle 'hewes/unite-gtags.git'
 NeoBundle 'hewes/cwordhl.vim.git'
+NeoBundle 'hewes/tmp-bookmarker.vim.git'
 NeoBundle 'kien/ctrlp.vim.git'
 NeoBundle 'abudden/TagHighlight'
 NeoBundle 'tomtom/quickfixsigns_vim.git'
@@ -1104,6 +1105,14 @@ call watchdogs#setup(g:quickrun_config)
 
 " operator-replace {{{
 map R <Plug>(operator-replace)
+" }}}
+
+" tmp-bookmarker {{{
+nnoremap <silent> ma :<C-u>TmpBookmarkAdd<CR>
+nnoremap <silent> mp :<C-u>TmpBookmarkPop<CR>
+nnoremap ms :<C-u>TmpBookmarkShow<CR>
+nnoremap <silent> mm :<C-u>TmpBookmarkNext<CR>
+nnoremap <silent> md :<C-u>TmpBookmarkDelete<CR>
 " }}}
 
 " }}}
