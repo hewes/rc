@@ -39,6 +39,8 @@ NeoBundle 'kmnk/vim-unite-svn.git'
 NeoBundle 'kana/vim-smartchr.git'
 NeoBundle 'kana/vim-altercmd'
 NeoBundle 'kana/vim-smartinput'
+NeoBundle 'kana/vim-operator-user'
+NeoBundle 'kana/vim-operator-replace'
 NeoBundle 'tsukkee/unite-help'
 NeoBundle 'tyru/eskk.vim'
 NeoBundle 'osyo-manga/unite-quickfix'
@@ -1098,6 +1100,10 @@ let g:quickfixsigns_classes = ['qfl', 'loc', 'vcsdiff', 'breakpoints']
 " watchdogs "{{{
 let g:watchdogs_check_BufWritePost_enable = 1
 call watchdogs#setup(g:quickrun_config)
+" }}}
+
+" operator-replace {{{
+map R <Plug>(operator-replace)
 " }}}
 
 " }}}
