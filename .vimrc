@@ -12,7 +12,6 @@ NeoBundleLazy 'taichouchou2/vim-rsense.git',{
       \ 'autoload' : {'filetypes' : ['ruby'] }
       \ }
 NeoBundle 'scrooloose/nerdcommenter.git'
-NeoBundle 'scrooloose/syntastic.git'
 NeoBundle 'tpope/vim-surround'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'tpope/vim-repeat.git'
@@ -42,6 +41,9 @@ NeoBundle 'kana/vim-altercmd'
 NeoBundle 'kana/vim-smartinput'
 NeoBundle 'tsukkee/unite-help'
 NeoBundle 'tyru/eskk.vim'
+NeoBundle 'osyo-manga/unite-quickfix'
+NeoBundle 'osyo-manga/shabadou.vim'
+NeoBundle 'osyo-manga/vim-watchdogs'
 NeoBundle 'ujihisa/unite-colorscheme.git'
 NeoBundle 'vim-scripts/DrawIt.git'
 NeoBundle 'rosstimson/scala-vim-support.git'
@@ -49,6 +51,7 @@ NeoBundle 'hewes/unite-gtags.git'
 NeoBundle 'hewes/cwordhl.vim.git'
 NeoBundle 'kien/ctrlp.vim.git'
 NeoBundle 'abudden/TagHighlight'
+NeoBundle 'tomtom/quickfixsigns_vim.git'
 filetype plugin indent on
 " }}}
 " ======== Source Macro {{{
@@ -845,7 +848,7 @@ nnoremap <silent> [unite]l :Unite -auto-preview line<CR>
 nnoremap <expr> [unite]g ':Unite grep:'. expand("%:h") . ':-r'
 nnoremap <silent> [unite]* :UniteWithCursorWord line<CR>
 nnoremap <silent> [unite]o :Unite -buffer-name=outline outline<CR>
-nnoremap <silent> [unite]q :Unite qf -no-start-insert<CR>
+nnoremap <silent> [unite]q :Unite quickfix -no-start-insert<CR>
 nnoremap [unite]s<SPACE> :Unite svn/
 nnoremap <silent> [unite]sd :Unite svn/diff<CR>
 nnoremap <silent> [unite]sb :Unite svn/blame<CR>
@@ -1079,6 +1082,23 @@ endif
 " overwrite other plugin setting (e.g.) smartinput)
 imap <C-j> <Plug>(eskk:toggle)
 "}}}
+
+" quickrun "{{{
+let g:quickrun_config = {}
+let g:quickrun_config['*'] = {'runmode': "async:remote:vimproc",  'split': 'below'}
+let g:quickrun_config["watchdogs_checker/_"]  = {
+      \ "hook/quickfixsigns_enable/enable_exit" : 1
+      \ }
+" }}}
+
+" quickfixsigns_vim {{{
+let g:quickfixsigns_classes = ['qfl', 'loc', 'vcsdiff', 'breakpoints']
+" }}}
+
+" watchdogs "{{{
+let g:watchdogs_check_BufWritePost_enable = 1
+call watchdogs#setup(g:quickrun_config)
+" }}}
 
 " }}}
 " ======== Each Language Setting {{{
