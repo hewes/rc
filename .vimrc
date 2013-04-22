@@ -5,6 +5,7 @@ if has('vim_starting')
   set rtp+=~/.vim/bundle/neobundle.vim/
   call neobundle#rc('~/.vim/bundle/')
 endif
+NeoBundle 'vim-jp/vital.vim.git'
 NeoBundleLazy 'm2ym/rsense.git', {
       \ 'autoload' : {'filetypes' : ['ruby'] }
       \ }
@@ -48,6 +49,7 @@ NeoBundle 'osyo-manga/shabadou.vim'
 NeoBundle 'osyo-manga/vim-watchdogs'
 NeoBundle 'ujihisa/unite-colorscheme.git'
 NeoBundle 'vim-scripts/DrawIt.git'
+NeoBundle 'vim-scripts/vcscommand.vim.git'
 NeoBundle 'rosstimson/scala-vim-support.git'
 NeoBundle 'hewes/unite-gtags.git'
 NeoBundle 'hewes/cwordhl.vim.git'
@@ -547,8 +549,6 @@ function! s:get_cd_project_name() " project name related to the current director
   endfor
   return ''
 endfunction
-
-let g:default_current_dir = $HOME
 " }}}
 
 " :TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
@@ -576,9 +576,15 @@ let g:localrc_name = ".project.vimrc"
 AlterCommand cd TabpageCD
 command! -nargs=0 CD silent execute 'TabpageCD' unite#util#path2project_directory(expand('%:p'))
 
-autocmd VimEnter,TabEnter *
-      \ call s:init_tab_page(g:default_current_dir, 0)
-      \| execute 'cd' fnameescape(t:cwd)
+augroup MyAutoCmd
+  autocmd VimEnter *
+        \ let g:default_current_dir = getcwd()
+        \| call s:init_tab_page(g:default_current_dir, 0)
+
+  autocmd TabEnter *
+        \ call s:init_tab_page(g:default_current_dir, 0)
+        \| execute 'cd' fnameescape(t:cwd)
+augroup END
 "}}}
 
 " Insert Mode <C-k> -- kill line from current to eol "{{{
@@ -903,8 +909,8 @@ let g:unite_kind_openable_cd_command = 'TabpageCD'
 let g:unite_kind_openable_lcd_command = 'TabpageCD'
 let g:unite_winheight = 20
 let g:unite_source_history_yank_enable = 1
-
-autocmd FileType unite call s:unite_my_settings()
+let g:unite_source_bookmark_directory = $HOME . "/.unite/bookmark"
+autocmd MyAutoCmd FileType unite call s:unite_my_settings()
 function! s:unite_my_settings()"{{{
   nnoremap <silent><buffer> <C-o> :call unite#mappings#do_action('tabopen')<CR>
   nnoremap <silent><buffer> <C-v> :call unite#mappings#do_action('vsplit')<CR>
@@ -1114,7 +1120,6 @@ nnoremap ms :<C-u>TmpBookmarkShow<CR>
 nnoremap <silent> mm :<C-u>TmpBookmarkNext<CR>
 nnoremap <silent> md :<C-u>TmpBookmarkDelete<CR>
 " }}}
-
 " }}}
 " ======== Each Language Setting {{{
 " Java {{{
