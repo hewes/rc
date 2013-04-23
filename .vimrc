@@ -551,6 +551,17 @@ function! s:get_cd_project_name() " project name related to the current director
 endfunction
 " }}}
 
+function! s:gtags_update() " update GTAGS {{{
+  let cmd = "global -u"
+  if exists('g:loaded_vimproc')
+    call vimproc#system(cmd)
+  else
+    call system(cmd)
+  endif
+endfunction
+command! GtagsUpdate call s:gtags_update()
+"}}}
+
 " :TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 call altercmd#load()
 command! -complete=dir -nargs=? TabpageCD
