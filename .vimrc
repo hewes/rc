@@ -781,6 +781,7 @@ let g:neocomplcache_max_keyword_width = 100
 let g:neocomplcache_enable_prefetch = 1
 " Set minimum syntax keyword length.
 let g:neocomplcache_min_syntax_length = 1
+let g:neocomplcache_disable_caching_file_path_pattern = '*.log'
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 let g:neocomplcache_auto_completion_start_length = 1
 let g:neocomplcache_plugin_completion_length_list = {
