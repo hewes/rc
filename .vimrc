@@ -5,6 +5,7 @@ if has('vim_starting')
   set rtp+=~/.vim/bundle/neobundle.vim/
   call neobundle#rc('~/.vim/bundle/')
 endif
+let g:neobundle#types#git#default_protocol = 'https'
 NeoBundle 'vim-jp/vital.vim.git'
 NeoBundleLazy 'm2ym/rsense.git', {
       \ 'autoload' : {'filetypes' : ['ruby'] }
