@@ -9,4 +9,5 @@ ln -s $HOME/rc/xmobarrc $HOME/.xmobarrc
 ln -s $HOME/rc/screenrc $HOME/.screenrc
 ln -s $HOME/rc/vimperatorrc $HOME/.vimperatorrc
 ln -s $HOME/rc/fehbg $HOME/.fehbg
+ln -s $HOME/rc/tmux.conf $HOME/.tmux.conf
 

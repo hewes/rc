@@ -7,8 +7,9 @@ bind j other
 defscrollback 10000
 startup_message off
 term xterm-256color
-termcapinfo xterm-256color 'is=rmJH?7h?1;4;6l'
 defbce on 
 
 #vbell off
 #autodetach on
+maptimeout 5
+termcapinfo xterm* 'Co#256:pa#32767:AB=\E[48;5;%dm:AF=\E[38;5;%dm:'
