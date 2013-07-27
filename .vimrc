@@ -26,10 +26,10 @@ endfunction
 
 if has('vim_starting') && isdirectory($NEOBUNDLE)
   set rtp+=$NEOBUNDLE
-  call neobundle#rc($VIMBUNDLE)
 endif
 
 if s:bundled('neobundle.vim')
+  call neobundle#rc($VIMBUNDLE)
   let g:neobundle#types#git#default_protocol = 'git'
   NeoBundle 'vim-jp/vital.vim.git'
   "NeoBundleLazy 'm2ym/rsense.git', {
@@ -50,7 +50,11 @@ if s:bundled('neobundle.vim')
   NeoBundle 'Shougo/neobundle.vim.git'
   NeoBundle 'Shougo/unite.vim.git'
   NeoBundle 'Shougo/unite-build.git'
-  NeoBundle 'Shougo/neocomplcache.git'
+  if has('lua')
+    NeoBundle 'Shougo/neocomplete.git'
+  else
+    NeoBundle 'Shougo/neocomplcache.git'
+  endif
   NeoBundle 'ujihisa/neco-look.git'
   NeoBundle 'Shougo/vimshell.git'
   NeoBundle 'Shougo/vimfiler.git'
@@ -795,17 +799,6 @@ if s:bundled('neocomplcache')
   inoremap <expr><C-g> neocomplcache#undo_completion()
   inoremap <expr><C-c> neocomplcache#complete_common_string()
 
-  " expand snippets by TAB
-  imap <silent> <expr> <Tab> <SID>tab_wrapper()
-  smap  <TAB> <Plug>(neocomplcache_snippets_expand)
-  function! s:tab_wrapper()
-    if neosnippet#expandable_or_jumpable()
-      return "\<Plug>(neosnippet_expand_or_jump)"
-    endif
-    return "\<Plug>(skip_position)""
-  endfunction
-  " }}}
-
   " snippets directory
   let g:neocomplcache_snippets_dir = $HOME. '/.vim/snippets'
   " Disable AutoComplPop.
@@ -860,19 +853,50 @@ if s:bundled('neocomplcache')
         \ 'md' :1,
         \ }
 
-  " Enable omni completion.
-  autocmd MyAutoCmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-  autocmd MyAutoCmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-  autocmd MyAutoCmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-  autocmd MyAutoCmd FileType python setlocal omnifunc=pythoncomplete#Complete
-  autocmd MyAutoCmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-
   " Enable heavy omni completion.
   if !exists('g:neocomplcache_omni_patterns')
     let g:neocomplcache_omni_patterns = {}
   endif
 endif
 " }}}
+
+if s:bundled('neosnippet')
+  " expand snippets by TAB
+  imap <silent> <expr> <Tab> <SID>tab_wrapper()
+  function! s:tab_wrapper()
+    if neosnippet#expandable_or_jumpable()
+      return "\<Plug>(neosnippet_expand_or_jump)"
+    endif
+    return "\<Plug>(skip_position)""
+  endfunction
+  let g:neosnippet#snippets_directory = $HOME. '/.vim/snippets'
+  " }}}
+endif
+
+" Enable omni completion.
+autocmd MyAutoCmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd MyAutoCmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd MyAutoCmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd MyAutoCmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd MyAutoCmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+if s:bundled('neocomplete')
+  let g:neocomplete#enable_at_startup = 1
+  let g:neocomplete#auto_completion_start_length = 2
+  let g:neocomplete#enable_auto_select = 1
+  if !exists('g:neocomplete#sources')
+    let g:neocomplete#sources = {}
+  endif
+  let g:neocomplete#sources._ = ['buffer']
+  let g:neocomplete#sources.cpp = ['buffer', 'include']
+  let g:neocomplete#enable_auto_close_preview = 1
+  imap <C-f> <Plug>(neocomplete_start_quick_match)
+  inoremap <expr><Space> pumvisible() ? neocomplete#close_popup() : "\<Space>"
+  let g:neocomplete#text_mode_filetypes = {
+        \ 'txt' :1,
+        \ 'md' :1,
+        \ }
+endif
 
 " unite.vim "{{{
 if s:bundled('unite.vim')
