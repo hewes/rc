@@ -75,7 +75,6 @@ if s:bundled('neobundle.vim')
   NeoBundle 'tsukkee/unite-help'
   NeoBundle 'tyru/eskk.vim'
   NeoBundle 'osyo-manga/unite-quickfix'
-  NeoBundle 'osyo-manga/shabadou.vim'
   NeoBundle 'osyo-manga/vim-watchdogs'
   NeoBundle 'ujihisa/unite-colorscheme.git'
   NeoBundle 'vim-scripts/DrawIt.git'
@@ -1177,6 +1176,12 @@ if s:bundled('vim-quickrun')
         \ "hook/quickfixsigns_enable/enable_exit" : 1,
         \ "hook/qfixgrep_enable/enable_exit" : 1
         \ }
+  " TODO: should consider class_path, and library on scala application
+  let g:quickrun_config['scala/watchdogs_checker'] = {"type" : "watchdogs_checker/nop"}
+  let g:quickrun_config['watchdogs_checker/nop'] = {
+        \ "command" : "echo",
+        \ "exec"    : "%c nop",
+        \}
 endif
 " }}}
 
