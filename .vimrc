@@ -6,6 +6,7 @@ let $DOTVIM = expand('~/.vim')
 let $VIMBUNDLE = $DOTVIM . '/bundle'
 let $NEOBUNDLE = $VIMBUNDLE . '/neobundle.vim'
 if !isdirectory($NEOBUNDLE)
+  " should 'git submodule init/update' at .vim/ before launch vim
   echoerr $NEOBUNDLE ' is not directory'
 endif
 
@@ -31,6 +32,8 @@ endif
 if s:bundled('neobundle.vim')
   call neobundle#rc($VIMBUNDLE)
   let g:neobundle#types#git#default_protocol = 'git'
+  NeoBundleFetch 'Shougo/neobundle.vim.git'
+
   NeoBundle 'vim-jp/vital.vim.git'
   "NeoBundleLazy 'm2ym/rsense.git', {
   "\ 'autoload' : {'filetypes' : ['ruby'] }
@@ -43,15 +46,18 @@ if s:bundled('neobundle.vim')
   NeoBundle 'tpope/vim-fugitive'
   NeoBundle 'tpope/vim-repeat.git'
   NeoBundle 'h1mesuke/vim-alignta.git'
-  NeoBundle 'thinca/vim-quickrun.git'
+  NeoBundleLazy 'thinca/vim-quickrun', { 'autoload' : {
+        \ 'mappings' : [['nxo', '<Plug>(quickrun)']],
+        \ 'commands' : ['QuickRun', 'UniteQuickRunConfig'],
+        \ }}
   NeoBundle 'thinca/vim-ref.git'
   NeoBundle 'fuenor/qfixgrep'
   NeoBundle 'othree/eregex.vim.git'
-  NeoBundle 'Shougo/neobundle.vim.git'
   NeoBundle 'Shougo/unite.vim.git'
   NeoBundle 'Shougo/unite-build.git'
   if has('lua')
-    NeoBundle 'Shougo/neocomplete.git'
+    NeoBundle 'Shougo/neocomplete.vim'
+    "NeoBundle 'Shougo/neocomplcache.git'
   else
     NeoBundle 'Shougo/neocomplcache.git'
   endif
@@ -75,7 +81,7 @@ if s:bundled('neobundle.vim')
   NeoBundle 'tsukkee/unite-help'
   NeoBundle 'tyru/eskk.vim'
   NeoBundle 'osyo-manga/unite-quickfix'
-  NeoBundle 'osyo-manga/vim-watchdogs'
+  NeoBundle 'osyo-manga/vim-watchdogs', {'depends' : ['thica/vim-quickrun']}
   NeoBundle 'ujihisa/unite-colorscheme.git'
   NeoBundle 'vim-scripts/DrawIt.git'
   NeoBundle 'vim-scripts/vcscommand.vim.git'
@@ -390,8 +396,7 @@ catch /E185/
 endtry
 
 if has('syntax')
-  augroup InsertHook
-    autocmd!
+  augroup MyAutoCmd
     autocmd InsertEnter * call s:change_status_line('Enter')
     autocmd InsertLeave * call s:change_status_line('Leave')
   augroup END
@@ -407,7 +412,7 @@ elseif &term == "xterm"
 endif
 
 let s:slhlcmd = ''
-let g:hi_insert  =  'highlight StatusLine ctermfg=white ctermbg=21 cterm=none'
+let g:hi_insert = 'highlight StatusLine ctermfg=white ctermbg=21 cterm=none'
 function! s:change_status_line(mode)
   if a:mode == 'Enter'
     silent! let s:slhlcmd = 'highlight ' . s:get_highlight('StatusLine')
@@ -550,6 +555,7 @@ if has('multi_byte_ime')
   highlight Cursor ctermfg=NONE ctermbg=Green
   highlight CursorIM ctermfg=NONE ctermbg=Yellow
 endif
+
 "}}}
 " }}}
 " ======== My Misc Setting {{{
@@ -797,9 +803,8 @@ if s:bundled('neocomplcache')
   " Plugin key-mappings.
   inoremap <expr><C-g> neocomplcache#undo_completion()
   inoremap <expr><C-c> neocomplcache#complete_common_string()
+  " }}}
 
-  " snippets directory
-  let g:neocomplcache_snippets_dir = $HOME. '/.vim/snippets'
   " Disable AutoComplPop.
   let g:acp_enableAtStartup = 0
   " Use neocomplcache.
@@ -859,7 +864,9 @@ if s:bundled('neocomplcache')
 endif
 " }}}
 
-if s:bundled('neosnippet')
+" neosnippet prefix {{{
+let s:hooks = neobundle#get_hooks("neosnippet")
+function! s:hooks.on_source(bundle)
   " expand snippets by TAB
   imap <silent> <expr> <Tab> <SID>tab_wrapper()
   function! s:tab_wrapper()
@@ -869,8 +876,9 @@ if s:bundled('neosnippet')
     return "\<Plug>(skip_position)""
   endfunction
   let g:neosnippet#snippets_directory = $HOME. '/.vim/snippets'
-  " }}}
-endif
+endfunction
+unlet s:hooks
+" }}}
 
 " Enable omni completion.
 autocmd MyAutoCmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
@@ -879,23 +887,63 @@ autocmd MyAutoCmd FileType javascript setlocal omnifunc=javascriptcomplete#Compl
 autocmd MyAutoCmd FileType python setlocal omnifunc=pythoncomplete#Complete
 autocmd MyAutoCmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
-if s:bundled('neocomplete')
-  let g:neocomplete#enable_at_startup = 1
+" ------- neocomplete {{{
+let g:neocomplete#enable_at_startup = 1
+let s:hooks = neobundle#get_hooks("neocomplete.vim")
+function! s:hooks.on_source(bundle)
   let g:neocomplete#auto_completion_start_length = 2
-  let g:neocomplete#enable_auto_select = 1
-  if !exists('g:neocomplete#sources')
-    let g:neocomplete#sources = {}
-  endif
-  let g:neocomplete#sources._ = ['buffer']
-  let g:neocomplete#sources.cpp = ['buffer', 'include']
+  let g:neocomplete#min_keyword_length = 2
+
+  let g:neocomplete#enable_auto_select = 0
+
+  " TODO: after patch for completeopt noinsert option
+  let g:neocomplete#enable_complete_select = 0
+  "let g:neocomplete#enable_complete_select = 1
+  let g:neocomplete#enable_refresh_always = 0
+  let g:neocomplete#enable_smart_case = 1
+  let g:neocomplete#enable_fuzzy_completion = 1
+  let g:neocomplete#enable_auto_delimiter = 1
+
   let g:neocomplete#enable_auto_close_preview = 1
-  imap <C-f> <Plug>(neocomplete_start_quick_match)
-  inoremap <expr><Space> pumvisible() ? neocomplete#close_popup() : "\<Space>"
+
+  " sources setting
+
+  if !exists('g:neocomplete#sources#omni#input_patterns')
+    let g:neocomplete#sources#omni#input_patterns = {}
+  end
+  let g:neocomplete#sources#omni#input_patterns = {}
+  let g:neocomplete#sources#omni#functions = {}
+
+  if !exists('g:neocomplete#force_omni_input_patterns')
+    let g:neocomplete#force_omni_input_patterns = {}
+  endif
+
+  if !exists('g:neocomplete#keyword_patterns')
+    let g:neocomplete#keyword_patterns = {}
+  end
+  let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+
+  let g:neocomplete#sources#syntax#min_keyword_length = 2
+
+  " keymappings
+  inoremap <expr><Space> pumvisible() ? neocomplete#close_popup() . "\<Space>"  : "\<Space>"
+  inoremap <expr><C-h> neocomplete#smart_close_popup() . "\<C-h>"
   let g:neocomplete#text_mode_filetypes = {
         \ 'txt' :1,
         \ 'md' :1,
         \ }
-endif
+
+  " Define dictionary.
+  let g:neocomplete#sources#dictionary#min_keyword_length = 2
+  let g:neocomplete#sources#dictionary#dictionaries = {
+        \ 'default' : '',
+        \ 'vimshell' : $HOME.'/.vimshell_hist',
+        \ 'ruby' : $HOME.'/.vim/dict/ruby.dict',
+        \ 'java' : $HOME.'/.vim/dict/java.dict',
+        \ }
+endfunction
+unlet s:hooks
+" }}}
 
 " unite.vim "{{{
 if s:bundled('unite.vim')
@@ -1098,7 +1146,7 @@ nnoremap [Quickfix]wg q:lgrep<Space>
 "}}}
 
 " vimfiler.vim"{{{
-if s:bundled('')
+if s:bundled('vimfiler')
   "nmap <Leader>v <Plug>(vimfiler_switch)
   "nnoremap <silent> <Leader>v :<C-u>VimFiler `=<SID>GetBufferDirectory()`<CR>
   nnoremap <silent> <Leader>v :<C-u>VimFiler<CR>
@@ -1169,9 +1217,10 @@ endif
 "}}}
 
 " vim-quickrun "{{{
-if s:bundled('vim-quickrun')
-  let g:quickrun_config = {}
-  let g:quickrun_config['*'] = {'runmode': "async:remote:vimproc"}
+let s:hooks = neobundle#get_hooks("vim-quickrun")
+let g:quickrun_config = {}
+function! s:hooks.on_source(bundle)
+  let g:quickrun_config._ = {'runner': "vimproc"}
   let g:quickrun_config["watchdogs_checker/_"]  = {
         \ "hook/quickfixsigns_enable/enable_exit" : 1,
         \ "hook/qfixgrep_enable/enable_exit" : 1
@@ -1182,7 +1231,8 @@ if s:bundled('vim-quickrun')
         \ "command" : "echo",
         \ "exec"    : "%c nop",
         \}
-endif
+endfunction
+unlet s:hooks
 " }}}
 
 " quickfixsigns_vim {{{
