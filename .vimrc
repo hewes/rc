@@ -35,12 +35,6 @@ if s:bundled('neobundle.vim')
   NeoBundleFetch 'Shougo/neobundle.vim.git'
 
   NeoBundle 'vim-jp/vital.vim.git'
-  "NeoBundleLazy 'm2ym/rsense.git', {
-  "\ 'autoload' : {'filetypes' : ['ruby'] }
-  "\ }
-  "NeoBundleLazy 'taichouchou2/vim-rsense.git',{
-  "\ 'autoload' : {'filetypes' : ['ruby'] }
-  "\ }
   NeoBundle 'scrooloose/nerdcommenter.git'
   NeoBundle 'tpope/vim-surround'
   NeoBundle 'tpope/vim-fugitive'
@@ -57,7 +51,6 @@ if s:bundled('neobundle.vim')
   NeoBundle 'Shougo/unite-build.git'
   if has('lua')
     NeoBundle 'Shougo/neocomplete.vim'
-    "NeoBundle 'Shougo/neocomplcache.git'
   else
     NeoBundle 'Shougo/neocomplcache.git'
   endif
@@ -82,7 +75,9 @@ if s:bundled('neobundle.vim')
   NeoBundle 'tyru/eskk.vim'
   NeoBundle 'osyo-manga/unite-quickfix'
   NeoBundle 'osyo-manga/vim-watchdogs', {'depends' : ['thica/vim-quickrun']}
-  NeoBundle 'ujihisa/unite-colorscheme.git'
+  NeoBundleLazy 'ujihisa/unite-colorscheme.git',{'autoload' : {
+        \ 'unite_sources' : 'colorscheme',
+        \  }}
   NeoBundle 'vim-scripts/DrawIt.git'
   NeoBundle 'vim-scripts/vcscommand.vim.git'
   NeoBundle 'rosstimson/scala-vim-support.git'
