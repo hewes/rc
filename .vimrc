@@ -64,7 +64,9 @@ if s:bundled('neobundle.vim')
         \ }, }
   NeoBundle 'Shougo/vim-vcs.git'
   NeoBundle 'Shougo/neosnippet.git'
-  NeoBundle 'Shougo/unite-outline.git'
+  NeoBundleLazy 'Shougo/unite-outline.git',{'autoload' : {
+        \ 'unite_sources' : 'outline',
+        \  }}
   NeoBundle 'kmnk/vim-unite-svn.git'
   NeoBundle 'kana/vim-smartchr.git'
   NeoBundle 'kana/vim-altercmd'
@@ -85,7 +87,6 @@ if s:bundled('neobundle.vim')
   NeoBundle 'hewes/cwordhl.vim.git'
   NeoBundle 'hewes/tmp-bookmarker.vim.git'
   NeoBundle 'kien/ctrlp.vim.git'
-  NeoBundle 'abudden/TagHighlight'
   NeoBundle 'tomtom/quickfixsigns_vim.git'
 endif
 
@@ -1194,7 +1195,8 @@ endif
 "}}}
 
 " eskk.vim"{{{
-if s:bundled('eskk.vim')
+let s:hooks = neobundle#get_hooks("eskk.vim")
+function! s:hooks.on_source(bundle)
   if !exists('g:eskk#disable') || !g:eskk#disable
     let g:eskk#directory  =  "~/.vim/.eskk"
     "let g:eskk#dictionary  =  { 'path': "~/.vim/dict/skk.dict",  'sorted': 0,  'encoding': 'utf-8',  }
@@ -1208,7 +1210,7 @@ if s:bundled('eskk.vim')
   endif
   " overwrite other plugin setting (e.g.) smartinput)
   imap <C-j> <Plug>(eskk:toggle)
-endif
+endfunction
 "}}}
 
 " vim-quickrun "{{{
