@@ -31,7 +31,11 @@ endif
 
 if s:bundled('neobundle.vim')
   call neobundle#rc($VIMBUNDLE)
-  let g:neobundle#types#git#default_protocol = 'git'
+  if empty($https_proxy)
+    let g:neobundle#types#git#default_protocol = 'git'
+  else
+    let g:neobundle#types#git#default_protocol = 'https'
+  endif
   NeoBundleFetch 'Shougo/neobundle.vim.git'
 
   NeoBundle 'vim-jp/vital.vim.git'
