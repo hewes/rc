@@ -573,6 +573,7 @@ autocmd MyAutoCmd CmdwinEnter * call s:init_cmdwin()
 function! s:init_cmdwin()
   nnoremap <buffer> <C-j> :<C-u>quit<CR>
   inoremap <buffer> <C-j> <ESC>:<C-u>quit<CR>
+  let b:neocomplete_sources = ['vim']
   startinsert!
 endfunction
 " }}}
@@ -925,11 +926,19 @@ function! s:hooks.on_source(bundle)
 
   " sources setting
 
+  " omni source
   if !exists('g:neocomplete#sources#omni#input_patterns')
     let g:neocomplete#sources#omni#input_patterns = {}
   end
   let g:neocomplete#sources#omni#input_patterns = {}
   let g:neocomplete#sources#omni#functions = {}
+
+  " vim source
+  if !exists('g:neocomplete#sources#vim#complete_functions')
+    let g:neocomplete#sources#vim#complete_functions = {}
+  endif
+  let g:neocomplete#sources#vim#complete_functions.Ref = 'ref#complete'
+  let g:neocomplete#sources#vim#complete_functions.Unite = 'untie#complete_source'
 
   if !exists('g:neocomplete#force_omni_input_patterns')
     let g:neocomplete#force_omni_input_patterns = {}
@@ -1365,8 +1374,7 @@ endfunction "}}}
 " help "{{{
 autocmd MyAutoCmd FileType help,ref-* call s:help_my_settings()
 function! s:help_my_settings()
-  nnoremap <buffer> <TAB> <C-w>w
-  nnoremap <silent> <buffer> qq :bd<CR>
+  nnoremap <silent> <buffer> <C-j> :bd<CR>
 endfunction "}}}
 " vimshell {{{
 autocmd MyAutoCmd FileType vimshell call s:vimshell_my_settings()
