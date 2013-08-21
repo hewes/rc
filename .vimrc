@@ -284,6 +284,13 @@ let mapleader= ','
 let g:mapleader = ','
 let g:maplocalleader = 'm'
 "}}}
+
+" sid mapping {{{
+nnoremap <sid>(command-line-enter) q:
+xnoremap <sid>(command-line-enter) q:
+nnoremap <sid>(command-line-norange) q:<C-u>
+"}}}
+
 " ---- insert mode {{{
 inoremap <C-e> <END>
 inoremap <C-f> <Right>
@@ -318,6 +325,10 @@ nnoremap tt <C-]>
 nnoremap tj <C-u>:tag<CR>
 nnoremap tk <C-u>:pop<CR>
 nnoremap tl <C-u>:tags<CR>
+
+" enter command window
+nmap : <sid>(command-line-enter)
+xmap : <sid>(command-line-enter)
 " }}}
 " ---- command mode {{{
 " bash like key-bind at cmdline
@@ -557,6 +568,14 @@ endif
 "}}}
 " }}}
 " ======== My Misc Setting {{{
+" command window setting commands --- {{{
+autocmd MyAutoCmd CmdwinEnter * call s:init_cmdwin()
+function! s:init_cmdwin()
+  nnoremap <buffer> <C-j> :<C-u>quit<CR>
+  inoremap <buffer> <C-j> <ESC>:<C-u>quit<CR>
+  startinsert!
+endfunction
+" }}}
 " diff commands --- {{{
 command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 command! -bar ToggleDiff if &diff | execute 'windo diffoff'  | else
