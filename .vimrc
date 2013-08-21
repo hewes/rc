@@ -29,70 +29,68 @@ if has('vim_starting') && isdirectory($NEOBUNDLE)
   set rtp+=$NEOBUNDLE
 endif
 
-if s:bundled('neobundle.vim')
-  call neobundle#rc($VIMBUNDLE)
-  if empty($https_proxy)
-    let g:neobundle#types#git#default_protocol = 'git'
-  else
-    let g:neobundle#types#git#default_protocol = 'https'
-  endif
-  NeoBundleFetch 'Shougo/neobundle.vim.git'
-
-  NeoBundle 'vim-jp/vital.vim.git'
-  NeoBundle 'scrooloose/nerdcommenter.git'
-  NeoBundle 'tpope/vim-surround'
-  NeoBundle 'tpope/vim-fugitive'
-  NeoBundle 'tpope/vim-repeat.git'
-  NeoBundle 'h1mesuke/vim-alignta.git'
-  NeoBundleLazy 'thinca/vim-quickrun', { 'autoload' : {
-        \ 'mappings' : [['nxo', '<Plug>(quickrun)']],
-        \ 'commands' : ['QuickRun', 'UniteQuickRunConfig'],
-        \ }}
-  NeoBundle 'thinca/vim-ref.git'
-  NeoBundle 'fuenor/qfixgrep'
-  NeoBundle 'othree/eregex.vim.git'
-  NeoBundle 'Shougo/unite.vim.git'
-  NeoBundle 'Shougo/unite-build.git'
-  if has('lua')
-    NeoBundle 'Shougo/neocomplete.vim'
-  else
-    NeoBundle 'Shougo/neocomplcache.git'
-  endif
-  NeoBundle 'ujihisa/neco-look.git'
-  NeoBundle 'Shougo/vimshell.git'
-  NeoBundle 'Shougo/vimfiler.git'
-  NeoBundle 'Shougo/vimproc.git' , { 'build' : {
-        \ 'mingw' : 'make -f make_mingw.mak',
-        \ 'mac'   : 'make -f make_mac.mak',
-        \ 'unix'  : 'make -f make_unix.mak',
-        \ }, }
-  NeoBundle 'Shougo/vim-vcs.git'
-  NeoBundle 'Shougo/neosnippet.git'
-  NeoBundleLazy 'Shougo/unite-outline.git',{'autoload' : {
-        \ 'unite_sources' : 'outline',
-        \  }}
-  NeoBundle 'kmnk/vim-unite-svn.git'
-  NeoBundle 'kana/vim-smartchr.git'
-  NeoBundle 'kana/vim-altercmd'
-  NeoBundle 'kana/vim-smartinput'
-  NeoBundle 'kana/vim-operator-user'
-  NeoBundle 'kana/vim-operator-replace'
-  NeoBundle 'tsukkee/unite-help'
-  NeoBundle 'tyru/eskk.vim'
-  NeoBundle 'osyo-manga/unite-quickfix'
-  NeoBundle 'osyo-manga/vim-watchdogs', {'depends' : ['thica/vim-quickrun']}
-  NeoBundleLazy 'ujihisa/unite-colorscheme.git',{'autoload' : {
-        \ 'unite_sources' : 'colorscheme',
-        \  }}
-  NeoBundle 'vim-scripts/DrawIt.git'
-  NeoBundle 'vim-scripts/vcscommand.vim.git'
-  NeoBundle 'rosstimson/scala-vim-support.git'
-  NeoBundle 'hewes/unite-gtags.git'
-  NeoBundle 'hewes/cwordhl.vim.git'
-  NeoBundle 'hewes/tmp-bookmarker.vim.git'
-  NeoBundle 'kien/ctrlp.vim.git'
-  NeoBundle 'tomtom/quickfixsigns_vim.git'
+call neobundle#rc($VIMBUNDLE)
+if empty($https_proxy)
+  let g:neobundle#types#git#default_protocol = 'git'
+else
+  let g:neobundle#types#git#default_protocol = 'https'
 endif
+NeoBundleFetch 'Shougo/neobundle.vim.git'
+
+NeoBundle 'vim-jp/vital.vim.git'
+NeoBundle 'scrooloose/nerdcommenter.git'
+NeoBundle 'tpope/vim-surround'
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'tpope/vim-repeat.git'
+NeoBundle 'h1mesuke/vim-alignta.git'
+NeoBundleLazy 'thinca/vim-quickrun', { 'autoload' : {
+      \ 'mappings' : [['nxo', '<Plug>(quickrun)']],
+      \ 'commands' : ['QuickRun', 'UniteQuickRunConfig'],
+      \ }}
+NeoBundle 'thinca/vim-ref.git'
+NeoBundle 'fuenor/qfixgrep'
+NeoBundle 'othree/eregex.vim.git'
+NeoBundle 'Shougo/unite.vim.git'
+NeoBundle 'Shougo/unite-build.git'
+if has('lua')
+  NeoBundle 'Shougo/neocomplete.vim'
+else
+  NeoBundle 'Shougo/neocomplcache.git'
+endif
+NeoBundle 'ujihisa/neco-look.git'
+NeoBundle 'Shougo/vimshell.git'
+NeoBundle 'Shougo/vimfiler.git'
+NeoBundle 'Shougo/vimproc.git' , { 'build' : {
+      \ 'mingw' : 'make -f make_mingw.mak',
+      \ 'mac'   : 'make -f make_mac.mak',
+      \ 'unix'  : 'make -f make_unix.mak',
+      \ }, }
+NeoBundle 'Shougo/vim-vcs.git'
+NeoBundle 'Shougo/neosnippet.git'
+NeoBundleLazy 'Shougo/unite-outline.git',{'autoload' : {
+      \ 'unite_sources' : 'outline',
+      \  }}
+NeoBundle 'kmnk/vim-unite-svn.git'
+NeoBundle 'kana/vim-smartchr.git'
+NeoBundle 'kana/vim-altercmd'
+NeoBundle 'kana/vim-smartinput'
+NeoBundle 'kana/vim-operator-user'
+NeoBundle 'kana/vim-operator-replace'
+NeoBundle 'tsukkee/unite-help'
+NeoBundle 'tyru/eskk.vim'
+NeoBundle 'osyo-manga/unite-quickfix'
+NeoBundle 'osyo-manga/vim-watchdogs', {'depends' : ['thica/vim-quickrun']}
+NeoBundleLazy 'ujihisa/unite-colorscheme.git',{'autoload' : {
+      \ 'unite_sources' : 'colorscheme',
+      \  }}
+NeoBundle 'vim-scripts/DrawIt.git'
+NeoBundle 'vim-scripts/vcscommand.vim.git'
+NeoBundle 'rosstimson/scala-vim-support.git'
+NeoBundle 'hewes/unite-gtags.git'
+NeoBundle 'hewes/cwordhl.vim.git'
+NeoBundle 'hewes/tmp-bookmarker.vim.git'
+NeoBundle 'kien/ctrlp.vim.git'
+NeoBundle 'tomtom/quickfixsigns_vim.git'
 
 filetype plugin indent on
 " }}}
