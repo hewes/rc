@@ -1005,10 +1005,6 @@ if s:bundled('unite.vim')
   nnoremap <silent> [unite]sb :Unite svn/blame<CR>
   nnoremap <silent> [unite]ss :Unite svn/status<CR>
   nnoremap <C-j> :Unite gtags/context<CR>
-  for key_number in [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    execute printf('nnoremap <silent> [unite]%d :<C-u> call UniteCurrentProjectShortcut(%d)<CR>', key_number, key_number)
-  endfor
-
   function! UniteCurrentProjectShortcut(key)
     if exists("t:local_unite") && has_key(t:local_unite, a:key)
       execute t:local_unite[a:key]
@@ -1038,6 +1034,10 @@ if s:bundled('unite.vim')
     return l:candidates
   endfunction
   call unite#define_source(s:local_unite_source)
+  for key_number in [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    execute printf('nnoremap <silent> [unite]%d :<C-u> call UniteCurrentProjectShortcut(%d)<CR>', key_number, key_number)
+  endfor
+
   nnoremap [unite]<SPACE> :Unite local<CR>
 
   let g:unite_enable_ignore_case = 1
