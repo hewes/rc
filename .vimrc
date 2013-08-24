@@ -78,6 +78,7 @@ NeoBundle 'kana/vim-operator-user'
 NeoBundle 'kana/vim-operator-replace'
 NeoBundle 'tsukkee/unite-help'
 NeoBundle 'tyru/eskk.vim'
+NeoBundle 'osyo-manga/vim-anzu'
 NeoBundle 'osyo-manga/unite-quickfix'
 NeoBundle 'osyo-manga/vim-watchdogs', {'depends' : ['thica/vim-quickrun']}
 NeoBundleLazy 'ujihisa/unite-colorscheme.git',{'autoload' : {
@@ -92,6 +93,7 @@ NeoBundle 'hewes/tmp-bookmarker.vim.git'
 NeoBundle 'kien/ctrlp.vim.git'
 NeoBundle 'tomtom/quickfixsigns_vim.git'
 NeoBundle 'bling/vim-airline.git'
+NeoBundle 'bling/vim-bufferline.git'
 
 filetype plugin indent on
 " }}}
@@ -1230,6 +1232,21 @@ if s:bundled('tmp-bookmarker.vim')
   nnoremap <silent> mm :<C-u>TmpBookmarkNext<CR>
   nnoremap <silent> md :<C-u>TmpBookmarkDelete<CR>
 endif
+" }}}
+
+" vim-anzu {{{
+nmap n <Plug>(anzu-n)
+nmap N <Plug>(anzu-N)
+nmap * <Plug>(anzu-star)
+nmap # <Plug>(anzu-sharp)
+" }}}
+
+" vim-bufferline{{{
+let g:bufferline_echo = 0
+let g:bufferline_show_bufnr = 0
+let g:bufferline_active_buffer_left = '['
+let g:bufferline_active_buffer_right = ']'
+let g:bufferline_modified = '+'
 " }}}
 " }}}
 " ======== Each Language Setting {{{
