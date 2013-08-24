@@ -91,6 +91,7 @@ NeoBundle 'hewes/cwordhl.vim.git'
 NeoBundle 'hewes/tmp-bookmarker.vim.git'
 NeoBundle 'kien/ctrlp.vim.git'
 NeoBundle 'tomtom/quickfixsigns_vim.git'
+NeoBundle 'bling/vim-airline.git'
 
 filetype plugin indent on
 " }}}
@@ -174,7 +175,7 @@ set ignorecase smartcase wrapscan incsearch hlsearch grepprg=internal
 set noimdisable noimcmdline
 set iminsert=1 imsearch=1
 
-" beyond line 
+" beyond line
 set whichwrap=b,s,h,l,<,>,[,]
 " No auto return
 set textwidth=0
@@ -404,13 +405,6 @@ catch /E185/
   colorscheme torte
 endtry
 
-if has('syntax')
-  augroup MyAutoCmd
-    autocmd InsertEnter * call s:change_status_line('Enter')
-    autocmd InsertLeave * call s:change_status_line('Leave')
-  augroup END
-endif
-
 " change cursor shape
 if &term == "xterm-256color"
   "let &t_SI .= "\eP\e[5 q\e\\"
@@ -419,68 +413,13 @@ elseif &term == "xterm"
   "let &t_SI .= "\e[5 q"
   "let &t_EI .= "\e[1 q"
 endif
-
-let s:slhlcmd = ''
-let g:hi_insert = 'highlight StatusLine ctermfg=white ctermbg=21 cterm=none'
-function! s:change_status_line(mode)
-  if a:mode == 'Enter'
-    silent! let s:slhlcmd = 'highlight ' . s:get_highlight('StatusLine')
-    silent exec g:hi_insert
-  else
-    highlight clear StatusLine
-    silent exec s:slhlcmd
-  endif
-endfunction
-
-function! s:get_highlight(hi)
-  redir => hl
-  exec 'highlight '.a:hi
-  redir END
-  let hl = substitute(hl, '[\r\n]', '', 'g')
-  let hl = substitute(hl, 'xxx', '', '')
-  return hl
-endfunction
 " }}}
 
-" ----- Status line setting {{{
-" status line format
-if v:version < 703
-  function! s:my_dir_name()
-    let project = get(t:, 'project', "")
-    if !empty(project)
-      let project = project . "\ "
-    end
-    return project . "%f"
-  endfunction
-else
-  function! s:my_dir_name()
-    return "%f"
-  endfunction
-end
-
-function! GetVCSInfo()
-  "if exists("g:loaded_vcs")
-  "return vcs#info("(%s)-[%b]", "(%s)-[%b|%a]")
-  "else
-  if exists("g:loaded_fugitive")
-    return fugitive#statusline()
-  endif
-  "endif
-endfunction
-
-function! MyStatusLine()
-  return "\%{GetVCSInfo()}". s:my_dir_name(). "\ %m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c][TAB:". tabpagenr() . "/". tabpagenr('$') .  "]"
-endfunction
-
-set statusline=%!MyStatusLine()
-"set statusline=%F%m%r%h%w\%=[FORMAT=%{&ff}]\[TYPE=%Y]\%{'[ENC='.(&fenc!=''?&fenc:&enc).']'}[%05l/%L:%04c]
-"}}}
-
-" ----- Tab label setting {{{ 
+" ----- Tab label setting {{{
 function! s:buf_name_on_tab(tab_num)
   let buflist  =  tabpagebuflist(a:tab_num)
   let winnr    =  tabpagewinnr(a:tab_num)
-  return bufname(buflist[winnr - 1]) 
+  return bufname(buflist[winnr - 1])
 endfunction
 
 if v:version < 703
@@ -671,7 +610,7 @@ cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 
 " Normal Mode <C-k> -- kill buffer, not close window {{{
 " http://nanasi.jp/articles/vim/kwbd_vim.html
-:com! Kwbd let kwbd_bn= bufnr("%")|enew|exe "bdel ".kwbd_bn|unlet kwbd_bn 
+:com! Kwbd let kwbd_bn= bufnr("%")|enew|exe "bdel ".kwbd_bn|unlet kwbd_bn
 nnoremap <C-k>  :Kwbd<CR>
 "}}}
 
@@ -727,8 +666,8 @@ endfunction
 if !has('gui_running') && !(has('win32') || has('win64'))
   autocmd MyAutoCmd BufWritePost $MYVIMRC nested source $MYVIMRC
 else
-  autocmd MyAutoCmd BufWritePost $MYVIMRC source $MYVIMRC | 
-        \if has('gui_running') | source $MYGVIMRC  
+  autocmd MyAutoCmd BufWritePost $MYVIMRC source $MYVIMRC |
+        \if has('gui_running') | source $MYGVIMRC
   autocmd MyAutoCmd BufWritePost $MYGVIMRC if has('gui_running') | source $MYGVIMRC
 endif
 " }}}
@@ -753,7 +692,7 @@ let g:jp_sticky_table = {
 let g:sticky_table = g:jp_sticky_table
 function! s:sticky_func()
   let l:special_table = {
-        \"\<ESC>" : "\<ESC>", "\<Space>" : ';', "\<CR>" : ";\<CR>", 
+        \"\<ESC>" : "\<ESC>", "\<Space>" : ';', "\<CR>" : ";\<CR>",
         \"\<TAB>" : "\<C-o>W" , "\<BS>" : "\<C-o>B"
         \}
 
@@ -852,7 +791,7 @@ if s:bundled('neocomplcache')
         \ 'Ref' : 'ref#complete',
         \ 'Unite' : 'unite#complete_source',
         \ 'VimShellExecute' : 'vimshell#complete#vimshell_execute_complete#completefunc',
-        \ 'VimShellTerminal' : 'vimshell#complete#vimshell_execute_complete#completefunc', 
+        \ 'VimShellTerminal' : 'vimshell#complete#vimshell_execute_complete#completefunc',
         \ 'VimShellInteractive' : 'vimshell#complete#vimshell_execute_complete#completefunc',
         \ 'VimFiler' : 'vimfiler#complete',
         \}
@@ -1013,8 +952,8 @@ if s:bundled('unite.vim')
     endif
   endfunction
   let s:local_unite_source = {
-        \ "name"        : "local", 
-        \ "description" : 'Unite commands defined at t:local_unite', 
+        \ "name"        : "local",
+        \ "description" : 'Unite commands defined at t:local_unite',
         \ }
   function! s:local_unite_source.gather_candidates(args, context)
     let l:candidates = []
@@ -1333,8 +1272,8 @@ function! s:ruby_my_settings()
   inoremap <buffer> <expr> # <SID>sysid_match(["rubyString", "rubyStringDelimiter", "rubyComment"]) ? "#{}\<LEFT>" : "#"
   inoremap <buffer> <expr> " smartchr#one_of('"', "\"\"\<LEFT>")
   let b:buffer_sticky = {
-        \"#" : "#{}\<LEFT>", "(" : "()\<LEFT>", 
-        \"{" : "{}\<LEFT>", "[" : "[]\<LEFT>", 
+        \"#" : "#{}\<LEFT>", "(" : "()\<LEFT>",
+        \"{" : "{}\<LEFT>", "[" : "[]\<LEFT>",
         \}
 endfunction "}}}
 
