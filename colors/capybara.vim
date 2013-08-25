@@ -1,3 +1,5 @@
+" customize wambat256
+
 set background=dark
 
 if version > 580
@@ -8,7 +10,6 @@ if version > 580
 endif
 
 let colors_name = "capybara"
-
 
 " General colors
 hi Normal		ctermfg=252		ctermbg=234		cterm=none		guifg=#e3e0d7	guibg=#242424	gui=none
@@ -68,10 +69,10 @@ hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
 " Syntax highlighting
 hi Keyword		ctermfg=111		cterm=none		guifg=#88b8f6	gui=none
 hi Statement	ctermfg=111		cterm=none		guifg=#88b8f6	gui=none
-hi Constant		ctermfg=173		cterm=none		guifg=#e5786d	gui=none
+hi Constant		ctermfg=209		cterm=none		guifg=#e5786d	gui=none
 hi Number		ctermfg=173		cterm=none		guifg=#e5786d	gui=none
-hi PreProc		ctermfg=173		cterm=none		guifg=#e5786d	gui=none
-hi Function		ctermfg=192		cterm=none		guifg=#cae982	gui=none
+hi PreProc		ctermfg=99		cterm=none		guifg=#e5786d	gui=none
+hi Function		ctermfg=180		cterm=none		guifg=#cae982	gui=none
 hi Identifier	ctermfg=192		cterm=none		guifg=#cae982	gui=none
 hi Type			ctermfg=186		cterm=none		guifg=#d4d987	gui=none
 hi Special		ctermfg=229		cterm=none		guifg=#eadead	gui=none
