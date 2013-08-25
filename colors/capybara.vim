@@ -52,8 +52,7 @@ hi IncSearch term=NONE cterm=NONE ctermfg=white ctermbg=52
 "hi PmenuThumb
 "hi Question
 "hi Scrollbar
-"hi SignColumn
-"hi SpellBad
+hi SignColumn ctermfg=14 ctermbg=234 guifg=Cyan guibg=Black
 "hi SpellCap
 "hi SpellLocal
 "hi SpellRare
