@@ -89,7 +89,6 @@ NeoBundle 'vim-scripts/vcscommand.vim.git'
 NeoBundle 'rosstimson/scala-vim-support.git'
 NeoBundle 'hewes/unite-gtags.git'
 NeoBundle 'hewes/cwordhl.vim.git'
-NeoBundle 'hewes/tmp-bookmarker.vim.git'
 NeoBundle 'kien/ctrlp.vim.git'
 NeoBundle 'tomtom/quickfixsigns_vim.git'
 NeoBundle 'bling/vim-airline.git'
@@ -1232,16 +1231,6 @@ endif
 " operator-replace {{{
 if s:bundled('operator-replace')
   map R <Plug>(operator-replace)
-endif
-" }}}
-
-" tmp-bookmarker.vim {{{
-if s:bundled('tmp-bookmarker.vim')
-  nnoremap <silent> ma :<C-u>TmpBookmarkAdd<CR>
-  nnoremap <silent> mp :<C-u>TmpBookmarkPop<CR>
-  nnoremap ms :<C-u>TmpBookmarkShow<CR>
-  nnoremap <silent> mm :<C-u>TmpBookmarkNext<CR>
-  nnoremap <silent> md :<C-u>TmpBookmarkDelete<CR>
 endif
 " }}}
 
