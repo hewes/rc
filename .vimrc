@@ -943,7 +943,7 @@ if s:bundled('unite.vim')
   nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
   nnoremap <silent> [unite]p :Unite bookmark -default-action=cd -no-start-insert<CR>
   " Explore home dir
-  nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file file/new -input='. $HOME .'/<CR>'
+  nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file file/new -input='. substitute($HOME, '\' ,'/', 'g') .'/<CR>'
   nnoremap <silent> [unite]H :<C-u>Unite history/yank<CR>
   nnoremap <silent> [unite]j :Unite buffer_tab -no-start-insert<CR>
   nnoremap <silent> [unite]l :Unite -auto-preview line<CR>
