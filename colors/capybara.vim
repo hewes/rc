@@ -58,7 +58,7 @@ hi SignColumn ctermfg=14 ctermbg=234 guifg=Cyan guibg=Black
 "hi SpellRare
 "hi TabLine
 "hi TabLineFill
-"hi TabLineSel
+hi TabLineSel ctermfg=232		ctermbg=192						guifg=#080808	guibg=#cae982
 "hi Tooltip
 "hi User1
 "hi User9
