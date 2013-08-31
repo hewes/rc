@@ -1249,6 +1249,23 @@ let g:bufferline_active_buffer_left = '['
 let g:bufferline_active_buffer_right = ']'
 let g:bufferline_modified = '+'
 " }}}
+
+" vim-surround{{{
+let s:hooks = neobundle#get_hooks("vim-surround")
+function! s:hooks.on_source(bundle)
+  let g:surround_no_mappings = 1
+  nmap ds  <Plug>Dsurround
+  nmap cs  <Plug>Csurround
+  nmap ys  <Plug>Ysurround
+  nmap yS  <Plug>YSurround
+  nmap yss <Plug>Yssurround
+  nmap ySs <Plug>YSsurround
+  nmap ySS <Plug>YSsurround
+  xmap s   <Plug>VSurround
+  xmap gs  <Plug>VgSurround
+endfunction
+unlet s:hooks
+"}}}
 " }}}
 " ======== Each Language Setting {{{
 " Java {{{
