@@ -516,6 +516,7 @@ if has('multi_byte')
 endif
 " fileformat[fileencoding]
 let g:airline_section_y = "%{strlen(&ff)?&ff:''}" . "[%{strlen(&fenc)?&fenc:&enc}]"
+let g:airline_section_z = "L:%l/%L C:%4c"
 " }}}
 " }}}
 " ======== My Misc Setting {{{
