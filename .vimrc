@@ -937,8 +937,8 @@ if s:bundled('unite.vim')
   nnoremap <silent> [unite]m :Unite -buffer-name=file file_mru<CR>
   nnoremap <silent> [unite]r :UniteResume<CR>
   nnoremap [unite]R :Unite ref/
-  nnoremap <silent> [unite]b :UniteWithBufferDir -buffer-name=files file file/new<CR>
-  nnoremap <silent> [unite]c :UniteWithCurrentDir -buffer-name=files file file/new<CR>
+  nnoremap <silent> <expr> [unite]b ':Unite -buffer-name=files file/new file:'. expand("%:h"). '<CR>'
+  nnoremap <silent> [unite]c :Unite -buffer-name=files file file/new<CR>
   nnoremap <silent> [unite]t :Unite tab<CR>
   nnoremap <silent> [unite]y :Unite register<CR>
   nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
