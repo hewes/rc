@@ -306,11 +306,6 @@ nnoremap <Leader>a :Ref<SPACE>alc<SPACE>
 
 nnoremap <Space> <Nop>
 nnoremap <SPACE><SPACE> <C-^>
-" Quick save and quit.
-nnoremap <silent> <Space>w :<C-u>update<CR>
-nnoremap <silent> <Space>W :<C-u>update!<CR>
-nnoremap <silent> <Space>q :<C-u>quit<CR>
-nnoremap <silent> <Space>Q :<C-u>quit!<CR>
 nnoremap ,t :tabnew<SPACE>
 nnoremap Y y$
 nnoremap + <C-w>+
@@ -508,7 +503,7 @@ endif
 
 " ----- airline {{{
 " theme is one of autoload/airline/themes
-let g:airline_theme = 'wombat'
+let g:airline_theme = 'bubblegum'
 if has('multi_byte')
   " TODO should only enable on environment where the font is patched
   let g:airline_powerline_fonts = 0
@@ -723,6 +718,22 @@ function! s:sticky_func()
 endfunction
 "}}}
 
+" ---- toggle vim setting "{{{
+nnoremap <silent> <expr> <SPACE> <SID>toggle_setting()
+let s:toggle_map = {
+      \ 'p' : 'paste',
+      \ 'w' : 'wrap',
+      \ }
+function! s:toggle_setting()
+  let l:key = getchar()
+  if has_key(s:toggle_map, nr2char(l:key))
+    return ":set ". "inv". s:toggle_map[nr2char(l:key)] . "\n"
+  else
+    return "<SPACE>" . nr2char(l:key)
+  endif
+endfunction
+
+" }}}
 " ---- reopen/write file with specified encoding {{{
 command! -bang -complete=file -nargs=? Utf8 edit<bang> ++enc=utf-8 <args>
 command! -bang -complete=file -nargs=? Sjis edit<bang> ++enc=cp932 <args>
