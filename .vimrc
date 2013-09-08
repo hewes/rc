@@ -92,7 +92,6 @@ NeoBundle 'hewes/cwordhl.vim.git'
 NeoBundle 'kien/ctrlp.vim.git'
 NeoBundle 'tomtom/quickfixsigns_vim.git'
 NeoBundle 'bling/vim-airline.git'
-NeoBundle 'bling/vim-bufferline.git'
 
 filetype plugin indent on
 " }}}
@@ -937,7 +936,7 @@ if s:bundled('unite.vim')
   nnoremap <silent> [unite]m :Unite -buffer-name=file file_mru<CR>
   nnoremap <silent> [unite]r :UniteResume<CR>
   nnoremap [unite]R :Unite ref/
-  nnoremap <silent> <expr> [unite]b ':Unite -buffer-name=files file/new file:'. expand("%:h"). '<CR>'
+  nnoremap <silent> [unite]b :UniteWithBufferDir file file/new<CR>
   nnoremap <silent> [unite]c :Unite -buffer-name=files file file/new<CR>
   nnoremap <silent> [unite]t :Unite tab<CR>
   nnoremap <silent> [unite]y :Unite register<CR>
