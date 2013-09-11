@@ -92,6 +92,7 @@ NeoBundle 'hewes/cwordhl.vim.git'
 NeoBundle 'kien/ctrlp.vim.git'
 NeoBundle 'tomtom/quickfixsigns_vim.git'
 NeoBundle 'bling/vim-airline.git'
+NeoBundle 'sjl/gundo.vim.git'
 
 filetype plugin indent on
 " }}}
@@ -732,8 +733,8 @@ function! s:toggle_setting()
     return "<SPACE>" . nr2char(l:key)
   endif
 endfunction
-
 " }}}
+
 " ---- reopen/write file with specified encoding {{{
 command! -bang -complete=file -nargs=? Utf8 edit<bang> ++enc=utf-8 <args>
 command! -bang -complete=file -nargs=? Sjis edit<bang> ++enc=cp932 <args>
