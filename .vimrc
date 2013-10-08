@@ -49,7 +49,6 @@ NeoBundleLazy 'thinca/vim-quickrun', { 'autoload' : {
       \ }}
 NeoBundle 'thinca/vim-ref.git'
 NeoBundle 'fuenor/qfixgrep'
-NeoBundle 'othree/eregex.vim.git'
 NeoBundle 'Shougo/unite.vim.git'
 NeoBundle 'Shougo/unite-build.git'
 if has('lua')
