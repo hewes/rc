@@ -60,9 +60,13 @@ try
 
   " Input support
   if has('lua')
-    NeoBundle "Shougo/neocomplete.vim"
+    NeoBundleLazy "Shougo/neocomplete.vim", { 'autoload' : {
+        \ 'insert' : 1,
+        \ }}
   else
-    NeoBundle "Shougo/neocomplcache"
+    NeoBundleLazy "Shougo/neocomplcache", { 'autoload' : {
+        \ 'insert' : 1,
+        \ }}
   endif
   NeoBundle 'ujihisa/neco-look.git'
   NeoBundle 'Shougo/neosnippet.git'
