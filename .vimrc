@@ -770,6 +770,8 @@ nnoremap <silent> <expr> <SPACE> <SID>toggle_setting()
 let s:toggle_map = {
       \ 'p' : 'paste',
       \ 'w' : 'wrap',
+      \ 'n' : 'number',
+      \ 'l' : 'list',
       \ }
 function! s:toggle_setting()
   let l:key = getchar()
