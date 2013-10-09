@@ -125,7 +125,7 @@ try
   " Etc
   NeoBundleLazy 'vim-jp/vital.vim.git', { 'autoload' : {
         \ 'commands' : ['Vitalize'],
-        \ }}                         
+        \ }}
   NeoBundle 'Shougo/vimproc.git' , { 'build' : {
         \ 'mingw' : 'make -f make_mingw.mak',
         \ 'mac'   : 'make -f make_mac.mak',
@@ -818,8 +818,28 @@ function! s:skip_position()
   return
 endfunction
 inoremap <Plug>(skip_position) <C-o>:call <SID>skip_position()<CR>
-
 " }}}
+
+" ---- check indent is valid {{{
+function! s:validate_ruby_indent()
+  let wsv = winsaveview()
+  normal G
+  let l:last = line('.')
+  call winrestview(wsv)
+
+  let l:invalid_linenum = []
+  let l:i = 0
+  while l:i != l:last
+    let l:i = l:i + 1
+    if GetRubyIndent(l:i) != indent(l:i)
+      call add(l:invalid_linenum, l:i)
+    endif
+  endwhile
+  echomsg string(l:invalid_linenum)
+endfunction
+" }}}
+command! ValidateRubyIndent call <SID>validate_ruby_indent()
+
 "}}}
 " ======== Plugin Settings {{{
 " ----- neocomplcache.vim {{{
@@ -955,6 +975,8 @@ function! s:configure_neocomplete(bundle)
           \ 'ruby' : $HOME.'/.vim/dict/ruby.dict',
           \ 'java' : $HOME.'/.vim/dict/java.dict',
           \ }
+    call neocomplete#custom#source('include', 'disabled_filetypes', {'_' : 1})
+    call neocomplete#custom#source('tag', 'disabled_filetypes', {'vim' : 1})
   endfunction
 endfunction
 if has('lua')
@@ -1193,8 +1215,8 @@ nnoremap [Quickfix]wg q:lgrep<Space>
 " vimfiler.vim"{{{
 function! s:configure_vimfiler(bundle)
   "nnoremap <silent> <Leader>v :<C-u>VimFiler `=<SID>GetBufferDirectory()`<CR>
-  nnoremap <silent> <Leader>v :<C-u>VimFiler<CR>
-  nnoremap <silent> <Leader>ff :<C-u>VimFilerSimple<CR>
+  nnoremap <silent> <Leader>f :<C-u>VimFiler<CR>
+  nnoremap <silent> <Leader>s :<C-u>VimFilerSimple<CR>
 
   function! a:bundle.hooks.on_source(bundle)
     call vimfiler#set_execute_file('vim', 'vim')
@@ -1299,7 +1321,7 @@ function! s:configure_watchdogs(bundle)
   let g:watchdogs_check_BufWritePost_enable = 1
   call watchdogs#setup(g:quickrun_config)
 endfunction
-call s:config_bundle('vim-watchdogs', function('s:configure_watchdogs')) 
+call s:config_bundle('vim-watchdogs', function('s:configure_watchdogs'))
 " }}}
 
 " operator-replace {{{
@@ -1406,6 +1428,7 @@ function! s:ruby_my_settings()
   inoremap <buffer> <expr> - <SID>sysid_match(["rubyString", "rubyStringDelimiter", "rubyComment"]) ? "-" : smartchr#one_of(' - ', ' -= ', '-')
   inoremap <buffer> <expr> # <SID>sysid_match(["rubyString", "rubyStringDelimiter", "rubyComment"]) ? "#{}\<LEFT>" : "#"
   inoremap <buffer> <expr> " smartchr#one_of('"', "\"\"\<LEFT>")
+  nnoremap <buffer> <Leader>v :ValidateRubyIndent<CR>
   let b:buffer_sticky = {
         \"#" : "#{}\<LEFT>", "(" : "()\<LEFT>",
         \"{" : "{}\<LEFT>", "[" : "[]\<LEFT>",
