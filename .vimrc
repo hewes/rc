@@ -335,10 +335,12 @@ let g:mapleader = ','
 let g:maplocalleader = 'm'
 "}}}
 
-" sid mapping {{{
-nnoremap <sid>(command-line-enter) q:
-xnoremap <sid>(command-line-enter) q:
-nnoremap <sid>(command-line-norange) q:<C-u>
+" cmdwin mapping {{{
+"nmap : <sid>(command-line-enter)
+"xmap : <sid>(command-line-enter)
+"nnoremap <sid>(command-line-enter) q:
+"xnoremap <sid>(command-line-enter) q:
+"nnoremap <sid>(command-line-norange) q:<C-u>
 "}}}
 
 " ---- insert mode {{{
@@ -369,10 +371,6 @@ nnoremap tt <C-]>
 nnoremap tj <C-u>:tag<CR>
 nnoremap tk <C-u>:pop<CR>
 nnoremap tl <C-u>:tags<CR>
-
-" enter command window
-nmap : <sid>(command-line-enter)
-xmap : <sid>(command-line-enter)
 " }}}
 " ---- command mode {{{
 " bash like key-bind at cmdline
