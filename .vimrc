@@ -14,7 +14,11 @@ let s:load_error_bundles = []
 function! s:config_bundle(bundle_name, config_func)
   try
     let l:bundle = neobundle#get(a:bundle_name)
-    call a:config_func(l:bundle)
+    if empty(l:bundle)
+      echoerr a:bundle_name . " is not bundled"
+    else
+      call a:config_func(l:bundle)
+    endif
   catch
     call add(s:load_error_bundles, a:bundle_name)
   endtry
@@ -43,7 +47,7 @@ try
         \ 'unite_sources' : 'outline',
         \  }}
   NeoBundleLazy 'kmnk/vim-unite-svn.git', {'autoload' : {
-        \ 'unite_sources' : 'svn',
+        \ 'unite_sources' : ['svn/status', 'svn/info', 'svn/blame', 'svn/diff'],
         \  }}
   NeoBundleLazy 'tsukkee/unite-help' ,{'autoload' : {
         \ 'unite_sources' : 'help',
@@ -55,7 +59,7 @@ try
         \ 'unite_sources' : 'colorscheme',
         \  }}
   NeoBundleLazy 'hewes/unite-gtags.git', {'autoload' : {
-        \ 'unite_sources' : 'gtags',
+        \ 'unite_sources' : ['gtags/context', 'gtags/ref', 'gtags/def', 'gtags/completion', 'gtags/grep'],
         \  }}
 
   " Input support
@@ -69,7 +73,9 @@ try
         \ }}
   endif
   NeoBundle 'ujihisa/neco-look.git'
-  NeoBundle 'Shougo/neosnippet.git'
+  NeoBundleLazy 'Shougo/neosnippet.git',  {'autoload' : {
+        \ 'insert' : 1,
+        \ }}
   NeoBundle 'kana/vim-smartchr.git'
   NeoBundle 'kana/vim-smartinput'
   NeoBundle 'tyru/eskk.vim'
@@ -85,11 +91,9 @@ try
   " Quickrun
   NeoBundle 'osyo-manga/vim-watchdogs', {'depends' : ['thica/vim-quickrun']}
   NeoBundleLazy 'thinca/vim-quickrun', { 'autoload' : {
-        \ 'mappings' : [['nxo', '<Plug>(quickrun)']],
+        \ 'mappings' : ['nxo', '<Plug>(quickrun)'],
         \ 'commands' : ['QuickRun', 'UniteQuickRunConfig'],
         \ }}
-  " for watchdogs
-  NeoBundle 'tomtom/quickfixsigns_vim.git'
 
   " VCS
   NeoBundle 'tpope/vim-fugitive'
@@ -100,18 +104,22 @@ try
   NeoBundle 'bling/vim-airline.git'
   NeoBundle 'osyo-manga/vim-anzu'
   NeoBundle 'hewes/cwordhl.vim.git'
+  NeoBundle 'tomtom/quickfixsigns_vim.git'
 
   " Programming Language
   NeoBundle 'rosstimson/scala-vim-support.git'
 
   " Util
   NeoBundle 'Shougo/vimshell.git'
-  NeoBundle 'Shougo/vimfiler.git'
+  NeoBundleLazy 'Shougo/vimfiler.git', { 'autoload' : {
+        \ 'commands' : ['VimFiler', 'VimFilerSimple'],
+        \ }}
   NeoBundle 'sjl/gundo.vim.git', { 'autoload' : {
         \ 'commands' : ['GundoShow', 'GundoHide', 'GundoToggle', 'GundoRenderGraph'],
         \ }}
   NeoBundleLazy 'thinca/vim-ref.git', { 'autoload' : {
         \ 'commands' : ['Ref'],
+        \ 'mappings' : ['<Plug>(ref-keyword)'],
         \ }}
 
   " Etc
@@ -343,9 +351,6 @@ inoremap <C-l> <C-o>w
 " }}}
 " ---- normal mode {{{
 nnoremap <silent> <Leader><Leader> :bnext<CR>
-nnoremap <Leader>a :Ref<SPACE>alc<SPACE>
-silent! nmap <silent> <unique> K <Plug>(ref-keyword)
-silent! vmap <silent> <unique> K <Plug>(ref-keyword)
 
 nnoremap <Space> <Nop>
 nnoremap <SPACE><SPACE> <C-^>
@@ -1122,7 +1127,7 @@ function! s:configure_smartchr(bundle)
           \| inoremap <buffer> <expr> < smartchr#loop('<', '<%', '<%=')
   augroup END
 endfunction
-call s:config_bundle("smartchar.vim", function("s:configure_smartchr"))
+call s:config_bundle("vim-smartchr", function("s:configure_smartchr"))
 "}}}
 
 " q: Quickfix "{{{
@@ -1187,49 +1192,48 @@ nnoremap [Quickfix]wg q:lgrep<Space>
 
 " vimfiler.vim"{{{
 function! s:configure_vimfiler(bundle)
-  "nmap <Leader>v <Plug>(vimfiler_switch)
   "nnoremap <silent> <Leader>v :<C-u>VimFiler `=<SID>GetBufferDirectory()`<CR>
   nnoremap <silent> <Leader>v :<C-u>VimFiler<CR>
-  nmap <Leader>ff <Plug>(vimfiler_switch)
-  nmap <Leader>si <Plug>(vimfiler_simple)
-  nmap <Leader>h :<C-u>edit %:h<CR>
+  nnoremap <silent> <Leader>ff :<C-u>VimFilerSimple<CR>
 
-  " Set local mappings.
-  nmap <C-p> <Plug>(vimfiler_open_previous_file)
-  nmap <C-n> <Plug>(vimfiler_open_next_file)
+  function! a:bundle.hooks.on_source(bundle)
+    call vimfiler#set_execute_file('vim', 'vim')
+    call vimfiler#set_execute_file('txt', 'vim')
+    let g:vimfiler_split_command = ''
+    let g:vimfiler_edit_command = 'tabedit'
+    let g:vimfiler_pedit_command = 'vnew'
 
-  call vimfiler#set_execute_file('vim', 'vim')
-  call vimfiler#set_execute_file('txt', 'vim')
-  let g:vimfiler_split_command = ''
-  let g:vimfiler_edit_command = 'tabedit'
-  let g:vimfiler_pedit_command = 'vnew'
+    let g:vimfiler_enable_clipboard = 0
+    let g:vimfiler_safe_mode_by_default = 1
+    let g:vimshell_cd_command = 'TabpageCD'
 
-  let g:vimfiler_enable_clipboard = 0
-  let g:vimfiler_safe_mode_by_default = 1
-  let g:vimshell_cd_command = 'TabpageCD'
+    " Linux default.
+    let g:vimfiler_external_copy_directory_command = 'cp -r $src $dest'
+    let g:vimfiler_external_copy_file_command = 'cp $src $dest'
+    let g:vimfiler_external_delete_command = 'rm -r $srcs'
+    let g:vimfiler_external_move_command = 'mv $srcs $dest'
 
-  " Linux default.
-  let g:vimfiler_external_copy_directory_command = 'cp -r $src $dest'
-  let g:vimfiler_external_copy_file_command = 'cp $src $dest'
-  let g:vimfiler_external_delete_command = 'rm -r $srcs'
-  let g:vimfiler_external_move_command = 'mv $srcs $dest'
+    " Windows default.
+    let g:vimfiler_external_delete_command = 'system rmdir /Q /S $srcs'
+    let g:vimfiler_external_copy_file_command = 'system copy $src $dest'
+    let g:vimfiler_external_copy_directory_command = ''
+    let g:vimfiler_external_move_command = 'move /Y $srcs $dest'
 
-  " Windows default.
-  let g:vimfiler_external_delete_command = 'system rmdir /Q /S $srcs'
-  let g:vimfiler_external_copy_file_command = 'system copy $src $dest'
-  let g:vimfiler_external_copy_directory_command = ''
-  let g:vimfiler_external_move_command = 'move /Y $srcs $dest'
+    let g:vimfiler_as_default_explorer = 1
+    let g:vimfiler_detect_drives = ['C', 'D', 'E', 'F', 'G', 'H', 'I',
+          \ 'J', 'K', 'L', 'M', 'N']
 
-  let g:vimfiler_as_default_explorer = 1
-  let g:vimfiler_detect_drives = ['C', 'D', 'E', 'F', 'G', 'H', 'I',
-        \ 'J', 'K', 'L', 'M', 'N']
+    autocmd MyAutoCmd FileType vimfiler call s:vimfiler_my_settings()
+  endfunction
 
-  autocmd MyAutoCmd FileType vimfiler call s:vimfiler_my_settings()
   function! s:vimfiler_my_settings() "{{{
     " Overwrite settings.
+    " Set local mappings.
+    nmap <buffer> <C-p> <Plug>(vimfiler_open_previous_file)
+    nmap <buffer> <C-n> <Plug>(vimfiler_open_next_file)
   endfunction "}}}
 endfunction
-call s:config_bundle("vimfiler.vim", function("s:configure_vimfiler"))
+call s:config_bundle("vimfiler", function("s:configure_vimfiler"))
 "}}}
 
 " vimshell.vim"{{{
@@ -1237,7 +1241,7 @@ function! s:configure_vimshell(bundle)
   nnoremap <Leader>x :VimShellTab<CR>
   let g:vimshell_user_prompt = 'getcwd()'
 endfunction
-call s:config_bundle('vimshell.vim', function('s:configure_vimshell'))
+call s:config_bundle('vimshell', function('s:configure_vimshell'))
 "}}}
 
 " eskk.vim"{{{
@@ -1348,7 +1352,18 @@ function! s:configure_drawit(budle)
   nnoremap  <Leader>di :DrawIt<CR>
   map  <Leader>ds <Plug>DrawItStop
 endfunction
-call s:config_bundle("Drawit", function('s:configure_drawit'))
+call s:config_bundle("DrawIt", function('s:configure_drawit'))
+" }}}
+
+" vim-ref {{{
+
+function! s:configure_vimref(bundle)
+  nnoremap <Leader>a :Ref<SPACE>alc<SPACE>
+  silent! nmap <silent> <unique> K <Plug>(ref-keyword)
+  silent! vmap <silent> <unique> K <Plug>(ref-keyword)
+endfunction
+call s:config_bundle('vim-ref', function('s:configure_vimref'))
+
 " }}}
 
 " }}}
