@@ -825,7 +825,6 @@ function! s:validate_ruby_indent()
   let wsv = winsaveview()
   normal G
   let l:last = line('.')
-  call winrestview(wsv)
 
   let l:invalid_linenum = []
   let l:i = 0
@@ -835,6 +834,7 @@ function! s:validate_ruby_indent()
       call add(l:invalid_linenum, l:i)
     endif
   endwhile
+  call winrestview(wsv)
   echomsg string(l:invalid_linenum)
 endfunction
 " }}}
