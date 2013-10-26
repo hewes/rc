@@ -831,6 +831,9 @@ function! s:validate_ruby_indent()
   let l:i = 0
   while l:i != l:last
     let l:i = l:i + 1
+    if empty(getline(l:i))
+      continue
+    endif
     if GetRubyIndent(l:i) != indent(l:i)
       call add(l:invalid_linenum, l:i)
     endif
