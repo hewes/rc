@@ -980,6 +980,7 @@ function! s:configure_neocomplete(bundle)
           \ }
     call neocomplete#custom#source('include', 'disabled_filetypes', {'_' : 1})
     call neocomplete#custom#source('tag', 'disabled_filetypes', {'vim' : 1})
+    call neocomplete#custom#source('_', 'converters', ['converter_remove_next_keyword', 'converter_delimiter', 'converter_abbr'])
   endfunction
 endfunction
 if has('lua')
