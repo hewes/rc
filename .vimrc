@@ -1095,6 +1095,8 @@ function! s:configure_unite(bundle)
   let g:unite_winheight = 20
   let g:unite_source_history_yank_enable = 1
   let g:unite_source_bookmark_directory = $HOME . "/.unite/bookmark"
+
+  let g:unite_source_gtags_treelize = 1
   autocmd MyAutoCmd FileType unite call s:unite_my_settings()
   function! s:unite_my_settings()"{{{
     nnoremap <silent><buffer> <C-o> :call unite#mappings#do_action('tabopen')<CR>
