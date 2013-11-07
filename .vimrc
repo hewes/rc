@@ -1,6 +1,4 @@
 " ======== NeoBundle Setting {{{
-set nocompatible
-filetype off
 
 let $DOTVIM = expand('~/.vim')
 let $VIMBUNDLE = $DOTVIM . '/bundle'
@@ -25,6 +23,8 @@ function! s:config_bundle(bundle_name, config_func)
 endfunction
 
 if has('vim_starting') && isdirectory($NEOBUNDLE)
+  set nocompatible
+  filetype off
   set rtp+=$NEOBUNDLE
 endif
 
