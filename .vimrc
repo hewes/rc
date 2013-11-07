@@ -174,7 +174,15 @@ function! s:sum(array)
   return sum
 endfunction
 
+function! s:system(cmd) " execute external command async if possible
+  if exists('g:loaded_vimproc')
+    call vimproc#system(a:cmd)
+  else
+    call system(a:cmd)
+  endif
+endfunction
 "}}}
+
 " ======== Basic Setting {{{
 " Initialize my vimrc augroup.
 augroup MyAutoCmd
@@ -597,13 +605,9 @@ function! s:get_cd_project_name() " project name related to the current director
 endfunction
 " }}}
 
+
 function! s:gtags_update() " update GTAGS {{{
-  let cmd = "global -u"
-  if exists('g:loaded_vimproc')
-    call vimproc#system(cmd)
-  else
-    call system(cmd)
-  endif
+  call s:system("gtags -i")
 endfunction
 command! GtagsUpdate call s:gtags_update()
 "}}}
