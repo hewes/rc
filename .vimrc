@@ -186,8 +186,10 @@ let s:has_win = has('win32') || has('win64')
 " Exchange path separator.
 if s:has_win
   set shellslash
+  set shell=bash
+else
+  set shell=zsh
 endif
-set shell=zsh
 
 " abosorb difference between windows and Linux
 let dotvim = $HOME . "/.vim"
