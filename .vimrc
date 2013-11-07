@@ -191,9 +191,6 @@ else
   set shell=zsh
 endif
 
-" abosorb difference between windows and Linux
-let dotvim = $HOME . "/.vim"
-
 " split window direction
 set splitbelow splitright
 
