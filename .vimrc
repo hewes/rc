@@ -830,6 +830,9 @@ function! s:validate_ruby_indent()
   let l:i = 0
   while l:i != l:last
     let l:i = l:i + 1
+    if empty(getline(l:i))
+      continue
+    endif
     if GetRubyIndent(l:i) != indent(l:i)
       call add(l:invalid_linenum, l:i)
     endif
@@ -977,6 +980,7 @@ function! s:configure_neocomplete(bundle)
           \ }
     call neocomplete#custom#source('include', 'disabled_filetypes', {'_' : 1})
     call neocomplete#custom#source('tag', 'disabled_filetypes', {'vim' : 1})
+    call neocomplete#custom#source('_', 'converters', ['converter_remove_next_keyword', 'converter_delimiter', 'converter_abbr'])
   endfunction
 endfunction
 if has('lua')
@@ -1091,6 +1095,8 @@ function! s:configure_unite(bundle)
   let g:unite_winheight = 20
   let g:unite_source_history_yank_enable = 1
   let g:unite_source_bookmark_directory = $HOME . "/.unite/bookmark"
+
+  let g:unite_source_gtags_treelize = 1
   autocmd MyAutoCmd FileType unite call s:unite_my_settings()
   function! s:unite_my_settings()"{{{
     nnoremap <silent><buffer> <C-o> :call unite#mappings#do_action('tabopen')<CR>
