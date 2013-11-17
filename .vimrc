@@ -1,6 +1,4 @@
 " ======== NeoBundle Setting {{{
-set nocompatible
-filetype off
 
 let $DOTVIM = expand('~/.vim')
 let $VIMBUNDLE = $DOTVIM . '/bundle'
@@ -25,6 +23,8 @@ function! s:config_bundle(bundle_name, config_func)
 endfunction
 
 if has('vim_starting') && isdirectory($NEOBUNDLE)
+  set nocompatible
+  filetype off
   set rtp+=$NEOBUNDLE
 endif
 
@@ -174,7 +174,15 @@ function! s:sum(array)
   return sum
 endfunction
 
+function! s:system(cmd) " execute external command async if possible
+  if exists('g:loaded_vimproc')
+    call vimproc#system(a:cmd)
+  else
+    call system(a:cmd)
+  endif
+endfunction
 "}}}
+
 " ======== Basic Setting {{{
 " Initialize my vimrc augroup.
 augroup MyAutoCmd
@@ -186,11 +194,10 @@ let s:has_win = has('win32') || has('win64')
 " Exchange path separator.
 if s:has_win
   set shellslash
+  set shell=bash
+else
+  set shell=zsh
 endif
-set shell=zsh
-
-" abosorb difference between windows and Linux
-let dotvim = $HOME . "/.vim"
 
 " split window direction
 set splitbelow splitright
@@ -609,13 +616,9 @@ function! s:get_cd_project_name() " project name related to the current director
 endfunction
 " }}}
 
+
 function! s:gtags_update() " update GTAGS {{{
-  let cmd = "global -u"
-  if exists('g:loaded_vimproc')
-    call vimproc#system(cmd)
-  else
-    call system(cmd)
-  endif
+  call s:system("gtags -i")
 endfunction
 command! GtagsUpdate call s:gtags_update()
 "}}}
@@ -836,7 +839,6 @@ function! s:validate_ruby_indent()
   let wsv = winsaveview()
   normal G
   let l:last = line('.')
-  call winrestview(wsv)
 
   let l:invalid_linenum = []
   let l:i = 0
@@ -849,6 +851,7 @@ function! s:validate_ruby_indent()
       call add(l:invalid_linenum, l:i)
     endif
   endwhile
+  call winrestview(wsv)
   echomsg string(l:invalid_linenum)
 endfunction
 " }}}
