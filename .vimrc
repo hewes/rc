@@ -295,10 +295,18 @@ endif
 autocmd MyAutoCmd FileType * set formatoptions-=ro
 
 " ------ The encoding setting {{{
-" Use utf-8.
-if &encoding !=? 'utf-8'
-  let &termencoding = &encoding
-  set encoding=utf-8
+if s:has_win
+  " if windows use cp932
+  if &encoding !=? 'cp932'
+    let &termencoding = &encoding
+    set encoding=cp932
+  endif
+else
+  " else use utf-8.
+  if &encoding !=? 'utf-8'
+    let &termencoding = &encoding
+    set encoding=utf-8
+  endif
 endif
 
 if has('guess_encode')
@@ -320,9 +328,12 @@ scriptencoding  utf-8
 "}}}
 
 " ------- Default fileformat. {{{
-set fileformat=unix
+if s:has_win
+  set fileformats=dos,unix,mac
+else
+  set fileformats=unix,dos,mac
+endif
 " Automatic recognition of a new line cord.
-set fileformats=unix,dos,mac
 " A fullwidth character is displayed in vim properly.
 set ambiwidth=double
 " }}}
