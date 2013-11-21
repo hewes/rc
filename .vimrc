@@ -181,6 +181,34 @@ function! s:system(cmd) " execute external command async if possible
     call system(a:cmd)
   endif
 endfunction
+
+" for debugging {{{
+let s:debugged_strings = []
+function! s:add_my_debug(str)
+  call add(s:debugged_strings, a:str)
+endfunction
+
+function! s:clear_my_debug()
+  let s:debugged_strings = []
+endfunction
+
+function! s:output_my_debug()
+    if empty(s:debugged_strings) | return | endif
+    try
+      "redir >> $DOTVIM . "~/.vim/debugging.log"
+      redir >> ~/.vim/debugging.log
+      for msg in s:debugged_strings
+        silent echo msg
+      endfor
+    finally
+        redir END
+        call s:clear_my_debug()
+    endtry
+endfunction
+
+command! -nargs=1 MyDebug call s:add_my_debug(<q-args>)
+command! OutputMyDebug call s:output_my_debug()
+command! ClearMyDebug call s:clear_my_debug()
 "}}}
 
 " ======== Basic Setting {{{
