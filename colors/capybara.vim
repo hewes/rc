@@ -12,7 +12,7 @@ endif
 let colors_name = "capybara"
 
 " General colors
-hi Normal		ctermfg=252		ctermbg=233		cterm=none		guifg=#e3e0d7	guibg=#242424	gui=none
+hi Normal		ctermfg=252		ctermbg=none		cterm=none		guifg=#e3e0d7	guibg=#000000	gui=none
 hi Cursor		ctermfg=234		ctermbg=228		cterm=none		guifg=#242424	guibg=#eae788	gui=none
 hi Visual		ctermfg=251		ctermbg=239		cterm=none		guifg=#c3c6ca	guibg=#554d4b	gui=none
 hi VisualNOS	ctermfg=251		ctermbg=236		cterm=none		guifg=#c3c6ca	guibg=#303030	gui=none
@@ -70,10 +70,10 @@ hi Keyword		ctermfg=111		cterm=none		guifg=#88b8f6	gui=none
 hi Statement	ctermfg=111		cterm=none		guifg=#88b8f6	gui=none
 hi Constant		ctermfg=209		cterm=none		guifg=#e5786d	gui=none
 hi Number		ctermfg=173		cterm=none		guifg=#e5786d	gui=none
-hi PreProc		ctermfg=99		cterm=none		guifg=#e5786d	gui=none
+hi PreProc		ctermfg=99		cterm=none		guifg=#875fff	gui=none
 hi Function		ctermfg=180		cterm=none		guifg=#cae982	gui=none
 hi Identifier	ctermfg=192		cterm=none		guifg=#cae982	gui=none
-hi Type			ctermfg=186		cterm=none		guifg=#d4d987	gui=none
+hi Type			ctermfg=47		cterm=none		guifg=#00ff5f	gui=none
 hi Special		ctermfg=229		cterm=none		guifg=#eadead	gui=none
 hi String		ctermfg=113		cterm=none		guifg=#95e454	gui=italic
 hi Comment		ctermfg=246		cterm=none		guifg=#9c998e	gui=italic
