@@ -1,10 +1,17 @@
-# alias	ls='ls --color=auto -F'
-# alias	l='ls --color=auto -aF'
-# alias	la='ls --color=auto -aF'
-# alias	lla='ls --color=auto -alF'
-alias	ls='ls -G'
-alias	ls='ls -l -G'
-alias	la='ls -a -G'
+
+if [[ $OSTYPE =~ linux ]]; then
+# for GNU ls
+  alias	ls='ls --color=auto -F'
+  alias	ls='ls -lF --color=auto'
+  alias	la='ls -aF --color=auto'
+else
+# for BSD ls
+  alias	ls='ls -G'
+  alias	ls='ls -l -G'
+  alias	la='ls -a -G'
+fi
+
 alias	s='screen'
 alias	ss='screen -S'
 alias	sr='screen -D -RR'
+
