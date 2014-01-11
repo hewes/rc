@@ -57,7 +57,7 @@ case ${UID} in
 		)
     ;;
 *)
-  PATH=./:/bin:/sbin:/usr/local/bin/:/opt/local/bin:$PATH
+  PATH=./:$HOME/bin:/bin:/sbin:/usr/local/bin/:/opt/local/bin:$PATH
     ;;
 esac
 
@@ -274,3 +274,7 @@ function view-file() {
 zle -N view-file
 bindkey "^x^r" view-file
 
+if [ -d $HOME/.rbenv ]; then
+    export PATH=$HOME/.rbenv/bin:$PATH
+    eval "$(rbenv init -)"
+fi
