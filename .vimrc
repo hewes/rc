@@ -1358,11 +1358,14 @@ function! s:configure_quickrun(bundle)
           \ 'runmode' : "async:remote:vimproc",
           \ }
     " TODO: should consider class_path, and library on scala application
-    let g:quickrun_config['scala/watchdogs_checker'] = {"type" : "watchdogs_checker/nop"}
     let g:quickrun_config['watchdogs_checker/nop'] = {
           \ "command" : "echo",
           \ "exec"    : "%c nop",
           \}
+    "let g:quickrun_config['scala/watchdogs_checker'] = {"type" : "watchdogs_checker/nop"}
+    let g:watchdogs_check_BufWritePost_enables = {
+          \ "scala" : 0
+          \ }
   endfunction
 endfunction
 call s:config_bundle('vim-quickrun', function('s:configure_quickrun'))
