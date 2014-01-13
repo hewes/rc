@@ -108,6 +108,7 @@ try
 
   " Programming Language
   NeoBundle 'rosstimson/scala-vim-support.git'
+  NeoBundle 'derekwyatt/vim-sbt.git'
 
   " Util
   NeoBundle 'Shougo/vimshell.git'
