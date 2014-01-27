@@ -218,7 +218,7 @@ command! -nargs=1 MyDebug call g:my_debugger.log(<q-args>)
 command! OutputMyDebug call g:my_debugger.output()
 command! ClearMyDebug call g:my_debugger.clear()
 "}}}
-
+"}}}
 " ======== Basic Setting {{{
 " Initialize my vimrc augroup.
 augroup MyAutoCmd
@@ -1146,7 +1146,9 @@ function! s:configure_unite(bundle)
   let g:unite_source_history_yank_enable = 1
   let g:unite_source_bookmark_directory = $HOME . "/.unite/bookmark"
 
-  let g:unite_source_gtags_treelize = 1
+  let g:unite_source_gtags_project = {
+        \ '_' : { 'treelize': 1 }
+        \ }
   autocmd MyAutoCmd FileType unite call s:unite_my_settings()
   function! s:unite_my_settings()"{{{
     nnoremap <silent><buffer> <C-o> :call unite#mappings#do_action('tabopen')<CR>
