@@ -2,8 +2,7 @@ hardstatus alwayslastline "%{= wk} %-w%{=bu dr}%n %t%{-}%+w %= %{=b wb}%y/%m/%d 
 escape ^T^T
 #bind l windowlist -b
 bind h prev
-bind l next
-bind j other
+bind l other
 defscrollback 10000
 startup_message off
 term xterm-256color
