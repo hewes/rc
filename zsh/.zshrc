@@ -231,7 +231,22 @@ export EDITOR=vim
 ##---------------------------
 ##ALIAS
 ##---------------------------
-source $ZDOTDIR/.zalias
+if [[ $OSTYPE =~ linux ]]; then
+# for GNU ls
+  alias	ls='ls --color=auto -F'
+  alias	ls='ls -lF --color=auto'
+  alias	la='ls -aF --color=auto'
+  alias	grep='grep --color=auto'
+else
+# for BSD ls
+  alias	ls='ls -G'
+  alias	ls='ls -l -G'
+  alias	la='ls -a -G'
+fi
+
+alias	s='screen'
+alias	ss='screen -S'
+alias	sr='screen -D -RR'
 
 # set terminal title including current directory
 #if [ $TERM = "screen" ];then
