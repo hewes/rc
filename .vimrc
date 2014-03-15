@@ -162,13 +162,17 @@ function! s:mkdir(file, ...)
 endfunction
 
 function! s:sysid_match(sys_ids)
-  let l:sysid = synIDattr(synID(line('.'), col('.'), 0), 'name')
-  if index(a:sys_ids, l:sysid) >= 0
+  if index(a:sys_ids, s:syntax_id()) >= 0
     return 1
   else
     return 0
   endif
 endfunction
+
+function! s:syntax_id()
+  return synIDattr(synID(line('.'), col('.'), 0), 'name')
+endfunction
+command! SyntaxId echo s:syntax_id()
 
 function! s:sum(array)
   let sum = 0
