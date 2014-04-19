@@ -186,7 +186,9 @@ setopt magic_equal_subst
 #autoload predict-on
 #predict-on
 
-limit coredumpsize 102400
+if [ $OSTYPE != cygwin ];then
+  limit coredumpsize 102400
+fi
 
 unsetopt promptcr
  
