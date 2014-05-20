@@ -62,8 +62,7 @@ case ${UID} in
 esac
 
 ## MAN PATH
-export MANPATH="/opt/SUNWspro/man:/usr/man:/usr/local/man:/usr/openwin/man:/usr/X11R5/man:/usr/X11R6/man:/usr/dt/man:/opt/gnu/man:/opt/SUNWspro/man:/home/gaea.home10/DEMO/SUNWspro/man:/alliance/man:/home/project/spice3f4/man:/usr/local/ssl/"
-
+#export MANPATH="/opt/SUNWspro/man:/usr/man:/usr/local/man:/usr/openwin/man:/usr/X11R5/man:/usr/X11R6/man:/usr/dt/man:/opt/gnu/man:/opt/SUNWspro/man:/home/gaea.home10/DEMO/SUNWspro/man:/alliance/man:/home/project/spice3f4/man:/usr/local/ssl/"
 
 ##-----------------------------------
 ## PROMPT
