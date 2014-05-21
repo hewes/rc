@@ -57,7 +57,7 @@ case ${UID} in
 		)
     ;;
 *)
-  PATH=./:$HOME/bin:/bin:/sbin:/usr/local/bin/:/opt/local/bin:$PATH
+  PATH=./:$HOME/bin:$HOME/rc/scripts:/bin:/sbin:/usr/local/bin/:/opt/local/bin:$PATH
     ;;
 esac
 
