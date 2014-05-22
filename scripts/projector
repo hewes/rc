@@ -1,0 +1,36 @@
+#!/bin/bash
+
+function usage(){
+  prog=`basename $0`
+  echo "usage: ${prog} {bookmark|tag}"
+  exit ${1}
+}
+
+if [ ${#1} -eq 0 ];then
+  usage 1
+fi
+
+function bookmark(){
+  location=`pwd`
+  project_name=`basename ${location}`
+  echo -e "${project_name}\t${location}/\t\t" >> $HOME/.unite/bookmark/default
+}
+
+function tags(){
+  echo "update gtags"
+  gtags -i > /dev/null
+  echo "update ctags"
+  ctags -R > /dev/null
+}
+
+case $1 in
+  bookmark)
+    bookmark
+    ;;
+  tags)
+    tags
+    ;;
+  *)
+    ;;
+esac
+
