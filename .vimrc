@@ -659,12 +659,34 @@ function! s:get_cd_project_name() " project name related to the current director
 endfunction
 " }}}
 
-
-function! s:gtags_update() " update GTAGS {{{
-  call s:system("gtags -i")
+function! s:refresh_project() " update GTAGS and tags{{{
+  let l:tags = []
+  if filereadable("tags") && executable('ctags')
+    call add(l:tags, 'ctags')
+    call s:system("ctags -R")
+  endif
+  if filereadable("GTAGS") && executable('gtags')
+    call add(l:tags, 'gtags')
+    call s:system("gtags -i")
+  endif
+  echo 'updating ' . join(l:tags, ', ') . '...'
 endfunction
-command! GtagsUpdate call s:gtags_update()
 "}}}
+command! RefreshProject call s:refresh_project()
+
+function! s:init_project() " generates GTAGS and tags{{{
+  let l:tags = []
+  if executable('ctags')
+    call add(l:tags, 'ctags')
+    call s:system("ctags -R")
+  endif
+  if executable('gtags')
+    call add(l:tags, 'gtags')
+    call s:system("gtags -i")
+  endif
+  echo 'generate ' . join(l:tags, ', ') . '...'
+endfunction
+command! InitProject call s:init_project()
 
 " :TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
 function! s:configure_altercmd(bundle)
