@@ -1417,7 +1417,7 @@ call s:config_bundle('vim-watchdogs', function('s:configure_watchdogs'))
 
 " operator-replace {{{
 function! s:configure_operator_replace(bundle)
-  map R <Plug>(operator-replace)
+  map <C-/>r <Plug>(operator-replace)
 endfunction
 call s:config_bundle("vim-operator-replace", function("s:configure_operator_replace"))
 " }}}
