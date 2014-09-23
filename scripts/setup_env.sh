@@ -1,7 +1,10 @@
 #!/bin/bash
 
-RBENV_DIR="~/.rbenv"
-PYENV_DIR="~/.pyenv"
+ROOT_WRAPPER="sudo -E "
+
+RBENV_DIR="${HOME}/.rbenv"
+PYENV_DIR="${HOME}/.pyenv"
+SRC_DIR="${HOME}/work"
 
 function usage(){
   cat <<EOS
@@ -23,12 +26,12 @@ function is_debian(){
 
 function yum_install(){
   echo "install $*"
-  sudo -E yum -y $*
+  ${ROOT_WRAPPER} yum -y install $* || error_exit "failed to install yum install"
 }
 
 function apt_get_install(){
   echo "install $*"
-  sudo apt-get install -y $*
+  ${ROOT_WRAPPER} apt-get install -y $* || error_exit "failed to install apt get install"
 }
 
 function mkdir_if_not_exist(){
@@ -38,6 +41,25 @@ function mkdir_if_not_exist(){
 function error_exit(){
   echo $*
   exit 1
+}
+
+function install_vim(){
+  if is_rhel ;then
+    echo "distribution is RHEL(or CentOS or Fedora)"
+    yum_install gcc make ncurses-devel mercurial perl-devel perl-ExtUtils-Embed ruby-devel python-devel lua-devel
+  elif is_debian; then
+    echo "distribution is Debian(or Ubuntu)"
+    apt_get_install mercurial gettext libncurses5-dev libacl1-dev libgpm-dev lua5.2 liblua5.2-dev luajit libluajit-5.1
+  else
+    error_exit "unknown distribution"
+  fi
+  pushd ${SRC_DIR}
+  hg clone https://vim.googlecode.com/hg/ vim || error_exit "failed hg clone vim"
+  cd vim
+  ./configure --with-features=huge --enable-gui=gnome2 --enable-perlinterp --enable-pythoninterp --enable-rubyinterp --enable-luainterp --enable-fail-if-missing || error_exit "failed to configure"
+  make || error_exit "failed to make"
+  ${ROOT_WRAPPER} make install || error_exit "failed to make install"
+  popd
 }
 
 function install_rbenv(){
@@ -94,6 +116,9 @@ case $1 in
     ;;
   pyenv)
     install_pyenv
+    ;;
+  install_vim)
+    install_vim
     ;;
   *)
     usage
