@@ -37,32 +37,8 @@ export GDM_LANG=jp_JP.UTF-8
 export LC_ALL=C
 export LC_MESSAGES=C
 
-##-----------------------------------
-## PATH
-##-----------------------------------
-
 ## LIBRARY PATH
 export LD_LIBRARY_PATH=".:/usr/local/lib:/usr/X11/lib:/usr/openwin/lib:/usr/lib:/usr/local/lib:/usr/X11R5/lib:/usr/X11R6/lib:/usr/ucblib:/usr/local/canna/lib:/usr/local/X11/lib:/usr/lib/locale/ja/wnn/lib:/usr/local/rvplayer5.0:/usr/local/ssl/lib:/etc/lib:/home/hewes/Javalib"
-
-## EXE PATH
-case ${UID} in
-0)
-	path=( ./ \
-		/bin \
-		/sbin \
-		/usr/local/bin \
-		/usr/local/sbin \
-		/usr/sbin \
-		/usr/bin \
-		)
-    ;;
-*)
-  PATH=./:$HOME/bin:$HOME/rc/scripts:/bin:/sbin:/usr/local/bin/:/opt/local/bin:$PATH
-    ;;
-esac
-
-## MAN PATH
-#export MANPATH="/opt/SUNWspro/man:/usr/man:/usr/local/man:/usr/openwin/man:/usr/X11R5/man:/usr/X11R6/man:/usr/dt/man:/opt/gnu/man:/opt/SUNWspro/man:/home/gaea.home10/DEMO/SUNWspro/man:/alliance/man:/home/project/spice3f4/man:/usr/local/ssl/"
 
 ##-----------------------------------
 ## PROMPT
@@ -294,3 +270,9 @@ if [ -d $HOME/.rbenv ]; then
     export PATH=$HOME/.rbenv/bin:$PATH
     eval "$(rbenv init -)"
 fi
+
+if [ -d $HOME/.pyenv ]; then
+    export PATH=$HOME/.pyenv/bin:$PATH
+    eval "$(pyenv init -)"
+fi
+
