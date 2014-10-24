@@ -1,0 +1,8 @@
+[include]
+  path = .gitconfig.local
+[color]
+  ui = auto
+[alias]
+  tr = log --graph --pretty='format:%C(yellow)%h%Creset %s %Cgreen(%an)%Creset %Cred%d%Creset'
+  list = log --pretty=format:'%C(yellow)%h%Creset %ad [%an] %Cgreen%d%Creset %s' --date=short
+
