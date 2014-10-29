@@ -103,7 +103,7 @@ try
   " Appearance
   NeoBundle 'bling/vim-airline.git'
   NeoBundle 'osyo-manga/vim-anzu'
-  NeoBundle 'hewes/cwordhl.vim.git'
+  NeoBundle 'hewes/context-highlight.vim.git'
   NeoBundle 'tomtom/quickfixsigns_vim.git'
 
   " Programming Language
@@ -851,6 +851,7 @@ let s:toggle_map = {
       \ 'w' : 'wrap',
       \ 'n' : 'number',
       \ 'l' : 'list',
+      \ 'h' : 'hlsearch',
       \ }
 function! s:toggle_setting()
   let l:key = getchar()
@@ -922,6 +923,7 @@ endfunction
 " }}}
 command! ValidateRubyIndent call <SID>validate_ruby_indent()
 
+"}}}
 "}}}
 " ======== Plugin Settings {{{
 " ----- neocomplcache.vim {{{
