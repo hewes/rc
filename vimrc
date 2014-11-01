@@ -30,12 +30,9 @@ endif
 
 " NeoBundle loading stage
 try
-  call neobundle#rc($VIMBUNDLE)
-  if empty($https_proxy)
-    let g:neobundle#types#git#default_protocol = 'git'
-  else
-    let g:neobundle#types#git#default_protocol = 'https'
-  endif
+  call neobundle#begin($VIMBUNDLE)
+  let g:neobundle#types#git#default_protocol = 'https'
+
   NeoBundleFetch 'Shougo/neobundle.vim.git'
 
   " Unite
@@ -73,8 +70,13 @@ try
         \ }}
   endif
   NeoBundle 'ujihisa/neco-look.git'
+
   NeoBundleLazy 'Shougo/neosnippet.git',  {'autoload' : {
         \ 'insert' : 1,
+        \ }}
+  NeoBundleLazy 'Shougo/neosnippet-snippets.git',  {'autoload' : {
+        \ 'insert' : 1,
+        \ 'depends' : ['Shougo/neosnippet.git'],
         \ }}
   NeoBundle 'kana/vim-smartchr.git'
   NeoBundle 'kana/vim-smartinput'
@@ -145,6 +147,8 @@ try
 catch /117/
   echo "load NeoBundle failed"
 endtry
+
+call neobundle#end()
 
 filetype plugin indent on
 " }}}
@@ -421,7 +425,8 @@ nnoremap Y y$
 nnoremap + <C-w>+
 nnoremap - <C-w>-
 nnoremap <expr> sw ':%s/\<' . expand('<cword>') .'\>/'
-"nnoremap <C-l> <C-g>
+nnoremap sp "_ciw<C-r>0<ESC>
+
 nnoremap <C-h> gT
 nnoremap <C-l> gt
 
