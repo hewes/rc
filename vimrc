@@ -23,7 +23,9 @@ function! s:config_bundle(bundle_name, config_func)
 endfunction
 
 if has('vim_starting') && isdirectory($NEOBUNDLE)
-  set nocompatible
+  if &compatible
+    set nocompatible
+  endif
   filetype off
   set rtp+=$NEOBUNDLE
 endif
