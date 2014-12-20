@@ -46,6 +46,9 @@ try
   NeoBundleLazy 'Shougo/unite-build.git', {'autoload' : {
         \ 'unite_sources' : 'build',
         \  }}
+  NeoBundleLazy 'Shougo/tabpagebuffer.vim', {'autoload' : {
+        \ 'unite_sources' : 'buffer_tab',
+        \  }}
   NeoBundleLazy 'Shougo/unite-outline.git',{'autoload' : {
         \ 'unite_sources' : 'outline',
         \  }}
@@ -151,6 +154,7 @@ try
   NeoBundle 'fuenor/qfixgrep'
   NeoBundle 'kien/ctrlp.vim.git'
   " }}}
+
   " ======== Plugin Settings {{{
   " ----- neocomplcache.vim {{{
   function! s:configure_neocomplcache(bundle)
@@ -317,6 +321,17 @@ try
   call s:config_bundle("neosnippet", function('s:configure_neosnippet'))
   " }}}
 
+  " unite-gtags {{{
+  function! s:configure_unite_gtags(bundle)
+    function! a:bundle.hooks.on_source(bundle)
+      let g:unite_source_gtags_project_config = {
+            \ '_': { 'treelize': 0, 'absolute_path': 1},
+            \ }
+    endfunction
+  endfunction
+  call s:config_bundle("unite-gtags", function('s:configure_unite_gtags'))
+" }}}
+
   " unite.vim "{{{
   function! s:configure_unite(bundle)
     function! a:bundle.hooks.on_source(bundle)
@@ -332,10 +347,6 @@ try
       let g:unite_winheight = 20
       let g:unite_source_history_yank_enable = 1
       let g:unite_source_bookmark_directory = $HOME . "/.unite/bookmark"
-
-      let g:unite_source_gtags_project_config = {
-            \ '_': { 'treelize': 0, 'absolute_path': 1},
-            \ }
 
       autocmd MyAutoCmd FileType unite call s:unite_my_settings()
       function! s:unite_my_settings()"{{{
@@ -1569,7 +1580,7 @@ function! s:clang_my_settings()
   setlocal ts=4
   setlocal sw=4
   setlocal noexpandtab
-  nnoremap <buffer> <C-j> :Unite gtags/def gtags/ref -auto-preview -no-split<CR>
+  nnoremap <buffer> <C-j> :Unite gtags/def gtags/ref<CR>
 endfunction "}}}
 
 " scala  "{{{
