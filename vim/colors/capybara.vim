@@ -29,8 +29,8 @@ hi ErrorMsg		ctermfg=196		ctermbg=236		cterm=bold		guifg=#ff2026	guibg=#3a3a3a	g
 
 " Vim >= 7.0 specific colors
 if version >= 700
-hi CursorLine term=reverse cterm=none ctermbg=233 guibg=#32322f
-hi CursorColumn term=reverse cterm=none ctermbg=233 guibg=#32322f
+hi CursorLine term=none ctermfg=none ctermbg=239 guibg=#32322f
+hi CursorColumn term=none ctermfg=none ctermbg=233 guibg=#32322f
 hi MatchParen term=NONE cterm=NONE ctermfg=NONE ctermbg=52 guifg=NONE guibg=red
 hi Pmenu		ctermfg=230		ctermbg=238						guifg=#ffffd7	guibg=#444444
 hi PmenuSel		ctermfg=232		ctermbg=192						guifg=#080808	guibg=#cae982
