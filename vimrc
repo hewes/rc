@@ -83,10 +83,12 @@ try
   NeoBundleLazy 'Shougo/neosnippet.git',  {'autoload' : {
         \ 'insert' : 1,
         \ }}
+
   NeoBundleLazy 'Shougo/neosnippet-snippets.git',  {'autoload' : {
         \ 'insert' : 1,
         \ 'depends' : ['Shougo/neosnippet.git'],
         \ }}
+
   NeoBundle 'kana/vim-smartchr.git'
   NeoBundle 'kana/vim-smartinput'
   NeoBundle 'tyru/eskk.vim'
@@ -292,7 +294,7 @@ try
     function! a:bundle.hooks.on_post_source(bundle)
       call neocomplete#custom#source('include', 'disabled_filetypes', {'_' : 1})
       call neocomplete#custom#source('tag', 'disabled_filetypes', {'vim' : 1})
-      call neocomplete#custom#source('_', 'converters', ['converter_remove_next_keyword', 'converter_delimiter', 'converter_abbr'])
+      call neocomplete#custom#source('_', 'converters', ['converter_delimiter', 'converter_abbr'])
       inoremap <expr><Space> pumvisible() ? neocomplete#close_popup() . "\<Space>"  : "\<Space>"
       inoremap <expr><C-h> neocomplete#smart_close_popup() . "\<C-h>"
     endfunction
