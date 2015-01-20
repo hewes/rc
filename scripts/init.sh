@@ -1,6 +1,6 @@
 #/bin/bash
 
-rc3=(gitconfig vimrc gvimrc vim zshenv screenrc tmux.conf)
+rc3=(gitconfig gitconfig.common vimrc gvimrc vim zshenv screenrc tmux.conf)
 rc5=(xmonad Xdefaults xinitrc Xmodmap xmobarrc vimperatorrc fehbg)
 
 function setup(){
