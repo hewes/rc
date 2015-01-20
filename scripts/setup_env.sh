@@ -9,9 +9,14 @@ SRC_DIR="${HOME}/work"
 function usage(){
   cat <<EOS
 USAGE:
-    ${0} {pyenv|rbenv}
+    ${0} {pyenv|rbenv|peco}
 EOS
   exit 0
+}
+
+function is_linux(){
+  [ -x /bin/uname ] && [ `/bin/uname` = 'Linux' ]
+  return $?
 }
 
 function is_rhel(){
@@ -42,6 +47,29 @@ function error_exit(){
   echo $*
   exit 1
 }
+
+function install_peco(){
+  if is_linux ;then
+    if [ -x "${HOME}/bin/peco" ];then
+      echo "peco is already installed in ${HOME}/bin"
+      return 1
+    fi
+    mkdir_if_not_exist "${HOME}/bin"
+    mkdir_if_not_exist "${HOME}/work"
+    pushd "${HOME}/work"
+    if [ ! -e peco_linux_amd64.tar.gz ];then
+      wget https://github.com/peco/peco/releases/download/v0.2.0/peco_linux_amd64.tar.gz
+    fi
+    tar -xzf peco_linux_amd64.tar.gz
+    cp peco_linux_amd64/peco "${HOME}/bin"
+    rm -r peco_linux_amd64
+    rm -r peco_linux_amd64.tar.gz
+    popd
+  else
+    echo "other than linux is not supported"
+  fi
+}
+
 
 function install_vim(){
   if is_rhel ;then
@@ -117,6 +145,8 @@ case $1 in
   pyenv)
     install_pyenv
     ;;
+  peco)
+    install_peco
   install_vim)
     install_vim
     ;;
