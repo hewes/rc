@@ -31,11 +31,11 @@ export MORE='-c'
 ## LANG
 ##-----------------------------------
 
-export LANG=ja_JP.UTF-8
-export LANGUAGE=ja_JP.UTF-8
-export GDM_LANG=jp_JP.UTF-8
-export LC_ALL=C
-export LC_MESSAGES=C
+#export LANG=ja_JP.UTF-8
+#export LANGUAGE=ja_JP.UTF-8
+#export GDM_LANG=jp_JP.UTF-8
+#export LC_ALL=C
+#export LC_MESSAGES=C
 
 ## LIBRARY PATH
 export LD_LIBRARY_PATH=".:/usr/local/lib:/usr/X11/lib:/usr/openwin/lib:/usr/lib:/usr/local/lib:/usr/X11R5/lib:/usr/X11R6/lib:/usr/ucblib:/usr/local/canna/lib:/usr/local/X11/lib:/usr/lib/locale/ja/wnn/lib:/usr/local/rvplayer5.0:/usr/local/ssl/lib:/etc/lib:/home/hewes/Javalib"
