@@ -25,7 +25,7 @@ function is_rhel(){
 }
 
 function is_debian(){
-  test -e /etc/debian_release
+  test -e /etc/debian_version
   return $?
 }
 
@@ -40,7 +40,11 @@ function apt_get_install(){
 }
 
 function mkdir_if_not_exist(){
-  [ ! -d $1 ] || mkdir -p $1
+  if [ -d $1 ];then
+    echo "${1} already exists"
+  else
+    mkdir -p $1
+  fi
 }
 
 function error_exit(){
@@ -61,7 +65,7 @@ function install_peco(){
       wget https://github.com/peco/peco/releases/download/v0.2.0/peco_linux_amd64.tar.gz
     fi
     tar -xzf peco_linux_amd64.tar.gz
-    cp peco_linux_amd64/peco "${HOME}/bin"
+    cp peco_linux_amd64/peco "${HOME}/bin/"
     rm -r peco_linux_amd64
     rm -r peco_linux_amd64.tar.gz
     popd
@@ -77,13 +81,19 @@ function install_vim(){
     yum_install gcc make ncurses-devel mercurial perl-devel perl-ExtUtils-Embed ruby-devel python-devel lua-devel
   elif is_debian; then
     echo "distribution is Debian(or Ubuntu)"
-    apt_get_install mercurial gettext libncurses5-dev libacl1-dev libgpm-dev lua5.2 liblua5.2-dev luajit libluajit-5.1
+    apt_get_install mercurial gettext libncurses5-dev libacl1-dev libperl-dev libpython2.7-dev libgpm-dev lua5.2 liblua5.2-dev luajit libluajit-5.1
   else
     error_exit "unknown distribution"
   fi
-  pushd ${SRC_DIR}
-  hg clone https://vim.googlecode.com/hg/ vim || error_exit "failed hg clone vim"
-  cd vim
+  mkdir_if_not_exist ${SRC_DIR}
+  if [ -d ${SRC_DIR}/vim ];then
+    pushd ${SRC_DIR}/vim
+    hg pull
+  else
+    pushd ${SRC_DIR}
+    hg clone https://vim.googlecode.com/hg/ vim || error_exit "failed hg clone vim"
+    cd vim
+  fi
   ./configure --with-features=huge --enable-gui=gnome2 --enable-perlinterp --enable-pythoninterp --enable-rubyinterp --enable-luainterp --enable-fail-if-missing || error_exit "failed to configure"
   make || error_exit "failed to make"
   ${ROOT_WRAPPER} make install || error_exit "failed to make install"
@@ -147,6 +157,7 @@ case $1 in
     ;;
   peco)
     install_peco
+    ;;
   install_vim)
     install_vim
     ;;
