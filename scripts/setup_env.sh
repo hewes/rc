@@ -14,6 +14,10 @@ EOS
   exit 0
 }
 
+function is_pyenv(){
+  return test -d ${PYENV_DIR}
+}
+
 function is_linux(){
   [ -x /bin/uname ] && [ `/bin/uname` = 'Linux' ]
   return $?
@@ -50,6 +54,37 @@ function mkdir_if_not_exist(){
 function error_exit(){
   echo $*
   exit 1
+}
+
+function install_global(){
+  if is_rhel ;then
+    echo "distribution is RHEL(or CentOS or Fedora)"
+    yum_install flex gcc make automake autoconf
+  elif is_debian; then
+    echo "distribution is Debian(or Ubuntu)"
+    apt_get_install gcc make automake autoconf flex gperf cvs bison libncurses5-dev texinfo ctags libtool python-pip
+  else
+    error_exit "unknown distribution"
+  fi
+
+  # preparation for Pygments plugin
+  if is_pyenv ;then
+    pip install Pygments
+  else
+    sudo pip install Pygments
+  fi
+
+  gnu_global_version="global-6.5"
+
+  mkdir_if_not_exist "${HOME}/work"
+  pushd "${HOME}/work"
+  rm -f global-*.tar.gz
+  wget http://ftp.gnu.org/gnu/global/${gnu_global_version}.tar.gz
+  tar -xzf ${gnu_global_version}.tar.gz
+  cd ${gnu_global_version}
+  sh ./reconf.sh
+  ./configure && make && sudo make install
+  popd
 }
 
 function install_peco(){
@@ -160,6 +195,9 @@ case $1 in
     ;;
   install_vim)
     install_vim
+    ;;
+  install_global)
+    install_global
     ;;
   *)
     usage
