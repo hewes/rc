@@ -46,9 +46,7 @@ try
   NeoBundleLazy 'Shougo/unite-build.git', {'autoload' : {
         \ 'unite_sources' : 'build',
         \  }}
-  NeoBundleLazy 'Shougo/tabpagebuffer.vim', {'autoload' : {
-        \ 'unite_sources' : 'buffer_tab',
-        \  }}
+  NeoBundle 'Shougo/tabpagebuffer.vim'
   NeoBundleLazy 'Shougo/unite-outline.git',{'autoload' : {
         \ 'unite_sources' : 'outline',
         \  }}
@@ -327,7 +325,7 @@ try
   function! s:configure_unite_gtags(bundle)
     function! a:bundle.hooks.on_source(bundle)
       let g:unite_source_gtags_project_config = {
-            \ '_': { 'treelize': 0, 'absolute_path': 1},
+            \ '_': { 'treelize': 0, 'absolute_path': 0},
             \ }
     endfunction
   endfunction
