@@ -6,13 +6,6 @@ RBENV_DIR="${HOME}/.rbenv"
 PYENV_DIR="${HOME}/.pyenv"
 SRC_DIR="${HOME}/work"
 
-function usage(){
-  cat <<EOS
-USAGE:
-    ${0} {pyenv|rbenv|peco}
-EOS
-  exit 0
-}
 
 function is_pyenv(){
   return test -d ${PYENV_DIR}
@@ -57,12 +50,14 @@ function error_exit(){
 }
 
 function install_global(){
+  install_develop_tools
+  echo "Installing GNU GLOBAL.."
   if is_rhel ;then
     echo "distribution is RHEL(or CentOS or Fedora)"
-    yum_install flex gcc make automake autoconf
+    yum_install flex automake autoconf
   elif is_debian; then
     echo "distribution is Debian(or Ubuntu)"
-    apt_get_install gcc make automake autoconf flex gperf cvs bison libncurses5-dev texinfo ctags libtool python-pip
+    apt_get_install automake autoconf flex gperf cvs bison libncurses5-dev texinfo ctags libtool python-pip
   else
     error_exit "unknown distribution"
   fi
@@ -87,7 +82,34 @@ function install_global(){
   popd
 }
 
+function install_develop_tools(){
+  echo "Installing develop tools.."
+  if is_rhel ;then
+    echo "distribution is RHEL(or CentOS or Fedora)"
+    yum_install make gcc
+  elif is_debian; then
+    echo "distribution is Debian(or Ubuntu)"
+    apt_get_install make gcc
+  else
+    error_exit "unknown distribution"
+  fi
+}
+
+function install_basic_tool(){
+  echo "Installing basic tools"
+  if is_rhel ;then
+    echo "distribution is RHEL(or CentOS or Fedora)"
+    yum_install zsh tmux
+  elif is_debian; then
+    echo "distribution is Debian(or Ubuntu)"
+    apt_get_install zsh tmux
+  else
+    error_exit "unknown distribution"
+  fi
+}
+
 function install_peco(){
+  echo "Installing peco.."
   if is_linux ;then
     if [ -x "${HOME}/bin/peco" ];then
       echo "peco is already installed in ${HOME}/bin"
@@ -111,9 +133,11 @@ function install_peco(){
 
 
 function install_vim(){
+  install_develop_tools
+  echo "Installing vim.."
   if is_rhel ;then
     echo "distribution is RHEL(or CentOS or Fedora)"
-    yum_install gcc make ncurses-devel mercurial perl-devel perl-ExtUtils-Embed ruby-devel python-devel lua-devel
+    yum_install ncurses-devel mercurial perl-devel perl-ExtUtils-Embed ruby-devel python-devel lua-devel
   elif is_debian; then
     echo "distribution is Debian(or Ubuntu)"
     apt_get_install mercurial gettext libncurses5-dev libacl1-dev libperl-dev libpython2.7-dev libgpm-dev lua5.2 liblua5.2-dev luajit libluajit-5.1
@@ -136,6 +160,8 @@ function install_vim(){
 }
 
 function install_rbenv(){
+  install_develop_tools
+  echo "Installing rbenv.."
   if is_rhel ;then
     echo "distribution is RHEL(or CentOS or Fedora)"
     yum_install git libyaml libyaml-devel zlib zlib-devel readline readline-devel openssl openssl-devel libxml2 libxml2-devel libxslt libxslt-devel
@@ -160,12 +186,14 @@ function install_rbenv(){
 }
 
 function install_pyenv(){
+  install_develop_tools
+  echo "Installing pyenv.."
   if is_rhel ;then
     echo "distribution is RHEL(or CentOS or Fedora)"
     yum_install git zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel
   elif is_debian; then
     echo "distribution is Debian(or Ubuntu)"
-    apt_get_install git make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl
+    apt_get_install git build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl
   else
     error_exit "unknown distribution"
   fi
@@ -183,7 +211,18 @@ function install_pyenv(){
   fi
 }
 
+function usage(){
+  cat <<EOS
+USAGE:
+    ${0} {basic|pyenv|rbenv|peco|vim|global}
+EOS
+  exit 0
+}
+
 case $1 in
+  basic)
+    install_basic_tool
+    ;;
   rbenv)
     install_rbenv
     ;;
@@ -193,10 +232,10 @@ case $1 in
   peco)
     install_peco
     ;;
-  install_vim)
+  vim)
     install_vim
     ;;
-  install_global)
+  global)
     install_global
     ;;
   *)
