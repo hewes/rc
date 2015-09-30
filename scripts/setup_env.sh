@@ -137,20 +137,20 @@ function install_vim(){
   echo "Installing vim.."
   if is_rhel ;then
     echo "distribution is RHEL(or CentOS or Fedora)"
-    yum_install ncurses-devel mercurial perl-devel perl-ExtUtils-Embed ruby-devel python-devel lua-devel
+    yum_install ncurses-devel git perl-devel perl-ExtUtils-Embed ruby-devel python-devel lua-devel
   elif is_debian; then
     echo "distribution is Debian(or Ubuntu)"
-    apt_get_install mercurial gettext libncurses5-dev libacl1-dev libperl-dev libpython2.7-dev libgpm-dev lua5.2 liblua5.2-dev luajit libluajit-5.1
+    apt_get_install git gettext libncurses5-dev libacl1-dev libperl-dev libpython2.7-dev libgpm-dev lua5.2 liblua5.2-dev luajit libluajit-5.1
   else
     error_exit "unknown distribution"
   fi
   mkdir_if_not_exist ${SRC_DIR}
   if [ -d ${SRC_DIR}/vim ];then
     pushd ${SRC_DIR}/vim
-    hg pull
+    git pull
   else
     pushd ${SRC_DIR}
-    hg clone https://vim.googlecode.com/hg/ vim || error_exit "failed hg clone vim"
+    git clone https://github.com/vim/vim vim || error_exit "failed git clone vim"
     cd vim
   fi
   ./configure --with-features=huge --enable-gui=gnome2 --enable-perlinterp --enable-pythoninterp --enable-rubyinterp --enable-luainterp --enable-fail-if-missing || error_exit "failed to configure"
