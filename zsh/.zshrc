@@ -224,6 +224,7 @@ fi
 alias	s='screen'
 alias	ss='screen -S'
 alias	sr='screen -D -RR'
+alias	tmr='tmux attach -t 0 || tmux'
 
 # set terminal title including current directory
 #if [ $TERM = "screen" ];then
