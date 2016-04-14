@@ -112,7 +112,8 @@ try
   NeoBundle 'vim-scripts/vcscommand.vim.git'
 
   " Appearance
-  NeoBundle 'bling/vim-airline.git'
+  NeoBundle 'vim-airline/vim-airline.git'
+  NeoBundle 'vim-airline/vim-airline-themes.git'
   NeoBundle 'osyo-manga/vim-anzu'
   NeoBundle 'hewes/context-highlight.vim.git'
   NeoBundle 'tomtom/quickfixsigns_vim.git'
@@ -550,7 +551,7 @@ try
         let g:eskk#directory  =  "~/.vim/.eskk"
         "let g:eskk#dictionary  =  { 'path': "~/.vim/dict/skk.dict",  'sorted': 0,  'encoding': 'utf-8',  }
         " SKK-JISYO from http://openlab.jp/skk/dic/SKK-JISYO.L.gz
-        let g:eskk#large_dictionary  =  { 'path': "~/SKK-JISYO.L",  'sorted': 0,  'encoding': 'euc-jp',  }
+        let g:eskk#large_dictionary  =  { 'path': "~/SKK-JISYO.L",  'sorted': 1,  'encoding': 'euc-jp',  }
         let g:eskk#enable_completion = 1
         let g:eskk#start_completion_length = 2
         let g:eskk_map_normal_keys = 1
@@ -1212,7 +1213,7 @@ endif
 
 " ----- airline {{{
 " theme is one of autoload/airline/themes
-let g:airline_theme = 'bubblegum'
+let g:airline_theme = 'wombat'
 if has('multi_byte')
   " TODO should only enable on environment where the font is patched
   let g:airline_powerline_fonts = 0
