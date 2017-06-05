@@ -603,6 +603,22 @@ try
       let g:watchdogs_check_BufWritePost_enables = {
             \ "scala" : 0
             \ }
+      let s:pyflakes = executable('pyflakes3') ? 'pyflakes3' :
+            \          executable('python3') ? 'python3' :
+            \          executable('pyflakes') ? 'pyflakes' :
+            \          'python'
+      let s:cmdopt = executable('pyflakes3') ? '' :
+            \          executable('python3') ? '-m pyflakes' :
+            \          executable('pyflakes') ? '' :
+            \          '-m pyflakes'
+      let g:quickrun_config["watchdogs_checker/pyflakes3"] = {
+            \ "command" : s:pyflakes,
+            \ "cmdopt" : s:cmdopt,
+            \ "exec"    : "%c %o %s:p",
+            \ "errorformat" : '%f:%l:%m',
+            \ }
+      unlet s:pyflakes
+      unlet s:cmdopt
     endfunction
     function! a:bundle.hooks.on_post_source(bundle)
     endfunction
