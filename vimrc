@@ -592,6 +592,7 @@ try
             \ "hook/quickfixsigns_enable/enable_exit" : 1,
             \ "hook/qfixgrep_enable/enable_exit" : 1,
             \ 'runmode' : "async:remote:vimproc",
+            \ "outputter/quickfix/open_cmd" : "",
             \ }
       " TODO: should consider class_path, and library on scala application
       let g:quickrun_config['watchdogs_checker/nop'] = {
