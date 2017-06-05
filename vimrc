@@ -47,7 +47,7 @@ try
         \ 'unite_sources' : 'build',
         \  }}
   NeoBundle 'Shougo/tabpagebuffer.vim'
-  NeoBundleLazy 'Shougo/unite-outline.git',{'autoload' : {
+  NeoBundle 'Shougo/unite-outline.git',{'autoload' : {
         \ 'unite_sources' : 'outline',
         \  }}
   NeoBundleLazy 'kmnk/vim-unite-svn.git', {'autoload' : {
@@ -62,8 +62,9 @@ try
   NeoBundleLazy 'ujihisa/unite-colorscheme.git', {'autoload' : {
         \ 'unite_sources' : 'colorscheme',
         \  }}
-  NeoBundleLazy 'hewes/unite-gtags.git', {'autoload' : {
-        \ 'unite_sources' : ['gtags/context', 'gtags/ref', 'gtags/def', 'gtags/completion', 'gtags/grep'],
+  NeoBundle 'hewes/unite-gtags.git', {'autoload' : {
+        \ 'depends' : ['Shougo/unite.vim.git'],
+        \ 'unite_sources' : ['gtags/context', 'gtags/ref', 'gtags/def', 'gtags/completion', 'gtags/grep','gtags/path'],
         \  }}
 
   " Input support
@@ -385,6 +386,7 @@ try
       nnoremap [unite]R :Unite ref/
       nnoremap <silent> [unite]b :UniteWithBufferDir file file/new<CR>
       nnoremap <silent> [unite]c :Unite -buffer-name=files file file/new<CR>
+      nnoremap <silent> [unite]n :Unite -buffer-name=files gtags/path file/new<CR>
       nnoremap <silent> [unite]t :Unite tab<CR>
       nnoremap <silent> [unite]y :Unite register<CR>
       nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
@@ -442,6 +444,15 @@ try
   endfunction
   call s:config_bundle("unite.vim", function('s:configure_unite'))
   "}}}
+
+  " quickfixsigns_vim"{{{
+  function! s:configure_quickfixsigns_vim(bundle)
+    function! a:bundle.hooks.on_source(bundle)
+      let g:quickfixsigns_sign_may_use_double=0
+    endfunction
+  endfunction
+  call s:config_bundle("quickfixsigns_vim", function('s:configure_quickfixsigns_vim'))
+  " }}}
 
   " smartchr.vim"{{{
   function! s:configure_smartchr(bundle)
