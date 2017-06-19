@@ -1,6 +1,8 @@
 [color]
   ui = auto
 [alias]
-  tr = log --graph --pretty='format:%C(yellow)%h%Creset %s %Cgreen(%an)%Creset %Cred%d%Creset'
+  tr-simple = log --graph --pretty='format:%C(red reverse)%d%Creset%C(white reverse) %h% Creset %C(green reverse) %an %Creset %C(cyan)%ar%Creset%n%C(white bold)%w(80)%s%Creset%n%n%w(80,2,2)%b'
+  tr = log --graph --name-status --pretty='format:%C(red reverse)%d%Creset%C(white reverse) %h% Creset %C(green reverse) %an %Creset %C(cyan)%ar%Creset%n%C(white bold)%w(80)%s%Creset%n%n%w(80,2,2)%b'
+  tr2 = log --graph --name-only --pretty='format:%C(yellow)%h%Creset %s %Cgreen(%an)%Creset %Cred%d%Creset'
   list = log --pretty=format:'%C(yellow)%h%Creset %ad [%an] %Cgreen%d%Creset %s' --date=short
   checkout-peco = !git checkout `git branch | cut -b 3- | peco`
