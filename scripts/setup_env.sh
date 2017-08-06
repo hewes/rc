@@ -140,7 +140,7 @@ function install_vim(){
     yum_install ncurses-devel git perl-devel perl-ExtUtils-Embed ruby-devel python-devel lua-devel
   elif is_debian; then
     echo "distribution is Debian(or Ubuntu)"
-    apt_get_install git gettext libncurses5-dev libacl1-dev libperl-dev libpython2.7-dev libgpm-dev lua5.2 liblua5.2-dev luajit libluajit-5.1
+    apt_get_install git gettext libncurses5-dev libacl1-dev libperl-dev libpython2.7-dev libgpm-dev lua5.2 liblua5.2-dev luajit libluajit-5.1  python-dev ruby-dev
   else
     error_exit "unknown distribution"
   fi
