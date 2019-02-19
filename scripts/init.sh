@@ -1,7 +1,7 @@
 #/bin/bash
 
 rc3=(peco gitconfig gitconfig.common vimrc gvimrc vim zshenv screenrc tmux.conf)
-rc5=(xmonad Xdefaults xinitrc Xmodmap xmobarrc vimperatorrc fehbg)
+rc5=(xmonad Xdefaults xinitrc Xmodmap xmobarrc fehbg)
 
 function setup(){
   for file in ${files[*]};do
