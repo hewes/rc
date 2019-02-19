@@ -37,6 +37,8 @@ export MORE='-c'
 #export LC_ALL=C
 #export LC_MESSAGES=C
 
+export PATH="/usr/local/bin/:${PATH}"
+
 ## LIBRARY PATH
 export LD_LIBRARY_PATH=".:/usr/local/lib:/usr/X11/lib:/usr/openwin/lib:/usr/lib:/usr/local/lib:/usr/X11R5/lib:/usr/X11R6/lib:/usr/ucblib:/usr/local/canna/lib:/usr/local/X11/lib:/usr/lib/locale/ja/wnn/lib:/usr/local/rvplayer5.0:/usr/local/ssl/lib:/etc/lib:/home/hewes/Javalib"
 
@@ -135,8 +137,11 @@ setopt auto_pushd
 #}
 
 # eval `dircolors`
-export LSCOLORS=exfxcxdxbxegedabagacad
 
+# for BSD
+export LSCOLORS=gxfxcxdxbxegedabagacad
+
+# for GNU
 LS_COLORS='di=94:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
 export LS_COLORS
 export ZLS_COLORS=$LS_COLORS
@@ -275,6 +280,10 @@ fi
 if [ -d $HOME/.pyenv ]; then
     export PATH=$HOME/.pyenv/bin:$PATH
     eval "$(pyenv init -)"
+fi
+
+if [ -d $HOME/.nodebrew ]; then
+    export PATH=$HOME/.nodebrew/current/bin:$PATH
 fi
 
 if type peco > /dev/null ;then

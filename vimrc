@@ -803,7 +803,7 @@ if s:has_win
   set shellslash
   set shell=bash
 else
-  set shell=zsh
+  set shell=bash
 endif
 
 " split window direction
