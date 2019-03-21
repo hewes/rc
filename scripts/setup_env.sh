@@ -26,6 +26,11 @@ function is_debian(){
   return $?
 }
 
+function is_mac(){
+  test "$(uname)" == 'Darwin'
+  return $?
+}
+
 function yum_install(){
   echo "install $*"
   ${ROOT_WRAPPER} yum -y install $* || error_exit "failed to install yum install"
@@ -58,6 +63,8 @@ function install_global(){
   elif is_debian; then
     echo "distribution is Debian(or Ubuntu)"
     apt_get_install automake autoconf flex gperf cvs bison libncurses5-dev texinfo ctags libtool python-pip
+  elif is_mac; then
+    echo "OS is Mac"
   else
     error_exit "unknown distribution"
   fi
@@ -90,6 +97,8 @@ function install_develop_tools(){
   elif is_debian; then
     echo "distribution is Debian(or Ubuntu)"
     apt_get_install make gcc
+  elif is_mac; then
+    echo "Mac OS, so do nothing"
   else
     error_exit "unknown distribution"
   fi
@@ -168,6 +177,8 @@ function install_rbenv(){
   elif is_debian; then
     echo "distribution is Debian(or Ubuntu)"
     apt_get_install git autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev
+  elif is_mac; then
+    echo "OS is mac"
   else
     error_exit "unknown distribution"
   fi
@@ -194,6 +205,8 @@ function install_pyenv(){
   elif is_debian; then
     echo "distribution is Debian(or Ubuntu)"
     apt_get_install git build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl
+  elif is_mac; then
+    echo "Mac OS"
   else
     error_exit "unknown distribution"
   fi
