@@ -1,3 +1,5 @@
+#zmodload zsh/zprof
+
 export ZDOTDIR=$HOME/rc/zsh
 
 ##-----------------------------------
@@ -19,3 +21,4 @@ case ${UID} in
   PATH=./:$HOME/bin:$HOME/rc/scripts:/bin:/sbin:/usr/local/bin/:/opt/local/bin:$PATH
     ;;
 esac
+

@@ -1,7 +1,41 @@
 ######
 ######  .zshrc
 ######
-###### Last update by hewes 10/07/13
+#
+
+if [[ -z "$TMUX" ]]
+then
+  tmux new-session;
+  exit;
+fi
+
+if [ -d $HOME/.zplug ];then
+  # zplug
+  source ~/.zplug/init.zsh
+  zplug 'zplug/zplug', hook-build:'zplug --self-manage'
+
+  # syntax highlight (https://github.com/zsh-users/zsh-syntax-highlighting)
+  zplug "zsh-users/zsh-syntax-highlighting"
+
+  # history
+  zplug "zsh-users/zsh-history-substring-search"
+
+  # completion
+  zplug "zsh-users/zsh-autosuggestions"
+  zplug "zsh-users/zsh-completions"
+
+  zplug "chrissicool/zsh-256color"
+
+  # Install plugins if there are plugins that have not been installed
+  if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+      echo; zplug install
+    fi
+  fi
+  # Then, source plugins and add commands to $PATH
+  zplug load
+fi
 
 ##-----------------------------------
 ## ENVIRONMENT
@@ -50,30 +84,30 @@ autoload colors
 colors
 
 case ${UID} in
-0)
-	PROMPT="%{$fg[red]%}<%T>%{$fg[red]%}[root@%m] %(!.#.$) %{${reset_color}%}%{${fg[red]}%}[%~]%{${reset_color}%} "
-	PROMPT2="%{${fg[red]}%}%_> %{${reset_color}%}"
-	SPROMPT="%{${fg[red]}%}correct: %R -> %r [nyae]? %{${reset_color}%}"
-	RPROMPT="%{${fg[cyan]}%}[%~]%{${reset_color}%} "
-	;;
-*)
-  autoload -Uz vcs_info
-  zstyle ':vcs_info:*' formats '(%s:%b)'
-  zstyle ':vcs_info:*' actionformats '(%s)-[%b|%a]'
-  precmd () {
-    psvar=()
-    LANG=en_US.UTF-8 vcs_info
-    [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
-  }
-  TIME_FORMAT="%{${fg[yellow]}%}<%T>"
-  USER_AND_HOST="%{$fg[white]%}[%n@%m]"
-  CURRENT_DIR="%{${fg[yellow]}%}[%~]"
-  RESET_COLOR="%{${reset_color}%}"
-	PROMPT="${TIME_FORMAT}${USER_AND_HOST}${RESET_COLOR}%% "
-	PROMPT2="%{${fg[red]}%}%_> %{${reset_color}%}"
-	SPROMPT="%{${fg[red]}%}correct: %R -> %r [nyae]? %{${reset_color}%}"
-	RPROMPT="%1(v|%F{green}%1v%f|)${CURRENT_DIR}$RESET_COLOR"
-	;;
+  0)
+    PROMPT="%{$fg[red]%}<%T>%{$fg[red]%}[root@%m] %(!.#.$) %{${reset_color}%}%{${fg[red]}%}[%~]%{${reset_color}%} "
+    PROMPT2="%{${fg[red]}%}%_> %{${reset_color}%}"
+    SPROMPT="%{${fg[red]}%}correct: %R -> %r [nyae]? %{${reset_color}%}"
+    RPROMPT="%{${fg[cyan]}%}[%~]%{${reset_color}%} "
+    ;;
+  *)
+    autoload -Uz vcs_info
+    zstyle ':vcs_info:*' formats '(%s:%b)'
+    zstyle ':vcs_info:*' actionformats '(%s)-[%b|%a]'
+    precmd () {
+      psvar=()
+      LANG=en_US.UTF-8 vcs_info
+      [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+    }
+    TIME_FORMAT="%{${fg[yellow]}%}<%T>"
+    USER_AND_HOST="%{$fg[white]%}[%n@%m]"
+    CURRENT_DIR="%{${fg[yellow]}%}[%~]"
+    RESET_COLOR="%{${reset_color}%}"
+    PROMPT="${TIME_FORMAT}${USER_AND_HOST}${RESET_COLOR}%% "
+    PROMPT2="%{${fg[red]}%}%_> %{${reset_color}%}"
+    SPROMPT="%{${fg[red]}%}correct: %R -> %r [nyae]? %{${reset_color}%}"
+    RPROMPT="%1(v|%F{green}%1v%f|)${CURRENT_DIR}$RESET_COLOR"
+    ;;
 esac
 
 ##-----------------------------------
@@ -82,23 +116,14 @@ esac
 ##
 
 HISTFILE=$ZDOTDIR/.zhistory
-
 HISTSIZE=100000
-
 SAVEHIST=100000
-
-setopt hist_ignore_dups
-
 setopt extended_history
-
 setopt share_history
-
 setopt hist_verify
-
 setopt hist_ignore_space
-
 setopt hist_no_store
-
+setopt hist_find_no_dups
 
 ##-----------------------------------
 ## completion
@@ -116,27 +141,14 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 # show complete candidates as groups
 zstyle ':completion:*' group-name ''
-zstyle ':completion:*:descriptions' format $'%B%{\e[33m%}Completing %d%b' 
+zstyle ':completion:*:descriptions' format $'%B%{\e[33m%}Completing %d%b'
 
 autoload -U compinit
 compinit
 
-
 setopt list_types
 setopt auto_list
 setopt auto_pushd
-
-###############
-# auto-fu-init
-###############
-#source $ZDOTDIR/auto-fu.zsh; zle-line-init(){ auto-fu-init; }; zle -N zle-line-init
-#function(){
-  #local code
-  #code=${functions[auto-fu-init]/'\n-azfu-'/''}
-  #eval "function auto-fu-init () { $code }"
-#}
-
-# eval `dircolors`
 
 # for BSD
 export LSCOLORS=gxfxcxdxbxegedabagacad
@@ -171,7 +183,7 @@ if [ $OSTYPE != cygwin ];then
 fi
 
 unsetopt promptcr
- 
+
 ## Emacs like keybind
 bindkey -e
 
@@ -195,7 +207,7 @@ setopt mark_dirs
 setopt no_flow_control
 setopt noautoremoveslash
 #unsetopt autoremoveslash
-setopt appendhistory 
+setopt appendhistory
 setopt extendedglob
 setopt notify
 setopt nomatch
@@ -231,46 +243,11 @@ alias	ss='screen -S'
 alias	sr='screen -D -RR'
 alias	tmr='tmux attach -t 0 || tmux'
 
-# set terminal title including current directory
-#if [ $TERM = "screen" ];then
-  #precmd() {
-    #echo -ne "\033]0;${PWD}\007"
-  #}
-#fi
-
-function chpwd(){
-  ls
-}
-
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 bindkey "^P" history-beginning-search-backward-end
 bindkey "^N" history-beginning-search-forward-end
-
-function edit-file() {
-    zle -I
-    local file
-    local -a words
-
-    words=(${(z)LBUFFER})
-    file="${words[$#words]}"
-    [[ -f "$file" ]] && $EDITOR "$file"
-}
-zle -N edit-file
-bindkey "^x^f" edit-file
-
-function view-file() {
-    zle -I
-    local file
-    local -a words
-
-    words=(${(z)LBUFFER})
-    file="${words[$#words]}"
-    [[ -f "$file" ]] && $PAGER "$file"
-}
-zle -N view-file
-bindkey "^x^r" view-file
 
 if [ -d $HOME/.rbenv ]; then
     export PATH=$HOME/.rbenv/bin:$PATH
@@ -286,22 +263,6 @@ if [ -d $HOME/.nodebrew ]; then
     export PATH=$HOME/.nodebrew/current/bin:$PATH
 fi
 
-if type peco > /dev/null ;then
-  function peco-select-history() {
-    local tac
-    if which tac > /dev/null; then
-      tac="tac"
-    else
-      tac="tail -r"
-    fi
-    BUFFER=$(history -n 1 | \
-      eval $tac | \
-      awk '!a[$0]++' | \
-      peco --query "$LBUFFER")
-    CURSOR=$#BUFFER
-    zle clear-screen
-  }
-  zle -N peco-select-history
-  bindkey '^r' peco-select-history
+if type zprof > /dev/null 2>&1; then
+  zprof | less
 fi
-

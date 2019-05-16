@@ -224,6 +224,23 @@ function install_pyenv(){
   fi
 }
 
+function install_zsh(){
+  echo "Installing zsh.."
+  if is_rhel ;then
+    echo "distribution is RHEL(or CentOS or Fedora)"
+    yum_install zsh
+  elif is_debian; then
+    echo "distribution is Debian(or Ubuntu)"
+    apt_get_install zsh
+  elif is_mac; then
+    echo "Mac OS"
+    brew install zsh
+  else
+    error_exit "unknown distribution"
+  fi
+  curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh| zsh
+}
+
 function usage(){
   cat <<EOS
 USAGE:
@@ -250,6 +267,9 @@ case $1 in
     ;;
   global)
     install_global
+    ;;
+  zsh)
+    install_zsh
     ;;
   *)
     usage
