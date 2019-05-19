@@ -3,12 +3,6 @@
 ######
 #
 
-if [[ -z "$TMUX" ]]
-then
-  tmux new-session;
-  exit;
-fi
-
 if [ -d $HOME/.zplug ];then
   # zplug
   source ~/.zplug/init.zsh
