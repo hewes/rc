@@ -4,6 +4,7 @@ repo = 'Shougo/dein.vim'
 # Unite {{{
 [[plugins]]
 repo = 'Shougo/unite.vim'
+depends = ['vimproc']
 hook_add='''
   let g:unite_enable_ignore_case = 1
   let g:unite_enable_smart_case = 1
@@ -64,41 +65,7 @@ hook_add='''
     inoremap <silent><buffer> _ <SPACE>
   endfunction "}}}
 
-  function! s:configure_unite(bundle)
-        if exists("t:local_unite") && has_key(t:local_unite, a:key)
-          execute t:local_unite[a:key]
-        else
-          echo "ERROR: t:local_unite is not defined or not has key: ". a:key
-        endif
-      endfunction
-      let s:local_unite_source = {
-            \ "name"        : "local",
-            \ "description" : 'Unite commands defined at t:local_unite',
-            \ }
-      function! s:local_unite_source.gather_candidates(args, context)
-        let l:candidates = []
-        if exists("t:local_unite")
-          for key in sort(keys(t:local_unite))
-            let l:candidate = {
-                  \ 'word'            : key . ': ' . t:local_unite[key],
-                  \ 'kind'            : 'command',
-                  \ 'action__command' : t:local_unite[key] . ' ',
-                  \ 'source__command' : ':'. t:local_unite[key],
-                  \ }
-            call add(l:candidates, l:candidate)
-          endfor
-        else
-          call unite#print_message("[unite-local] Warning: t:local_unite is not defined")
-        endif
-        return l:candidates
-      endfunction
-
-      call unite#define_source(s:local_unite_source)
-      for key_number in [1, 2, 3, 4, 5, 6, 7, 8, 9]
-        execute printf('nnoremap <silent> [unite]%d :<C-u> call UniteCurrentProjectShortcut(%d)<CR>', key_number, key_number)
-      endfor
-
-      nnoremap [unite]<SPACE> :Unite local<CR>
+  nnoremap [unite]<SPACE> :Unite local<CR>
 '''
 
 [[plugins]]
@@ -107,10 +74,12 @@ repo = 'Shougo/neomru.vim'
 [[plugins]]
 repo = 'Shougo/unite-outline.git'
 on_source= ['unite.vim']
+depends = ['unite.vim']
 
 [[plugins]]
 repo = 'hewes/unite-gtags.git'
 on_source= ['unite.vim']
+depends = ['unite.vim']
 hook_add='''
   let g:unite_source_gtags_project_config = {
         \ '_': { 'treelize': 0, 'absolute_path': 0},
@@ -349,6 +318,7 @@ hook_source='''
 [[plugins]]
 repo = 'osyo-manga/vim-watchdogs'
 on_source='vim-quickrun'
+depends = ['vim-quickrun']
 hook_add='''
       let g:watchdogs_check_BufWritePost_enable = 1
 '''
@@ -361,6 +331,7 @@ repo = 'vim-airline/vim-airline'
 
 [[plugins]]
 repo = 'vim-airline/vim-airline-themes'
+depends = ['vim-airline']
 on_source= ['vim-airline']
 
 [[plugins]]
@@ -388,7 +359,7 @@ build='make'
 
 [[plugins]]
 repo = 'kana/vim-altercmd'
-hook_source='''
+hook_post_source='''
   call altercmd#load()
   AlterCommand cd TabpageCD
   command! -nargs=0 CD silent execute 'TabpageCD' unite#util#path2project_directory(expand('%:p'))
@@ -405,5 +376,4 @@ repo = 'tpope/vim-repeat.git'
 
 [[plugins]]
 repo = 'cespare/vim-toml'
-
 
