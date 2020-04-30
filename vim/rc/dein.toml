@@ -318,7 +318,7 @@ hook_source='''
 [[plugins]]
 repo = 'osyo-manga/vim-watchdogs'
 on_source='vim-quickrun'
-depends = ['vim-quickrun']
+depends = ['vim-quickrun', 'vimproc']
 hook_add='''
       let g:watchdogs_check_BufWritePost_enable = 1
 '''
