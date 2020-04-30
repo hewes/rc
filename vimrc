@@ -244,14 +244,14 @@ endif
 if s:has_win
   " if windows use cp932
   if &encoding !=? 'cp932'
-    let &termencoding = &encoding
     set encoding=cp932
+    let &termencoding = &encoding
   endif
 else
   " else use utf-8.
   if &encoding !=? 'utf-8'
-    let &termencoding = &encoding
     set encoding=utf-8
+    let &termencoding = &encoding
   endif
 endif
 
