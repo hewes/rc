@@ -97,7 +97,8 @@ case ${UID} in
     USER_AND_HOST="%{$fg[white]%}[%n@%m]"
     CURRENT_DIR="%{${fg[yellow]}%}[%~]"
     RESET_COLOR="%{${reset_color}%}"
-    PROMPT="${TIME_FORMAT}${USER_AND_HOST}${RESET_COLOR}%  ${CURRENT_DIR}${RESET_COLOR} %1(v|%F{green}%1v%f|)
+    PROMPT="
+${TIME_FORMAT}${USER_AND_HOST}${RESET_COLOR}%  ${CURRENT_DIR}${RESET_COLOR} %1(v|%F{green}%1v%f|)
 %% "
     PROMPT2="%{${fg[red]}%}%_> %{${reset_color}%}"
     SPROMPT="%{${fg[red]}%}correct: %R -> %r [nyae]? %{${reset_color}%}"
