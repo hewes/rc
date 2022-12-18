@@ -1,6 +1,83 @@
 [[plugins]]
 repo = 'Shougo/dein.vim'
 
+# denops {{{
+[[plugins]]
+repo = 'vim-denops/denops.vim'
+# }}}
+
+# ddc.vim - Completion {{{
+[[plugins]]
+repo = 'Shougo/ddc.vim'
+depends = ['denops']
+hook_post_source='''
+call ddc#custom#patch_global('completionMenu', 'pum.vim')
+call ddc#custom#patch_global('ui', 'native')
+call ddc#custom#patch_global('sources', [
+ \ 'around',
+ \ 'vim-lsp',
+ \ 'file'
+ \ ])
+call ddc#custom#patch_global('sourceOptions', {
+ \ '_': {
+ \   'matchers': ['matcher_head'],
+ \   'sorters': ['sorter_rank'],
+ \   'converters': ['converter_remove_overlap'],
+ \ },
+ \ 'around': {'mark': 'A'},
+ \ 'vim-lsp': {
+ \   'mark': 'L',
+ \   'matchers': ['matcher_head'],
+ \   'forceCompletionPattern': '\.|:|->|"\w+/*'
+ \ },
+ \ 'file': {
+ \   'mark': 'F',
+ \   'isVolatile': v:true,
+ \   'forceCompletionPattern': '\S/\S*'
+ \ }})
+call ddc#enable()
+inoremap <silent><expr> <TAB>
+\ pumvisible() ? '<C-n>' :
+\ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
+\ '<TAB>' : ddc#map#manual_complete()
+inoremap <expr><S-TAB>  pumvisible() ? '<C-p>' : '<C-h>'
+'''
+
+[[plugins]]
+repo = 'Shougo/pum.vim'
+
+[[plugins]]
+repo = 'Shougo/ddc-around'
+
+[[plugins]]
+repo = 'Shougo/ddc-ui-native'
+
+[[plugins]]
+repo = 'Shougo/ddc-file'
+
+[[plugins]]
+repo = 'Shougo/ddc-matcher_head'
+
+[[plugins]]
+repo = 'Shougo/ddc-sorter_rank'
+
+[[plugins]]
+repo = 'Shougo/ddc-converter_remove_overlap'
+
+[[plugins]]
+repo = 'shun/ddc-vim-lsp'
+depends = ['vim-lsp']
+# }}}
+
+# vim-lsp - LSP {{{
+[[plugins]]
+repo = 'prabirshrestha/vim-lsp'
+
+[[plugins]]
+repo = 'mattn/vim-lsp-settings'
+depends = ['vim-lsp']
+# }}}
+
 # Unite {{{
 [[plugins]]
 repo = 'Shougo/unite.vim'
@@ -87,96 +164,6 @@ hook_add='''
 '''
 
 # }}}
-# Complete {{{
-[[plugins]]
-repo = 'Shougo/tabpagebuffer.vim'
-
-[[plugins]]
-repo = 'Shougo/neocomplete.vim'
-if = 'has("lua")'
-hook_post_source='''
-  let g:neocomplete#enable_at_startup = 1
-  let g:neocomplete#auto_completion_start_length = 2
-  let g:neocomplete#min_keyword_length = 2
-
-  let g:neocomplete#enable_auto_select = 0
-
-  " TODO: after patch for completeopt noinsert option
-  let g:neocomplete#enable_complete_select = 0
-  "let g:neocomplete#enable_complete_select = 1
-  let g:neocomplete#enable_refresh_always = 0
-  let g:neocomplete#enable_smart_case = 1
-  let g:neocomplete#enable_fuzzy_completion = 1
-  let g:neocomplete#enable_auto_delimiter = 1
-
-  let g:neocomplete#enable_auto_close_preview = 1
-
-  " sources setting
-
-  " omni source
-  if !exists('g:neocomplete#sources#omni#input_patterns')
-    let g:neocomplete#sources#omni#input_patterns = {}
-  end
-  let g:neocomplete#sources#omni#input_patterns = {}
-  let g:neocomplete#sources#omni#functions = {}
-
-  " vim source
-  if !exists('g:neocomplete#sources#vim#complete_functions')
-    let g:neocomplete#sources#vim#complete_functions = {}
-  endif
-  let g:neocomplete#sources#vim#complete_functions.Ref = 'ref#complete'
-  let g:neocomplete#sources#vim#complete_functions.Unite = 'untie#complete_source'
-
-  if !exists('g:neocomplete#force_omni_input_patterns')
-    let g:neocomplete#force_omni_input_patterns = {}
-  endif
-
-  if !exists('g:neocomplete#keyword_patterns')
-    let g:neocomplete#keyword_patterns = {}
-  end
-  let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-
-  let g:neocomplete#sources#syntax#min_keyword_length = 2
-
-  " keymappings
-  let g:neocomplete#text_mode_filetypes = {
-        \ 'txt' :1,
-        \ 'md' :1,
-        \ }
-
-  " Define dictionary.
-  let g:neocomplete#sources#dictionary#min_keyword_length = 2
-  let g:neocomplete#sources#dictionary#dictionaries = {
-        \ 'default' : '',
-        \ 'vimshell' : $HOME.'/.vimshell_hist',
-        \ 'ruby' : $HOME.'/.vim/dict/ruby.dict',
-        \ 'java' : $HOME.'/.vim/dict/java.dict',
-        \ }
-  call neocomplete#custom#source('include', 'disabled_filetypes', {'_' : 1})
-  call neocomplete#custom#source('tag', 'disabled_filetypes', {'vim' : 1})
-  call neocomplete#custom#source('_', 'converters', ['converter_delimiter', 'converter_abbr'])
-  inoremap <expr><Space> pumvisible() ? neocomplete#close_popup() . "\<Space>"  : "\<Space>"
-  inoremap <expr><C-h> neocomplete#smart_close_popup() . "\<C-h>"
-'''
-
-[[plugins]]
-repo = 'Shougo/neocomplcache'
-if = '!has("lua")'
-
-[[plugins]]
-repo = 'Shougo/neosnippet'
-hook_add='''
-  " expand snippets by TAB
-  imap <silent> <expr> <Tab> <SID>tab_wrapper()
-  function! s:tab_wrapper()
-    if neosnippet#expandable_or_jumpable()
-      return "\<Plug>(neosnippet_expand_or_jump)"
-    endif
-    return "\<Plug>(skip_position)""
-  endfunction
-  let g:neosnippet#snippets_directory = $HOME. '/.vim/snippets'
-'''
-# }}}
 # eskk {{{
 [[plugins]]
 repo = 'Shougo/neosnippet-snippets'
@@ -229,7 +216,7 @@ hook_source='''
       let g:eskk#directory  =  "~/.vim/.eskk"
       "let g:eskk#dictionary  =  { 'path': "~/.vim/dict/skk.dict",  'sorted': 0,  'encoding': 'utf-8',  }
       " SKK-JISYO from http://openlab.jp/skk/dic/SKK-JISYO.L.gz
-      let g:eskk#large_dictionary  =  { 'path': "~/SKK-JISYO.L",  'sorted': 1,  'encoding': 'euc-jp',  }
+      let g:eskk#large_dictionary  =  { 'path': "~/SKK-JISYO.L",  'sorted': 0,  'encoding': 'euc-jp',  }
       let g:eskk#enable_completion = 1
       let g:eskk#start_completion_length = 2
       let g:eskk_map_normal_keys = 1

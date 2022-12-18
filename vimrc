@@ -49,6 +49,7 @@ if dein#check_install()
   call dein#install()
 endif
 "}}}
+
 " ======== Source Macro {{{
 if filereadable($VIMRUNTIME . "/macros/matchit.vim")
   source $VIMRUNTIME/macros/matchit.vim
@@ -170,7 +171,9 @@ set ignorecase smartcase wrapscan incsearch hlsearch grepprg=internal
 
 "Japanese input etc settings
 set noimdisable noimcmdline
-set iminsert=1 imsearch=1
+
+" ddc does not work if lmap is ON
+set iminsert=0 imsearch=1
 
 " beyond line
 set whichwrap=b,s,h,l,<,>,[,]
