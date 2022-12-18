@@ -49,11 +49,46 @@ if dein#check_install()
   call dein#install()
 endif
 "}}}
+
 " ======== Source Macro {{{
 if filereadable($VIMRUNTIME . "/macros/matchit.vim")
   source $VIMRUNTIME/macros/matchit.vim
 endif
 " }}}
+
+call ddc#custom#patch_global('completionMenu', 'pum.vim')
+call ddc#custom#patch_global('ui', 'native')
+call ddc#custom#patch_global('sources', [
+ \ 'around',
+ \ 'vim-lsp',
+ \ 'file'
+ \ ])
+call ddc#custom#patch_global('sourceOptions', {
+ \ '_': {
+ \   'matchers': ['matcher_head'],
+ \   'sorters': ['sorter_rank'],
+ \   'converters': ['converter_remove_overlap'],
+ \ },
+ \ 'around': {'mark': 'A'},
+ \ 'vim-lsp': {
+ \   'mark': 'L', 
+ \   'matchers': ['matcher_head'],
+ \   'forceCompletionPattern': '\.|:|->|"\w+/*'
+ \ },
+ \ 'file': {
+ \   'mark': 'F',
+ \   'isVolatile': v:true, 
+ \   'forceCompletionPattern': '\S/\S*'
+ \ }})
+call ddc#enable()
+inoremap <silent><expr> <TAB>
+\ pumvisible() ? '<C-n>' :
+\ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
+\ '<TAB>' : ddc#map#manual_complete()
+inoremap <expr><S-TAB>  pumvisible() ? '<C-p>' : '<C-h>'
+"inoremap <Tab> <Cmd>call pum#map#insert_relative(+1)<CR>
+"inoremap <S-Tab> <Cmd>call pum#map#insert_relative(-1)<CR>
+
 " ======== Util Function {{{
 function! s:mkdir(file, ...)
   let f = a:0 ? fnamemodify(a:file, a:1) : a:file
