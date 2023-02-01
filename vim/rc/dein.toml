@@ -1,6 +1,10 @@
 [[plugins]]
 repo = 'Shougo/dein.vim'
 
+[[plugins]]
+repo = 'Shougo/vimproc'
+build='make'
+
 # denops {{{
 [[plugins]]
 repo = 'vim-denops/denops.vim'
@@ -87,6 +91,9 @@ depends = ['vim-lsp']
 
 # Unite {{{
 [[plugins]]
+repo = 'Shougo/tabpagebuffer.vim'
+
+[[plugins]]
 repo = 'Shougo/unite.vim'
 depends = ['vimproc']
 hook_add='''
@@ -169,7 +176,6 @@ hook_add='''
         \ '_': { 'treelize': 0, 'absolute_path': 0},
         \ }
 '''
-
 # }}}
 [[plugins]]
 repo = 'kana/vim-smartchr'
@@ -330,10 +336,6 @@ hook_source='''
   let g:quickfixsigns_sign_may_use_double=0
   let g:quickfixsigns_classes = ['qfl', 'loc', 'vcsdiff', 'breakpoints']
 '''
-
-[[plugins]]
-repo = 'Shougo/vimproc'
-build='make'
 
 [[plugins]]
 repo = 'kana/vim-altercmd'

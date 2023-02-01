@@ -32,9 +32,11 @@ if dein#load_state('~/.cache/dein')
   "call dein#add('~/.cache/dein/repos/github.com/Shougo/dein.vim')
   let g:rc_dir    = expand('~/.vim/rc')
   let s:toml      = g:rc_dir . '/dein.toml'
+  let s:toml_ddu  = g:rc_dir . '/dein-ddu.toml'
   let s:lazy_toml = g:rc_dir . '/dein_lazy.toml'
 
   call dein#load_toml(s:toml, {'lazy': 0})
+  "call dein#load_toml(s:toml_ddu, {'lazy': 0})
   call dein#load_toml(s:lazy_toml, {'lazy': 1})
 
   call dein#end()
@@ -49,7 +51,6 @@ if dein#check_install()
   call dein#install()
 endif
 "}}}
-
 " ======== Source Macro {{{
 if filereadable($VIMRUNTIME . "/macros/matchit.vim")
   source $VIMRUNTIME/macros/matchit.vim

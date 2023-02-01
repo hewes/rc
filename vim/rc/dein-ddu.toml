@@ -1,0 +1,95 @@
+[[plugins]]
+repo = 'Shougo/ddu.vim'
+depends = ['vimproc']
+hook_add='''
+call ddu#custom#patch_global({
+\   'ui': 'ff',
+\   'sources': [
+\     {
+\       'name': 'file_rec',
+\       'params': {
+\         'ignoredDirectories': ['.git', 'node_modules', 'vendor', '.next']
+\       }
+\     }
+\   ],
+\   'sourceOptions': {
+\     '_': {
+\       'matchers': ['matcher_substring'],
+\     },
+\   },
+\   'filterParams': {
+\     'matcher_substring': {
+\       'highlightMatched': 'Title',
+\     },
+\   },
+\   'kindOptions': {
+\     'file': {
+\       'defaultAction': 'open',
+\     },
+\   },
+\   'uiParams': {
+\     'ff': {
+\       'startFilter': v:true,
+\       'statusline': v:false,
+\       'prompt': '> '
+\     }
+\   },
+\ })
+
+nnoremap ff f
+nmap f [ddu]
+xmap f [ddu]
+nnoremap [ddu] <Nop>
+xnoremap [ddu] <Nop>
+nnoremap <silent> [ddu]b :Ddu file -source-option-path=`expand('%:h')`<CR>
+nnoremap <silent> [ddu]h :Ddu file -source-option-path=expand('~/')<CR>
+autocmd FileType ddu-ff call s:ddu_my_settings()
+function! s:ddu_my_settings() abort
+  nnoremap <buffer><silent> <C-j> <Cmd>call ddu#ui#ff#do_action('quit')<CR>
+  nnoremap <buffer><silent> <CR> <Cmd>call ddu#ui#ff#do_action('itemAction')<CR>
+  nnoremap <buffer><silent> <Space> <Cmd>call ddu#ui#ff#do_action('toggleSelectItem')<CR>
+  nnoremap <buffer><silent> i <Cmd>call ddu#ui#ff#do_action('openFilterWindow')<CR>
+  nnoremap <buffer><silent> q <Cmd>call ddu#ui#ff#do_action('quit')<CR>
+endfunction
+
+autocmd FileType ddu-ff-filter call s:ddu_filter_my_settings()
+function! s:ddu_filter_my_settings() abort
+  nnoremap <buffer><silent> <C-j> <Cmd>call ddu#ui#ff#do_action('quit')<CR>
+  inoremap <buffer><silent> <C-j> <Cmd>call ddu#ui#ff#do_action('quit')<CR>
+  inoremap <buffer><silent> <C-n> <Cmd>call ddu#ui#ff#execute("call cursor(line('.')+1,0)<Bar>redraw")<CR>
+  inoremap <buffer><silent> <C-p> <Cmd>call ddu#ui#ff#execute("call cursor(line('.')-1,0)<Bar>redraw")<CR>
+  nnoremap <buffer><silent> j <Cmd>call ddu#ui#ff#execute("call cursor(line('.')+1,0)<Bar>redraw")<CR>
+  nnoremap <buffer><silent> k <Cmd>call ddu#ui#ff#execute("call cursor(line('.')-1,0)<Bar>redraw")<CR>
+  nnoremap <buffer><silent> <CR> <Cmd>call ddu#ui#ff#do_action("itemAction")<CR>
+  inoremap <buffer><silent> <CR> <Cmd>call ddu#ui#ff#do_action("itemAction")<CR>
+endfunction
+'''
+
+[[plugins]]
+repo = 'Shougo/ddu-ui-ff'
+on_source='ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-source-file_rec'
+on_source='ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-source-file'
+on_source='ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-filter-matcher_substring'
+on_source='ddu.vim'
+
+[[plugins]]
+repo = 'shun/ddu-source-buffer'
+on_source='ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-kind-file'
+on_source='ddu.vim'
+
+[[plugins]]
+repo = 'Shougo/ddu-commands.vim'
+on_source = ['ddu.vim']
+
