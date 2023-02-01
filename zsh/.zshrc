@@ -1,11 +1,17 @@
 ######
 ######  .zshrc
 ######
-#
 
-if [ -d $HOME/.zplug ];then
+if [ -d /opt/homebrew/opt/zplug ];then
+  # if MacOS and zplug is installed by homebrew
+  export ZPLUG_HOME=/opt/homebrew/opt/zplug
+else
+  export ZPLUG_HOME=$HOME/.zplug
+fi
+
+if [ -d $ZPLUG_HOME ];then
   # zplug
-  source ~/.zplug/init.zsh
+  source $ZPLUG_HOME/init.zsh
   zplug 'zplug/zplug', hook-build:'zplug --self-manage'
 
   # syntax highlight (https://github.com/zsh-users/zsh-syntax-highlighting)
@@ -262,3 +268,8 @@ fi
 if type zprof > /dev/null 2>&1; then
   zprof | less
 fi
+
+if [ -d /opt/homebrew/bin ];then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
