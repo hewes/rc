@@ -10,76 +10,6 @@ build='make'
 repo = 'vim-denops/denops.vim'
 # }}}
 
-# ddc.vim - Completion {{{
-[[plugins]]
-repo = 'Shougo/ddc.vim'
-depends = ['denops', 'skkeleton']
-hook_source='''
-call ddc#custom#patch_global('completionMenu', 'pum.vim')
-call ddc#custom#patch_global('ui', 'native')
-call ddc#custom#patch_global('sources', [
- \ 'around',
- \ 'vim-lsp',
- \ 'skkeleton',
- \ 'file'
- \ ])
-call ddc#custom#patch_global('sourceOptions', {
- \ '_': {
- \   'matchers': ['matcher_head'],
- \   'sorters': ['sorter_rank'],
- \   'converters': ['converter_remove_overlap'],
- \ },
- \ 'around': {'mark': 'A'},
- \ 'vim-lsp': {
- \   'mark': 'L',
- \   'matchers': ['matcher_head'],
- \   'forceCompletionPattern': '\.|:|->|"\w+/*'
- \ },
- \   'skkeleton': {
- \     'mark': 'skk',
- \     'matchers': ['skkeleton'],
- \     'sorters': [],
- \     'minAutoCompleteLength': 2,
- \   },
- \ 'file': {
- \   'mark': 'F',
- \   'isVolatile': v:true,
- \   'forceCompletionPattern': '\S/\S*'
- \ }})
-call ddc#enable()
-inoremap <silent><expr> <TAB>
-\ pumvisible() ? '<C-n>' :
-\ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
-\ '<TAB>' : ddc#map#manual_complete()
-inoremap <expr><S-TAB>  pumvisible() ? '<C-p>' : '<C-h>'
-'''
-
-[[plugins]]
-repo = 'Shougo/pum.vim'
-
-[[plugins]]
-repo = 'Shougo/ddc-around'
-
-[[plugins]]
-repo = 'Shougo/ddc-ui-native'
-
-[[plugins]]
-repo = 'Shougo/ddc-file'
-
-[[plugins]]
-repo = 'Shougo/ddc-matcher_head'
-
-[[plugins]]
-repo = 'Shougo/ddc-sorter_rank'
-
-[[plugins]]
-repo = 'Shougo/ddc-converter_remove_overlap'
-
-[[plugins]]
-repo = 'shun/ddc-vim-lsp'
-depends = ['vim-lsp']
-# }}}
-
 # vim-lsp - LSP {{{
 [[plugins]]
 repo = 'prabirshrestha/vim-lsp'
@@ -164,12 +94,10 @@ repo = 'Shougo/neomru.vim'
 
 [[plugins]]
 repo = 'Shougo/unite-outline.git'
-on_source= ['unite.vim']
 depends = ['unite.vim']
 
 [[plugins]]
 repo = 'hewes/unite-gtags.git'
-on_source= ['unite.vim']
 depends = ['unite.vim']
 hook_add='''
   let g:unite_source_gtags_project_config = {
@@ -177,57 +105,6 @@ hook_add='''
         \ }
 '''
 # }}}
-[[plugins]]
-repo = 'kana/vim-smartchr'
-hook_source='''
-  inoremap <expr> , smartchr#one_of(', ', ',')
-  inoremap <expr> ? smartchr#one_of('?', '? ')
-
-  " Smart =.
-  inoremap <expr> = search('\(&\<bar><bar>\<bar>+\<bar>-\<bar>/\<bar>>\<bar><\) \%#', 'bcn')? '<bs>= '
-        \ : search('\(*\<bar>!\)\%#', 'bcn') ? '= '
-        \ : smartchr#one_of(' = ', '=', ' == ',  '=')
-  augroup MyAutoCmd
-    autocmd FileType c,cpp inoremap <buffer> <expr> . smartchr#loop('.', '->', '...')
-    autocmd FileType perl,php inoremap <buffer> <expr> . smartchr#loop(' . ', '->', '.')
-    autocmd FileType perl,php inoremap <buffer> <expr> - smartchr#loop('-', '->')
-    autocmd FileType vim inoremap <buffer> <expr> . smartchr#loop('.', ' . ', '..', '...')
-
-    autocmd FileType haskell,int-ghci
-          \ inoremap <buffer> <expr> + smartchr#loop('+', ' ++ ')
-          \| inoremap <buffer> <expr> - smartchr#loop('-', ' -> ', ' <- ')
-          \| inoremap <buffer> <expr> $ smartchr#loop(' $ ', '$')
-          \| inoremap <buffer> <expr> \ smartchr#loop('\ ', '\')
-          \| inoremap <buffer> <expr> : smartchr#loop(':', ' :: ', ' : ')
-          \| inoremap <buffer> <expr> . smartchr#loop('.', ' . ', '..')
-    autocmd FileType sh,bash,vim,zsh
-          \ inoremap = =
-          \| inoremap , ,
-    autocmd FileType scala
-          \ inoremap <buffer> <expr> - smartchr#loop('-', ' -> ', ' <- ')
-          \| inoremap <buffer> <expr> = smartchr#loop(' = ', '=', ' => ')
-          \| inoremap <buffer> <expr> : smartchr#loop(': ', ':', ' :: ')
-          \| inoremap <buffer> <expr> . smartchr#loop('.', ' => ')
-    autocmd FileType eruby,yaml
-          \ inoremap <buffer> <expr> > smartchr#loop('>', '%>')
-          \| inoremap <buffer> <expr> < smartchr#loop('<', '<%', '<%=')
-  augroup END
-'''
-
-[[plugins]]
-repo = 'kana/vim-smartinput'
-
-# skkeleton {{{
-[[plugins]]
-repo = 'vim-skk/skkeleton'
-depends = ['denops']
-hook_source='''
-" SKK-JISYO from http://openlab.jp/skk/dic/SKK-JISYO.L.gz
-call skkeleton#config({ 'globalJisyo': '~/SKK-JISYO.L' })
-imap <C-j> <Plug>(skkeleton-toggle)
-'''
-# }}}
-
 [[plugins]]
 repo = 'vim-scripts/DrawIt'
 hook_source='''
@@ -304,7 +181,6 @@ hook_source='''
 
 [[plugins]]
 repo = 'osyo-manga/vim-watchdogs'
-on_source='vim-quickrun'
 depends = ['vim-quickrun', 'vimproc']
 hook_add='''
       let g:watchdogs_check_BufWritePost_enable = 1
@@ -317,32 +193,10 @@ hook_post_source='''
 repo = 'vim-airline/vim-airline'
 
 [[plugins]]
-repo = 'vim-airline/vim-airline-themes'
-depends = ['vim-airline']
-on_source= ['vim-airline']
-
-[[plugins]]
-repo = 'osyo-manga/vim-anzu'
-hook_source='''
-      nmap n <Plug>(anzu-n)
-      nmap N <Plug>(anzu-N)
-      nmap * <Plug>(anzu-star)
-      nmap # <Plug>(anzu-sharp)
-'''
-
-[[plugins]]
 repo = 'tomtom/quickfixsigns_vim'
 hook_source='''
   let g:quickfixsigns_sign_may_use_double=0
   let g:quickfixsigns_classes = ['qfl', 'loc', 'vcsdiff', 'breakpoints']
-'''
-
-[[plugins]]
-repo = 'kana/vim-altercmd'
-hook_post_source='''
-  call altercmd#load()
-  AlterCommand cd TabpageCD
-  command! -nargs=0 CD silent execute 'TabpageCD' unite#util#path2project_directory(expand('%:p'))
 '''
 
 [[plugins]]

@@ -1,0 +1,147 @@
+
+[[plugins]]
+repo = 'osyo-manga/vim-anzu'
+on_map = {n = '<Plug>'}
+hook_add='''
+      nmap n <Plug>(anzu-n)
+      nmap N <Plug>(anzu-N)
+      nmap * <Plug>(anzu-star)
+      nmap # <Plug>(anzu-sharp)
+'''
+
+[[plugins]]
+repo = 'vim-airline/vim-airline-themes'
+on_source= ['vim-airline']
+
+# skkeleton {{{
+[[plugins]]
+repo = 'vim-skk/skkeleton'
+depends = ['denops']
+on_event = ['InsertEnter']
+hook_source='''
+" SKK-JISYO from http://openlab.jp/skk/dic/SKK-JISYO.L.gz
+call skkeleton#config({ 'globalJisyo': '~/SKK-JISYO.L' })
+imap <C-j> <Plug>(skkeleton-toggle)
+'''
+# }}}
+
+# ddc.vim - Completion {{{
+[[plugins]]
+repo = 'Shougo/ddc.vim'
+depends = ['denops', 'skkeleton']
+on_event = ['InsertEnter']
+hook_post_source='''
+call ddc#custom#patch_global('completionMenu', 'pum.vim')
+call ddc#custom#patch_global('ui', 'native')
+call ddc#custom#patch_global('sources', [
+ \ 'around',
+ \ 'vim-lsp',
+ \ 'skkeleton',
+ \ 'file'
+ \ ])
+call ddc#custom#patch_global('sourceOptions', {
+ \ '_': {
+ \   'matchers': ['matcher_head'],
+ \   'sorters': ['sorter_rank'],
+ \   'converters': ['converter_remove_overlap'],
+ \ },
+ \ 'around': {'mark': 'A'},
+ \ 'vim-lsp': {
+ \   'mark': 'L',
+ \   'matchers': ['matcher_head'],
+ \   'forceCompletionPattern': '\.|:|->|"\w+/*'
+ \ },
+ \   'skkeleton': {
+ \     'mark': 'skk',
+ \     'matchers': ['skkeleton'],
+ \     'sorters': [],
+ \     'minAutoCompleteLength': 2,
+ \   },
+ \ 'file': {
+ \   'mark': 'F',
+ \   'isVolatile': v:true,
+ \   'forceCompletionPattern': '\S/\S*'
+ \ }})
+call ddc#enable()
+inoremap <silent><expr> <TAB>
+\ pumvisible() ? '<C-n>' :
+\ (col('.') <= 1 <Bar><Bar> getline('.')[col('.') - 2] =~# '\s') ?
+\ '<TAB>' : ddc#map#manual_complete()
+inoremap <expr><S-TAB>  pumvisible() ? '<C-p>' : '<C-h>'
+'''
+
+[[plugins]]
+repo = 'Shougo/pum.vim'
+depends = ['ddc.vim']
+
+[[plugins]]
+repo = 'Shougo/ddc-around'
+depends = ['ddc.vim']
+
+[[plugins]]
+repo = 'Shougo/ddc-ui-native'
+depends = ['ddc.vim']
+
+[[plugins]]
+repo = 'Shougo/ddc-file'
+depends = ['ddc.vim']
+
+[[plugins]]
+repo = 'Shougo/ddc-matcher_head'
+depends = ['ddc.vim']
+
+[[plugins]]
+repo = 'Shougo/ddc-sorter_rank'
+depends = ['ddc.vim']
+
+[[plugins]]
+repo = 'Shougo/ddc-converter_remove_overlap'
+depends = ['ddc.vim']
+
+[[plugins]]
+repo = 'shun/ddc-vim-lsp'
+depends = ['ddc.vim', 'vim-lsp']
+# }}}
+
+[[plugins]]
+repo = 'kana/vim-smartchr'
+on_event = ['InsertEnter']
+hook_source='''
+  inoremap <expr> , smartchr#one_of(', ', ',')
+  inoremap <expr> ? smartchr#one_of('?', '? ')
+
+  " Smart =.
+  inoremap <expr> = search('\(&\<bar><bar>\<bar>+\<bar>-\<bar>/\<bar>>\<bar><\) \%#', 'bcn')? '<bs>= '
+        \ : search('\(*\<bar>!\)\%#', 'bcn') ? '= '
+        \ : smartchr#one_of(' = ', '=', ' == ',  '=')
+  augroup MyAutoCmd
+    autocmd FileType c,cpp inoremap <buffer> <expr> . smartchr#loop('.', '->', '...')
+    autocmd FileType perl,php inoremap <buffer> <expr> . smartchr#loop(' . ', '->', '.')
+    autocmd FileType perl,php inoremap <buffer> <expr> - smartchr#loop('-', '->')
+    autocmd FileType vim inoremap <buffer> <expr> . smartchr#loop('.', ' . ', '..', '...')
+
+    autocmd FileType haskell,int-ghci
+          \ inoremap <buffer> <expr> + smartchr#loop('+', ' ++ ')
+          \| inoremap <buffer> <expr> - smartchr#loop('-', ' -> ', ' <- ')
+          \| inoremap <buffer> <expr> $ smartchr#loop(' $ ', '$')
+          \| inoremap <buffer> <expr> \ smartchr#loop('\ ', '\')
+          \| inoremap <buffer> <expr> : smartchr#loop(':', ' :: ', ' : ')
+          \| inoremap <buffer> <expr> . smartchr#loop('.', ' . ', '..')
+    autocmd FileType sh,bash,vim,zsh
+          \ inoremap = =
+          \| inoremap , ,
+    autocmd FileType scala
+          \ inoremap <buffer> <expr> - smartchr#loop('-', ' -> ', ' <- ')
+          \| inoremap <buffer> <expr> = smartchr#loop(' = ', '=', ' => ')
+          \| inoremap <buffer> <expr> : smartchr#loop(': ', ':', ' :: ')
+          \| inoremap <buffer> <expr> . smartchr#loop('.', ' => ')
+    autocmd FileType eruby,yaml
+          \ inoremap <buffer> <expr> > smartchr#loop('>', '%>')
+          \| inoremap <buffer> <expr> < smartchr#loop('<', '<%', '<%=')
+  augroup END
+'''
+
+[[plugins]]
+repo = 'kana/vim-smartinput'
+on_event = ['InsertEnter']
+
