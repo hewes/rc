@@ -6,6 +6,7 @@ if [ -d /opt/homebrew/opt/zplug ];then
   # if MacOS and zplug is installed by homebrew
   export ZPLUG_HOME=/opt/homebrew/opt/zplug
 else
+  # curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
   export ZPLUG_HOME=$HOME/.zplug
 fi
 
@@ -271,5 +272,9 @@ fi
 
 if [ -d /opt/homebrew/bin ];then
     eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+if hash starship ;then
+  eval "$(starship init zsh)"
 fi
 
