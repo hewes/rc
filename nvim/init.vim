@@ -164,7 +164,7 @@ set nrformats& nrformats-=octal
 
 " Backup.
 set backup
-set backupdir=./.backup,~/.backup
+set backupdir=~/.backup
 " Paths of swap file and backup file.
 if $TMP !=# ''
   execute 'set backupdir+=' . escape(expand($TMP), ' \')
