@@ -218,7 +218,7 @@ set foldmethod=marker
 set modeline
 
 set display=lastline
-if exists('&ambiwidth')
+if exists('&ambiwidth') && !exists('g:vscode')
   set ambiwidth=double
 endif
 
