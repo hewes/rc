@@ -22,6 +22,10 @@ call jetpack#begin()
   call jetpack#add('lewis6991/gitsigns.nvim')
   call jetpack#add('scrooloose/nerdcommenter')
   call jetpack#add('h1mesuke/vim-alignta')
+  call jetpack#add('h1mesuke/vim-alignta')
+  call jetpack#add('vim-denops/denops.vim')
+  call jetpack#add('vim-skk/skkeleton')
+  call jetpack#add('kana/vim-smartchr')
 call jetpack#end()
 
 "}}}
@@ -549,7 +553,6 @@ let g:airline_section_z = "L:%l/%L C:%4c"
 " }}}
 " }}}
 " ======== Unite Setting {{{
-
 let g:unite_enable_ignore_case = 1
 let g:unite_enable_smart_case = 1
 let g:unite_enable_start_insert = 1
@@ -609,6 +612,11 @@ function! s:unite_my_settings()
   inoremap <silent><buffer> <SPACE> _
   inoremap <silent><buffer> _ <SPACE>
 endfunction
+" }}}
+"{{{ ======== skkeleton setting
+" SKK-JISYO from http://openlab.jp/skk/dic/SKK-JISYO.L.gz
+call skkeleton#config({ 'globalJisyo': '~/SKK-JISYO.L' })
+imap <C-j> <Plug>(skkeleton-toggle)
 " }}}
 " ======== My Misc Setting {{{
 " command window setting commands --- {{{
@@ -1004,3 +1012,4 @@ endif
 "}}}
 unlet s:has_win
 " }}}
+
