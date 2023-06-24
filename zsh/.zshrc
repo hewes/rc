@@ -274,7 +274,7 @@ if [ -d /opt/homebrew/bin ];then
     eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-if hash starship ;then
-  eval "$(starship init zsh)"
+if [ -f ~/.fzf.zsh ];then
+  source ~/.fzf.zsh
+  bindkey '^G' fzf-file-widget
 fi
-
