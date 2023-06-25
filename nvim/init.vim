@@ -7,21 +7,30 @@ augroup MyAutoCmd
   autocmd!
 augroup END
 "}}}
-
 " ======== Jetpack setting {{{
 call jetpack#begin()
   " bootstrap
   call jetpack#add('tani/vim-jetpack', { 'opt': 1 })
   call jetpack#add('kylechui/nvim-surround')
-  call jetpack#add('Shougo/unite.vim')
-  call jetpack#add('Shougo/unite-outline.git')
+  call jetpack#add('Shougo/ddu.vim')
+  call jetpack#add('Shougo/ddu-ui-ff')
+  call jetpack#add('Shougo/ddu-kind-file')
+  call jetpack#add('Shougo/ddu-filter-matcher_substring')
+  call jetpack#add('Shougo/ddu-source-file')
+  call jetpack#add('Shougo/ddu-source-file_old')
+  call jetpack#add('Shougo/ddu-source-line')
   call jetpack#add('Shougo/neomru.vim')
   call jetpack#add('Shougo/tabpagebuffer.vim')
+
+  call jetpack#add('netvim/nvim-lspconfig')
+  call jetpack#add('williamboman/mason.nvim')
+  call jetpack#add('williamboman/mason-lspconfig.nvim')
+
   call jetpack#add('vim-airline/vim-airline')
   call jetpack#add('vim-airline/vim-airline-themes')
+
   call jetpack#add('lewis6991/gitsigns.nvim')
   call jetpack#add('scrooloose/nerdcommenter')
-  call jetpack#add('h1mesuke/vim-alignta')
   call jetpack#add('h1mesuke/vim-alignta')
   call jetpack#add('vim-denops/denops.vim')
   call jetpack#add('vim-skk/skkeleton')
@@ -430,7 +439,6 @@ set background=dark
 function! s:set_highlight() " color setting {{{
   highlight CurrentWord term=NONE ctermbg=52  ctermfg=NONE guibg=darkred
   highlight Indent      term=NONE ctermbg=238 ctermfg=NONE guibg=#444444 guifg=NONE
-  highlight link uniteSource__Gtags_Path Directory
 endfunction
 " }}}
 autocmd MyAutoCmd ColorScheme * call s:set_highlight()
@@ -552,334 +560,152 @@ let g:airline_section_y = "%{strlen(&ff)?&ff:''}" . "[%{strlen(&fenc)?&fenc:&enc
 let g:airline_section_z = "L:%l/%L C:%4c"
 " }}}
 " }}}
-" ======== Unite Setting {{{
-let g:unite_enable_ignore_case = 1
-let g:unite_enable_smart_case = 1
-let g:unite_enable_start_insert = 1
-let g:unite_enable_split_vertically  =  0
-let g:unite_source_file_mru_limit  =  300
-let g:unite_source_file_rec_min_cache_files = 300
-let g:unite_source_file_rec_max_depth = 10
-let g:unite_kind_openable_cd_command = 'TabpageCD'
-let g:unite_kind_openable_lcd_command = 'TabpageCD'
-let g:unite_winheight = 20
-let g:unite_source_history_yank_enable = 1
-let g:unite_source_bookmark_directory = $HOME . "/.unite/bookmark"
+"
+function! s:my_ddu_init()
+  " https://github.com/Shougo/ddu-ui-ff
+  call ddu#custom#patch_global({
+        \ 'ui': 'ff',
+        \ 'uiParams': {
+        \     'ff': {
+        \       'startFilter': v:true,
+        \       'prompt': '> ',
+        \       'split': 'floating',
+        \       'floatingBorder': "rounded",
+        \       'autoResize': v:true,
+        \       'winHeight': 40,
+        \       'filterFloatingPosition': "top",
+        \       'previewFloaing': v:true,
+        \       'previewFloaingBorder': 'single',
+        \       'previewSplit': 'vertical',
+        \       'previewFloatingTitle': 'Preview',
+        \       'highlights': {
+        \         'floating': 'Normal',
+        \         'floatingBorder': 'Normal',
+        \         'selected': 'Visual',
+        \        },
+        \       'displaySourceName': "long",
+        \       'floatingTitle': "ddu",
+        \     }
+        \   },
+        \ })
 
-nnoremap ff f
-nmap f [unite]
-xmap f [unite]
-nnoremap [unite] <Nop>
-xnoremap [unite] <Nop>
-nnoremap <silent> [unite]u :Unite -buffer-name=files file<CR>
-nnoremap <silent> [unite]m :Unite -buffer-name=file file_mru<CR>
-nnoremap <silent> [unite]r :UniteResume<CR>
-nnoremap [unite]R :Unite ref/
-nnoremap <silent> [unite]b :UniteWithBufferDir file file/new<CR>
-nnoremap <silent> [unite]c :Unite -buffer-name=files file file/new<CR>
-nnoremap <silent> [unite]n :Unite -buffer-name=files gtags/path file/new<CR>
-nnoremap <silent> [unite]t :Unite tab<CR>
-nnoremap <silent> [unite]y :Unite register<CR>
-nnoremap <silent> [unite]a :UniteBookmarkAdd<CR>
-nnoremap <silent> [unite]p :Unite bookmark -default-action=cd -no-start-insert<CR>
-nnoremap <silent> <expr> [unite]h ':UniteWithInput -buffer-name=files file file/new -input='. substitute($HOME, '\' ,'/', 'g') .'/<CR>'
-nnoremap <silent> [unite]H :<C-u>Unite history/yank<CR>
-nnoremap <silent> [unite]j :Unite buffer_tab -no-start-insert<CR>
-nnoremap <silent> [unite]l :Unite -auto-preview line<CR>
-nnoremap <expr> [unite]g ':Unite grep:'. expand("%:h") . ':-r'
-nnoremap <silent> [unite]* :UniteWithCursorWord line<CR>
-nnoremap <silent> [unite]o :Unite -buffer-name=outline outline<CR>
-nnoremap <silent> [unite]q :Unite quickfix -no-start-insert<CR>
-nnoremap [unite]s<SPACE> :Unite svn/
-nnoremap <C-j> :Unite gtags/context<CR>
-autocmd MyAutoCmd FileType unite call s:unite_my_settings()
+  " https://github.com/Shougo/ddu-kind-file
+  call ddu#custom#patch_global({
+        \   'kindOptions': {
+        \     'file': {
+        \       'defaultAction': 'open',
+        \     },
+        \   }
+        \ })
 
-function! s:unite_my_settings()
-  nnoremap <silent><buffer> <C-o> :call unite#mappings#do_action('tabopen')<CR>
-  nnoremap <silent><buffer> <C-v> :call unite#mappings#do_action('vsplit')<CR>
-  nnoremap <silent><buffer> <C-s> :call unite#mappings#do_action('split')<CR>
-  nnoremap <silent><buffer> <C-r> :call unite#mappings#do_action('rec')<CR>
-  nnoremap <silent><buffer> <C-f> :call unite#mappings#do_action('preview')<CR>
-  inoremap <silent><buffer> <C-o> <Esc>:call unite#mappings#do_action('tabopen')<CR>
-  inoremap <silent><buffer> <C-v> <Esc>:call unite#mappings#do_action('vsplit')<CR>
-  inoremap <silent><buffer> <C-s> <Esc>:call unite#mappings#do_action('split')<CR>
-  inoremap <silent><buffer> <C-r> <Esc>:call unite#mappings#do_action('rec')<CR>
-  inoremap <silent><buffer> <C-e> <Esc>:call unite#mappings#do_action('edit')<CR>
-  inoremap <silent><buffer> <C-f> <C-o>:call unite#mappings#do_action('preview')<CR>
-  " I hope to use <C-o> and return to the selected item after action...
-  inoremap <silent><buffer> <C-j> <ESC>:quit<CR>
-  nmap <silent><buffer> <C-j> <Plug>(unite_all_exit)
-  inoremap <silent><buffer> <SPACE> _
-  inoremap <silent><buffer> _ <SPACE>
-endfunction
-" }}}
-"{{{ ======== skkeleton setting
-" SKK-JISYO from http://openlab.jp/skk/dic/SKK-JISYO.L.gz
-call skkeleton#config({ 'globalJisyo': '~/SKK-JISYO.L' })
-imap <C-j> <Plug>(skkeleton-toggle)
-" }}}
-" ======== My Misc Setting {{{
-" command window setting commands --- {{{
-autocmd MyAutoCmd CmdwinEnter * call s:init_cmdwin()
-function! s:init_cmdwin()
-  nnoremap <buffer> <C-j> :<C-u>quit<CR>
-  inoremap <buffer> <C-j> <ESC>:<C-u>quit<CR>
-  let b:neocomplete_sources = ['vim']
-  startinsert!
-endfunction
-" }}}
-" diff commands --- {{{
-command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
-command! -bar ToggleDiff if &diff | execute 'windo diffoff'  | else
-      \                           | execute 'windo diffthis' | endif
+  " https://github.com/Shougo/ddu-filter-matcher_substring
+  call ddu#custom#patch_global({
+        \   'sourceOptions': {
+        \     '_': {
+        \       'matchers': ['matcher_substring'],
+        \     },
+        \   }
+        \ })
 
-" }}}
-function! s:get_cd_project_name() " project name related to the current directory {{{
-  if fnamemodify(t:cwd, ":p") == fnamemodify("~/", ":p")
-    return "[home]"
-  endif
-  if !exists('g:unite_source_bookmark_directory')
-    return ''
-  endif
-  if !filereadable(g:unite_source_bookmark_directory . '/default')
-    return ''
-  endif
-  for line in readfile(g:unite_source_bookmark_directory . '/default')
-    let match = matchlist(line, '^\([^\t]*\)\t\([^\t]*\)\t\t')
-    if empty(match)
-      continue
-    endif
-    if match[2] == t:cwd .'/'
-      return '['. match[1] .']'
-    endif
-  endfor
-  return ''
-endfunction
-" }}}
-function! s:refresh_project() " update GTAGS and tags{{{
-  let l:tags = []
-  if filereadable("tags") && executable('ctags')
-    call add(l:tags, 'ctags')
-    call s:system("ctags -R")
-  endif
-  if filereadable("GTAGS") && executable('gtags')
-    call add(l:tags, 'gtags')
-    call s:system("gtags -i")
-  endif
-  echo 'updating ' . join(l:tags, ', ') . '...'
-endfunction
-"}}}
-command! RefreshProject call s:refresh_project()
-function! s:init_project() " generates GTAGS and tags{{{
-  let l:tags = []
-  if executable('ctags')
-    call add(l:tags, 'ctags')
-    call s:system("ctags -R")
-  endif
-  if executable('gtags')
-    call add(l:tags, 'gtags')
-    call s:system("gtags -i")
-  endif
-  echo 'generate ' . join(l:tags, ', ') . '...'
-endfunction
-command! InitProject call s:init_project()
-" }}}
-" :TabpageCD - wrapper of :cd to keep cwd for each tabpage  "{{{
-command! -complete=dir -nargs=? TabpageCD
-      \ execute 'cd' fnameescape(<q-args>)
-      \| call s:init_tab_page(getcwd(), 1)
+  " https://github.com/Shougo/ddu-source-file
+  call ddu#custom#patch_global({
+      \ 'sources': [{'name': 'file', 'params': {}}],
+      \ })
 
-function! s:init_tab_page(chdir, force)
-  if !exists('t:cwd') || a:force
-    let t:cwd = a:chdir
-  endif
-  if !exists('t:project') || a:force
-    let t:project = s:get_cd_project_name()
-  endif
-  if !exists('t:local_setting') || a:force
-    let t:local_setting = 1
-    if exists("g:localrc_name") && filereadable(t:cwd. "/" . g:localrc_name)
-      execute "source " . t:cwd . "/" . g:localrc_name
-    endif
-  endif
+  " Set name specific configuration
+  "call ddu#custom#patch_local('files', {
+  "    \ 'sources': [
+  "    \   {'name': 'file', 'params': {}},
+  "    \   {'name': 'file_old', 'params': {}},
+  "    \ ],
+  "    \ })
+
+  " Specify name
+  "call ddu#start({'name': 'files'})
+
+  " Specify source with params
+  " NOTE: file_rec source
+  " https://github.com/Shougo/ddu-source-file_rec
+  "call ddu#start({'sources': [
+  "    \ {'name': 'file_rec', 'params': {'path': expand('~')}}
+  "    \ ]})
+  nnoremap ff f
+  nmap f [ddu]
+  xmap f [ddu]
+  nnoremap [ddu] <Nop>
+  xnoremap [ddu] <Nop>
+
+  nnoremap <silent> [ddu]b <Cmd>call ddu#start({
+      \ 'name': 'current buffer dir',
+      \ 'sources': [{'name': 'file'}],
+      \ 'sourceOptions': {'file': #{ path: expand("%:p:h") },}
+      \ })<CR>
+  nnoremap <silent> [ddu]c <Cmd>call ddu#start({
+      \ 'name': 'current',
+      \ 'sources': [{'name': 'file'}],
+      \ 'sourceOptions': {'file': #{ path: expand("./") },}
+      \ })<CR>
+  nnoremap <silent> [ddu]h <Cmd>call ddu#start({
+      \ 'name': 'home',
+      \ 'sources': [{'name': 'file'}],
+      \ 'sourceOptions': {'file': #{ path: expand("~") },}
+      \ })<CR>
+  nnoremap <silent> [ddu]j <Cmd>call ddu#start({
+      \ 'name': 'file_old',
+      \ 'sources': [{'name': 'file_old'}]
+      \ })<CR>
+  nnoremap <silent> [ddu]l <Cmd>call ddu#start({
+      \ 'name': 'line',
+      \ 'sources': [{'name': 'line'}]
+      \ })<CR>
+  "nnoremap <silent> [ddu]p :Unite bookmark -default-action=cd -no-start-insert<CR>
+  "nnoremap <expr> [ddu]g ':Unite grep:'. expand("%:h") . ':-r'
+  "nnoremap <silent> [ddu]o :Unite -buffer-name=outline outline<CR>
+  "nnoremap <silent> [ddu]q :Unite quickfix -no-start-insert<CR>
 endfunction
-let g:localrc_name = ".project.vimrc"
+call s:my_ddu_init()
 
-augroup MyAutoCmd
-  autocmd VimEnter *
-        \ let g:default_current_dir = getcwd()
-        \| call s:init_tab_page(g:default_current_dir, 0)
-
-  autocmd TabEnter *
-        \ call s:init_tab_page(g:default_current_dir, 0)
-        \| execute 'cd' fnameescape(t:cwd)
-augroup END
-"}}}
-" Insert Mode <C-k> -- kill line from current to eol "{{{
-func! s:kill_line()
-  let curcol = col('.')
-  if curcol == col('$')
-    join!
-    call cursor(line('.'), curcol)
-  else
-    normal! D
-  endif
-endfunc
-inoremap <C-k>  <C-o>:<C-u>call <SID>kill_line()<CR>
-cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
-"}}}
-" Normal Mode <C-k> -- kill buffer, not close window {{{
-" http://nanasi.jp/articles/vim/kwbd_vim.html
-:com! Kwbd let kwbd_bn= bufnr("%")|enew|exe "bdel ".kwbd_bn|unlet kwbd_bn
-nnoremap <C-k>  :Kwbd<CR>
-"}}}
-" :Rename, :Move, :Delete -- operate current file command {{{
-command! -nargs=1 -bang -bar -complete=file Rename
-      \        call s:move(<q-args>, <q-bang>, expand('%:h'))
-command! -nargs=1 -bang -bar -complete=file Move
-      \        call s:move(<q-args>, <q-bang>, getcwd())
-function! s:move(file, bang, base)
-  let pwd = getcwd()
-  cd `=a:base`
-  try
-    let from = expand('%:p')
-    let to = simplify(expand(a:file))
-    let bang = a:bang
-    if isdirectory(to)
-      let to .= '/' . fnamemodify(from, ':t')
-    endif
-    if filereadable(to) && !bang
-      echo '"' . to . '" is exists. Overwrite? [yN]'
-      if nr2char(getchar()) !=? 'y'
-        echo 'Cancelled.'
-        return
-      endif
-      let bang = '!'
-    endif
-    let dir = fnamemodify(to, ':h')
-    call s:mkdir(dir)
-    execute 'saveas' . bang '`=to`'
-    call delete(from)
-  finally
-    cd `=pwd`
-  endtry
+autocmd FileType ddu-ff call s:ddu_my_settings()
+function! s:ddu_my_settings() abort
+  nnoremap <buffer><silent> <CR>
+        \ <Cmd>call ddu#ui#do_action('itemAction')<CR>
+  nnoremap <buffer><silent> <Space>
+        \ <Cmd>call ddu#ui#do_action('toggleSelectItem')<CR>
+  nnoremap <buffer><silent> i
+        \ <Cmd>call ddu#ui#do_action('openFilterWindow')<CR>
+  nnoremap <buffer><silent> q
+        \ <Cmd>call ddu#ui#do_action('quit')<CR>
+  nnoremap <buffer><silent> <C-j>
+        \ <Cmd>call ddu#ui#do_action('quit')<CR>
 endfunction
 
-command! -nargs=? -bang -bar -complete=file Delete
-      \ call s:delete_with_confirm(<q-args>, <bang>0)
-function! s:delete_with_confirm(file, force)
-  let file = a:file ==# '' ? expand('%') : a:file
-  if !a:force
-    echo 'Delete "' . file . '"? [y/N]:'
-  endif
-  if a:force || nr2char(getchar()) ==? 'y'
-    call delete(file)
-    echo 'Deleted "' . file . '"!'
-  else
-    echo 'Cancelled.'
-  endif
+autocmd FileType ddu-ff-filter call s:ddu_filter_my_settings()
+function! s:ddu_filter_my_settings() abort
+  inoremap <buffer><silent> <CR>
+        \ <Esc><Cmd>call ddu#ui#do_action('itemAction')<CR>
+  inoremap <buffer><silent> <C-j>
+        \ <Esc><Cmd>call ddu#ui#do_action('quit')<CR>
+  nnoremap <buffer><silent> <C-j>
+        \ <Cmd>call ddu#ui#do_action('quit')<CR>
+  nnoremap <buffer><silent> <CR>
+        \ <Cmd>close<CR>
+  nnoremap <buffer><silent> q
+        \ <Cmd>close<CR>
+  inoremap <buffer><silent> <C-n>
+        \ <Cmd>call ddu#ui#ff#execute("call cursor(line('.')+1,0)")<CR>
+  inoremap <buffer><silent> <C-p>
+        \ <Cmd>call ddu#ui#ff#execute("call cursor(line('.')-1,0)")<CR>
 endfunction
-"}}}
-" ----- source vimrc when write {{{
-if !has('gui_running') && !(has('win32') || has('win64'))
-  autocmd MyAutoCmd BufWritePost $MYVIMRC nested source $MYVIMRC
-else
-  autocmd MyAutoCmd BufWritePost $MYVIMRC source $MYVIMRC |
-        \if has('gui_running') | source $MYGVIMRC
-  autocmd MyAutoCmd BufWritePost $MYGVIMRC if has('gui_running') | source $MYGVIMRC
-endif
-" }}}
-" ---- sticky shift "{{{
-inoremap <expr> ;  <SID>sticky_func()
-cnoremap <expr> ;  <SID>sticky_func()
-snoremap <expr> ;  <SID>sticky_func()
 
-let g:us_sticky_table = {
-      \',' : '<', '.' : '>', '/' : '?',
-      \'1' : '!', '2' : '@', '3' : '#', '4' : '$', '5' : '%',
-      \'6' : '^', '7' : '&', '8' : '*', '9' : '(', '0' : ')', '-' : '_', '=' : '+',
-      \';' : ':', '[' : '{', ']' : '}', '`' : '~', "'" : "\"", '\' : '|',
-      \}
-let g:jp_sticky_table = {
-      \',' : '<', '.' : '>', '/' : '?',
-      \'1' : '!', '2' : "\"" , '3' : '#', '4' : '$', '5' : '%',
-      \'6' : '&', '7' : "'", '8' : '(', '9' : ')', '-' : '=', '^' : '~',
-      \';' : '+', '[' : '{', ']' : '}', '@' : '`'  , ':' : '*', '\' :  '_' ,
-      \}
-let g:sticky_table = g:jp_sticky_table
-function! s:sticky_func()
-  let l:special_table = {
-        \"\<ESC>" : "\<ESC>", "\<Space>" : ';', "\<CR>" : ";\<CR>",
-        \"\<TAB>" : "\<C-o>W" , "\<BS>" : "\<C-o>B"
-        \}
+" lsp{{{
+lua<<EOF
+local mason = require('mason')
+mason.setup()
+local mason_lspconfig = require('mason-lspconfig')
+mason_lspconfig.setup()
+EOF
+" }}}
 
-  let l:key = getchar()
-  if nr2char(l:key) =~ '\l'
-    return toupper(nr2char(l:key))
-  elseif has_key(g:sticky_table, nr2char(l:key))
-    return g:sticky_table[nr2char(l:key)]
-  elseif has_key(l:special_table, nr2char(l:key))
-    return l:special_table[nr2char(l:key)]
-  elseif exists("b:buffer_sticky") && has_key(b:buffer_sticky, nr2char(l:key))
-    return b:buffer_sticky[nr2char(l:key)]
-  else
-    return ''
-  endif
-endfunction
-"}}}
-" ---- toggle vim setting "{{{
-nnoremap <silent> <expr> <SPACE> <SID>toggle_setting()
-let s:toggle_map = {
-      \ 'p' : 'paste',
-      \ 'w' : 'wrap',
-      \ 'n' : 'number',
-      \ 'l' : 'list',
-      \ 'h' : 'hlsearch',
-      \ }
-function! s:toggle_setting()
-  let l:key = getchar()
-  if has_key(s:toggle_map, nr2char(l:key))
-    return ":set ". "inv". s:toggle_map[nr2char(l:key)] . "\n"
-  else
-    return "<SPACE>" . nr2char(l:key)
-  endif
-endfunction
-" }}}
-" ---- reopen/write file with specified encoding {{{
-command! -bang -complete=file -nargs=? Utf8 edit<bang> ++enc=utf-8 <args>
-command! -bang -complete=file -nargs=? Sjis edit<bang> ++enc=cp932 <args>
-command! -bang -complete=file -nargs=? Euc edit<bang> ++enc=eucjp <args>
-command! -bang -complete=file -nargs=? WUtf8 write<bang> ++enc=utf-8 <args>
-command! -bang -complete=file -nargs=? WSjis write<bang> ++enc=cp932 <args>
-command! -bang -complete=file -nargs=? WEuc write<bang> ++enc=eucjp <args>
-" }}}
-" ---- move caret to next delimiter {{{
-function! s:skip_position()
-  let pos = getpos('.')
-  let l:eol_col = len(getline('.'))
-  if l:eol_col == pos[2] && pos[3] > 0
-    " if caret is at eol, feed next line, and move to right
-    let pos[1] += 1
-    let pos[2] = 0
-    let pos[3] = 0
-  else
-    let match = search('[,(){}\[\]"]', 'c', line('.'))
-    let pos = getpos('.')
-    if match == 0
-      " if delimeter is not found at the current line, move to eol
-      let pos[2] = l:eol_col + 1
-      let pos[3] = 0
-    else
-      " if delimeter is found, move caret to next col of the delimeter
-      let pos[2] += 1
-      let pos[3] = 0
-    endif
-  endif
-  call setpos('.', pos)
-  return
-endfunction
-inoremap <Plug>(skip_position) <C-o>:call <SID>skip_position()<CR>
-" }}}
 " ---- check indent is valid {{{
 function! s:validate_ruby_indent()
   let wsv = winsaveview()
