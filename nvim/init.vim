@@ -956,6 +956,14 @@ function! s:clang_my_settings()
   setlocal noexpandtab
   nnoremap <buffer> <C-j> :Unite gtags/context<CR>
 endfunction "}}}
+" golang  "{{{
+autocmd MyAutoCmd FileType go call s:golang_my_settings()
+function! s:golang_my_settings()
+  setlocal ts=4
+  setlocal sw=4
+  setlocal noexpandtab
+  nnoremap <buffer> <C-j> :Unite gtags/context<CR>
+endfunction "}}}
 " cpp  "{{{
 autocmd MyAutoCmd FileType cpp call s:cpp_my_settings()
 function! s:cpp_my_settings()
