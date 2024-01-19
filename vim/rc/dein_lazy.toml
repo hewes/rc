@@ -9,10 +9,6 @@ hook_add='''
       nmap # <Plug>(anzu-sharp)
 '''
 
-[[plugins]]
-repo = 'vim-airline/vim-airline-themes'
-on_source= ['vim-airline']
-
 # skkeleton {{{
 [[plugins]]
 repo = 'vim-skk/skkeleton'
