@@ -72,7 +72,7 @@ export MORE='-c'
 #export LC_ALL=C
 #export LC_MESSAGES=C
 
-export PATH="${HOME}/google-cloud-sdk/bin/:/usr/local/bin/:${PATH}"
+export PATH="${HOME}/google-cloud-sdk/bin/:/snap/bin/:/usr/local/bin/:${PATH}"
 
 ## LIBRARY PATH
 export LD_LIBRARY_PATH=".:/usr/local/lib:/usr/X11/lib:/usr/openwin/lib:/usr/lib:/usr/local/lib:/usr/X11R5/lib:/usr/X11R6/lib:/usr/ucblib:/usr/local/canna/lib:/usr/local/X11/lib:/usr/lib/locale/ja/wnn/lib:/usr/local/rvplayer5.0:/usr/local/ssl/lib:/etc/lib:/home/hewes/Javalib"
@@ -278,3 +278,5 @@ if [ -f ~/.fzf.zsh ];then
   source ~/.fzf.zsh
   bindkey '^G' fzf-file-widget
 fi
+
+export PATH=~/.deno/bin:$PATH
