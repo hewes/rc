@@ -17,6 +17,7 @@ function setup(){
   if [ -e $HOME/.config/nvim ];then
     echo ".config/nvim already exists"
   else
+    mkdir -p $HOME/.config
     ln -s $HOME/rc/nvim $HOME/.config/nvim
   fi
 }
