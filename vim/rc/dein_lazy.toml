@@ -9,17 +9,6 @@ hook_add='''
       nmap # <Plug>(anzu-sharp)
 '''
 
-# skkeleton {{{
-[[plugins]]
-repo = 'vim-skk/skkeleton'
-depends = ['denops']
-on_event = ['InsertEnter']
-hook_source='''
-" SKK-JISYO from http://openlab.jp/skk/dic/SKK-JISYO.L.gz
-call skkeleton#config({ 'globalJisyo': '~/SKK-JISYO.L' })
-imap <C-j> <Plug>(skkeleton-toggle)
-'''
-# }}}
 
 # ddc.vim - Completion {{{
 [[plugins]]
