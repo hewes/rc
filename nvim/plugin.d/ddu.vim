@@ -7,7 +7,9 @@ let g:ddu_source_lsp_clientName = "nvim-lsp"
 let s:file_source = {
     \      'name': 'file',
     \      'options': 
-    \          {'converters': ['converter_hl_dir', 'converter_devicon']}
+    \          {
+    \             'converters': ['converter_hl_dir', 'converter_devicon']
+    \          },
     \    }
 
 function s:file_open_or_narrow(args)
@@ -97,6 +99,7 @@ call ddu#custom#patch_global({
       \   'sourceOptions': {
       \     '_': {
       \       'matchers': ['matcher_substring'],
+      \       'sorters': ['sorter_alpha'],
       \     },
       \   },
       \ 'sources': [
@@ -222,12 +225,17 @@ nnoremap <silent> [ddu]o <Cmd>call ddu#start({
     \   {
     \       'name': 'lsp_documentSymbol',
     \       'options': 
-    \          {'converters': ['converter_lsp_symbol']}
+    \          {
+    \             'converters': ['converter_lsp_symbol'],
+    \             'sorters': [],
+    \          }
     \   }
     \  ],
     \ 'uiParams': {
     \   'ff': {
     \     'floatingTitle' : "LSP-Symbols",
+    \     'autoAction': {'name': 'preview'},
+    \     'startAutoAction' : v:true,
     \    }
     \  }
     \ })<CR>
@@ -328,6 +336,8 @@ function! s:ddu_ff_filter_settings() abort
         \ <Cmd>close<CR>
   inoremap <nowait><buffer><silent> <C-n> <Cmd>call <SID>exe_parent('normal! j')<CR>
   inoremap <nowait><buffer><silent> <C-p> <Cmd>call <SID>exe_parent('normal! k')<CR>
+  inoremap <nowait><buffer><silent> <C-f> <Cmd>call <SID>exe_parent('normal! <C-f>')<CR>
+  inoremap <nowait><buffer><silent> <C-b> <Cmd>call <SID>exe_parent('normal! <C-b>')<CR>
 endfunction
 
 function! s:exe_parent(expr) abort
