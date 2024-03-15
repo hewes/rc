@@ -141,62 +141,6 @@ hook_source='''
 [[plugins]]
 repo = 'h1mesuke/vim-alignta'
 
-# quickrun {{{
-[[plugins]]
-repo = 'thinca/vim-quickrun'
-hook_add='''
-    let g:quickrun_config = {}
-'''
-hook_source='''
-      let g:quickrun_config._ = {'runner': "vimproc"}
-      let g:quickrun_config["watchdogs_checker/_"]  = {
-            \ "runner" : "vimproc",
-            \ "outputter" : "quickfix",
-            \ "hook/quickfix_status_enable/enable_exit" : 1,
-            \ "hook/quickfixsigns_enable/enable_exit" : 1,
-            \ "hook/qfixgrep_enable/enable_exit" : 1,
-            \ 'runmode' : "async:remote:vimproc",
-            \ "outputter/quickfix/open_cmd" : "",
-            \ }
-      " TODO: should consider class_path, and library on scala application
-      let g:quickrun_config['watchdogs_checker/nop'] = {
-            \ "command" : "echo",
-            \ "exec"    : "%c nop",
-            \}
-      "let g:quickrun_config['scala/watchdogs_checker'] = {"type" : "watchdogs_checker/nop"}
-      let g:watchdogs_check_BufWritePost_enables = {
-            \ "scala" : 0
-            \ }
-      let s:pyflakes = executable('pyflakes3') ? 'pyflakes3' :
-            \          executable('python3') ? 'python3' :
-            \          executable('pyflakes') ? 'pyflakes' :
-            \          'python'
-      let s:cmdopt = executable('pyflakes3') ? '' :
-            \          executable('python3') ? '-m pyflakes' :
-            \          executable('pyflakes') ? '' :
-            \          '-m pyflakes'
-      let g:quickrun_config["watchdogs_checker/pyflakes3"] = {
-            \ "command" : s:pyflakes,
-            \ "cmdopt" : s:cmdopt,
-            \ "exec"    : "%c %o %s:p",
-            \ "errorformat" : '%f:%l:%m',
-            \ }
-      unlet s:pyflakes
-      unlet s:cmdopt
-
-'''
-# }}} quickrun
-
-[[plugins]]
-repo = 'osyo-manga/vim-watchdogs'
-depends = ['vim-quickrun', 'vimproc.vim']
-hook_add='''
-      let g:watchdogs_check_BufWritePost_enable = 1
-'''
-hook_post_source='''
-      call watchdogs#setup(g:quickrun_config)
-'''
-
 [[plugins]]
 repo = 'vim-airline/vim-airline'
 

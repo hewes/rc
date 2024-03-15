@@ -32,7 +32,6 @@ if dein#load_state('~/.cache/dein')
   "call dein#add('~/.cache/dein/repos/github.com/Shougo/dein.vim')
   let g:rc_dir    = expand('~/.vim/rc')
   let s:toml      = g:rc_dir . '/dein.toml'
-  let s:toml_ddu  = g:rc_dir . '/dein-ddu.toml'
   let s:lazy_toml = g:rc_dir . '/dein_lazy.toml'
 
   call dein#load_toml(s:toml, {'lazy': 0})
@@ -43,8 +42,8 @@ if dein#load_state('~/.cache/dein')
   call dein#save_state()
 endif
 
-if dein#check_install(['vimproc'])
-  call dein#install(['vimproc'])
+if dein#check_install(['vimproc.vim'])
+  call dein#install(['vimproc.vim'])
 endif
 
 if dein#check_install()
