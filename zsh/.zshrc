@@ -274,11 +274,8 @@ if [ -d /opt/homebrew/bin ];then
     eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-if type fzf > /dev/null 2>&1; then
-  # requires fzf >= 0.48.0
-  eval "$(fzf --zsh)"
-  # if previous version, should read
-  # shell/completion.zsh and shell/key-bindings.zsh
+if [ -e $HOME/.fzf.zsh ]; then
+  source $HOME/.fzf.zsh
   bindkey '^G' fzf-file-widget
 fi
 
