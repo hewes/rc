@@ -141,6 +141,21 @@ function install_peco(){
 }
 
 
+function install_nvim(){
+  echo "Installing nvim.."
+  if is_rhel ;then
+    echo "distribution is RHEL(or CentOS or Fedora)"
+    echo "not support yet..."
+    exit 1
+  elif is_debian; then
+    echo "distribution is Debian(or Ubuntu)"
+    sudo snap install --beta nvim --classic
+  else
+    error_exit "unknown distribution"
+    exit 1
+  fi
+}
+
 function install_vim(){
   install_develop_tools
   echo "Installing vim.."
@@ -264,6 +279,9 @@ case $1 in
     ;;
   vim)
     install_vim
+    ;;
+  nvim)
+    install_nvim
     ;;
   global)
     install_global
