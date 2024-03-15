@@ -77,8 +77,9 @@ hi Type			ctermfg=47		cterm=none		guifg=#00ff5f	gui=none
 hi Special		ctermfg=229		cterm=none		guifg=#eadead	gui=none
 hi String		ctermfg=113		cterm=none		guifg=#95e454	gui=none
 hi Comment		ctermfg=246		cterm=none		guifg=#9c998e	gui=none
-hi Todo			ctermfg=101		cterm=none		guifg=#857b6f	gui=none
+hi Todo			ctermfg=102		ctermbg=none	cterm=none		guifg=#857b6f	gui=none
 
+hi UnderLineWarning	cterm=undercurl
 
 " Links
 hi! link FoldColumn		Folded

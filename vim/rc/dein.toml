@@ -2,22 +2,8 @@
 repo = 'Shougo/dein.vim'
 
 [[plugins]]
-repo = 'Shougo/vimproc'
+repo = 'Shougo/vimproc.vim'
 build='make'
-
-# denops {{{
-[[plugins]]
-repo = 'vim-denops/denops.vim'
-# }}}
-
-# vim-lsp - LSP {{{
-[[plugins]]
-repo = 'prabirshrestha/vim-lsp'
-
-[[plugins]]
-repo = 'mattn/vim-lsp-settings'
-depends = ['vim-lsp']
-# }}}
 
 # Unite {{{
 [[plugins]]
@@ -25,7 +11,7 @@ repo = 'Shougo/tabpagebuffer.vim'
 
 [[plugins]]
 repo = 'Shougo/unite.vim'
-depends = ['vimproc']
+depends = ['vimproc.vim']
 hook_add='''
   let g:unite_enable_ignore_case = 1
   let g:unite_enable_smart_case = 1
@@ -105,6 +91,28 @@ hook_add='''
         \ }
 '''
 # }}}
+
+# eskk {{{
+[[plugins]]
+repo = 'tyru/eskk.vim'
+on_i=1
+hook_source='''
+    if !exists('g:eskk#disable') || !g:eskk#disable
+      let g:eskk#directory  =  "~/.vim/.eskk"
+      "let g:eskk#dictionary  =  { 'path': "~/.vim/dict/skk.dict",  'sorted': 0,  'encoding': 'utf-8',  }
+      " SKK-JISYO from http://openlab.jp/skk/dic/SKK-JISYO.L.gz
+      let g:eskk#large_dictionary  =  { 'path': "~/SKK-JISYO.L",  'sorted': 0,  'encoding': 'euc-jp',  }
+      let g:eskk#enable_completion = 1
+      let g:eskk#start_completion_length = 2
+      let g:eskk_map_normal_keys = 1
+      let g:eskk#use_cursor_color = 1
+      let g:eskk#show_annotation = 1
+      let g:eskk#keep_state = 0
+    endif
+    imap <C-j> <Plug>(eskk:toggle)
+'''
+# }}}
+
 [[plugins]]
 repo = 'vim-scripts/DrawIt'
 hook_source='''
@@ -181,7 +189,7 @@ hook_source='''
 
 [[plugins]]
 repo = 'osyo-manga/vim-watchdogs'
-depends = ['vim-quickrun', 'vimproc']
+depends = ['vim-quickrun', 'vimproc.vim']
 hook_add='''
       let g:watchdogs_check_BufWritePost_enable = 1
 '''
@@ -191,6 +199,9 @@ hook_post_source='''
 
 [[plugins]]
 repo = 'vim-airline/vim-airline'
+
+[[plugins]]
+repo = 'vim-airline/vim-airline-themes'
 
 [[plugins]]
 repo = 'tomtom/quickfixsigns_vim'

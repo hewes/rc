@@ -149,7 +149,7 @@ function install_vim(){
     yum_install ncurses-devel git perl-devel perl-ExtUtils-Embed ruby-devel python-devel lua-devel
   elif is_debian; then
     echo "distribution is Debian(or Ubuntu)"
-    apt_get_install git gettext libncurses5-dev libacl1-dev libperl-dev libpython2.7-dev libgpm-dev lua5.2 liblua5.2-dev luajit libluajit-5.1  python-dev ruby-dev
+    apt_get_install git gettext libncurses5-dev libacl1-dev libperl-dev libpython3-dev libgpm-dev lua5.4 liblua5.4-dev libluajit2-5.1-dev python-dev-is-python3 ruby-dev
   else
     error_exit "unknown distribution"
   fi
@@ -162,7 +162,7 @@ function install_vim(){
     git clone https://github.com/vim/vim vim || error_exit "failed git clone vim"
     cd vim
   fi
-  ./configure --with-features=huge --enable-gui=gnome2 --enable-perlinterp --enable-pythoninterp --enable-rubyinterp --enable-luainterp --enable-fail-if-missing || error_exit "failed to configure"
+  ./configure --with-features=huge --enable-gui=gnome2 --enable-perlinterp --enable-python3interp --enable-rubyinterp --enable-luainterp --enable-fail-if-missing || error_exit "failed to configure"
   make || error_exit "failed to make"
   ${ROOT_WRAPPER} make install || error_exit "failed to make install"
   popd
