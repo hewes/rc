@@ -314,6 +314,12 @@ function! s:ddu_ff_settings() abort
   nnoremap <buffer><silent> e <Cmd>call ddu#ui#do_action('expandItem',#{mode: "toggle"})<CR>
   nnoremap <buffer><silent> <C-j> <Cmd>call ddu#ui#do_action('quit')<CR>
   nnoremap <buffer><silent> p <Cmd>call ddu#ui#do_action('toggleAutoAction')<CR>
+  nnoremap <buffer><silent> j <Cmd>call <SID>go_down()<CR>
+  nnoremap <buffer><silent> k <Cmd>call <SID>go_up()<CR>
+  nmap <C-n> j
+  nmap <C-p> k
+  nnoremap <buffer><silent> u
+        \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'open_upper'})<CR>
 endfunction
 
 function! s:ddu_ff_filter_settings() abort
@@ -334,17 +340,51 @@ function! s:ddu_ff_filter_settings() abort
         \ <Cmd>close<CR>
   nnoremap <buffer><silent> q
         \ <Cmd>close<CR>
-  inoremap <nowait><buffer><silent> <C-n> <Cmd>call <SID>exe_parent('normal! j')<CR>
-  inoremap <nowait><buffer><silent> <C-p> <Cmd>call <SID>exe_parent('normal! k')<CR>
+  inoremap <nowait><buffer><silent> <C-n> <Cmd>call <SID>go_down()<CR>
+  inoremap <nowait><buffer><silent> <C-p> <Cmd>call <SID>go_up()<CR>
   inoremap <nowait><buffer><silent> <C-f> <Cmd>call <SID>exe_parent('normal! <C-f>')<CR>
   inoremap <nowait><buffer><silent> <C-b> <Cmd>call <SID>exe_parent('normal! <C-b>')<CR>
 endfunction
 
-function! s:exe_parent(expr) abort
-  if !exists('g:ddu#ui#ff#_filter_parent_winid')
-    return
+function! s:go_up() abort
+  if &filetype == "ddu-ff"
+    let l:winid = win_getid()
+  else
+    let l:winid = g:ddu#ui#ff#_filter_parent_winid
   endif
-  call win_execute(g:ddu#ui#ff#_filter_parent_winid, a:expr)
+  let l:pos = getcurpos(l:winid)
+  if l:pos[1] == 1
+    call s:exe_parent('normal! G')
+  else
+    call s:exe_parent('normal! k')
+  endif
+endfunction
+
+function! s:go_down() abort
+  if &filetype == "ddu-ff"
+    let l:winid = win_getid()
+  else
+    let l:winid = g:ddu#ui#ff#_filter_parent_winid
+  endif
+  let l:pos = getcurpos(l:winid)
+  if l:pos[1] == line('$', l:winid)
+    call s:exe_parent('normal! gg')
+  else
+    call s:exe_parent('normal! j')
+  endif
+endfunction
+
+function! s:exe_parent(expr) abort
+  if &filetype == "ddu-ff"
+    " call from ddu-ff
+    call execute(a:expr)
+  else
+    " call from ddu-ff-filter
+    if !exists('g:ddu#ui#ff#_filter_parent_winid')
+      return
+    endif
+    call win_execute(g:ddu#ui#ff#_filter_parent_winid, a:expr)
+  endif
 endfunction
 
 augroup my-ddu
