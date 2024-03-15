@@ -21,6 +21,17 @@ function! s:init() abort
   call jetpack#add('williamboman/mason-lspconfig.nvim')
   call jetpack#add('hedyhli/outline.nvim')
 
+  " ddc
+  call jetpack#add('Shougo/ddc.vim')
+  call jetpack#add('Shougo/pum.vim')
+  call jetpack#add('Shougo/ddc-around')
+  call jetpack#add('Shougo/ddc-ui-native')
+  call jetpack#add('LumaKernel/ddc-source-file')
+  call jetpack#add('Shougo/ddc-matcher_head')
+  call jetpack#add('Shougo/ddc-sorter_rank')
+  call jetpack#add('Shougo/ddc-converter_remove_overlap')
+  call jetpack#add('shun/ddc-vim-lsp')
+
   " ddu
   call jetpack#add('Bakudankun/ddu-filter-matchfuzzy')
   call jetpack#add('Milly/ddu-filter-kensaku')
