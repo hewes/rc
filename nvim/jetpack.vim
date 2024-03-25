@@ -53,6 +53,7 @@ function! s:init() abort
   call jetpack#add('uga-rosa/ddu-filter-converter_devicon')
   call jetpack#add('kyoh86/ddu-filter-converter_hl_dir')
   call jetpack#add('shun/ddu-source-buffer')
+  call jetpack#add('shun/ddu-source-rg')
   call jetpack#add('Shougo/ddu-source-register')
   call jetpack#add('Shougo/ddu-ui-ff')
   call jetpack#add('Shougo/ddu.vim', {"depends": "denops.vim"})

@@ -109,6 +109,12 @@ call ddu#custom#patch_global({
       \       'ignoredDirectories': ['.git', 'node_modules', 'venv'],
       \     },
       \   },
+      \   {
+      \     'name': 'rg',
+      \     'params': {
+      \       'args': ['--column', '--no-heading', '--color', 'never'],
+      \     },
+      \   },
       \ ],
       \})
 
@@ -291,6 +297,22 @@ nnoremap <silent> gc <Cmd>call ddu#start(#{
       \     autoAction: {'name': 'preview'},
       \     startAutoAction : v:true,
       \     floatingTitle : "LSP-CallHierarchy",
+      \   },
+      \ }
+      \})<CR>
+
+nnoremap <silent> [ddu]g <Cmd>call ddu#start(#{
+      \ sources: [#{
+      \   name: 'rg',
+      \   params: {'input': input('Pattern: ')},
+      \ }],
+      \ uiParams: #{
+      \   ff: #{
+      \     displayTree: v:true,
+      \     startFilter: v:false,
+      \     autoAction: {'name': 'preview'},
+      \     startAutoAction : v:true,
+      \     floatingTitle : "ripgrep",
       \   },
       \ }
       \})<CR>
