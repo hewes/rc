@@ -6,33 +6,17 @@ endif
 let g:ddu_source_lsp_clientName = "nvim-lsp"
 let s:file_source = {
     \      'name': 'file',
-    \      'options': 
+    \      'options':
     \          {
     \             'converters': ['converter_hl_dir', 'converter_devicon']
     \          },
     \    }
 
-function s:file_open_or_narrow(args)
-  let items = a:args->get('items')
-  let action = items[0]->get('action')
-  if action->get('isDirectory')
-    let fullpath = fnamemodify(action->get('path'),':p')
-    call ddu#start({
-          \ 'sources': [s:file_source],
-          \ 'sourceOptions': {'file': { 'path': fullpath },},
-          \ 'uiParams': {
-          \   'ff': {
-          \     'floatingTitle' : fullpath,
-          \    }
-          \  }
-          \ })
-  else
-    execute "e ".fnameescape(action->get('path'))
-  endif
-  return 0
-endfunction
+let s:file_sources = [
+    \  s:file_source,
+    \ ]
 
-function s:file_open_upper(args)
+function s:file_open_parent(args)
   let items = a:args->get('items')
   let action = items[0]->get('action')
   let curdir = fnamemodify(action->get('path'), ':h')
@@ -49,8 +33,7 @@ function s:file_open_upper(args)
   return 0
 endfunction
 
-call ddu#custom#action('source', 'file', 'open_or_narrow', function('s:file_open_or_narrow'))
-call ddu#custom#action('source', 'file', 'open_upper', function('s:file_open_upper'))
+call ddu#custom#action('kind', 'file', 'open_parent', function('s:file_open_parent'))
 
 call ddu#custom#patch_global({
       \   'ui': 'ff',
@@ -90,7 +73,7 @@ call ddu#custom#patch_global({
       \       'defaultAction': 'do',
       \     },
       \     'file': {
-      \       'defaultAction': 'open_or_narrow',
+      \       'defaultAction': 'open',
       \     },
       \     'lsp': {
       \       'defaultAction': "open",
@@ -164,8 +147,8 @@ call s:resize()
 
 nnoremap <silent> [ddu]b <Cmd>call ddu#start({
     \ 'name': 'current buffer dir',
-    \ 'sources': [<sid>get('file_source')],
-    \ 'sourceOptions': {'file': #{ path: expand("%:p:h") },},
+    \ 'sources': <sid>get('file_sources'),
+    \ 'sourceOptions': {'_': #{ path: expand("%:p:h") },},
     \ 'uiParams': {
     \   'ff': {
     \     'floatingTitle' : expand("%:p:h"),
@@ -174,8 +157,8 @@ nnoremap <silent> [ddu]b <Cmd>call ddu#start({
     \ })<CR>
 nnoremap <silent> [ddu]c <Cmd>call ddu#start({
     \ 'name': 'current',
-    \ 'sources': [<sid>get('file_source')],
-    \ 'sourceOptions': {'file': #{ path: expand("./") },},
+    \ 'sources': <sid>get('file_sources'),
+    \ 'sourceOptions': {'_': #{ path: expand("./") },},
     \ 'uiParams': {
     \   'ff': {
     \     'floatingTitle' : expand("./"),
@@ -184,8 +167,8 @@ nnoremap <silent> [ddu]c <Cmd>call ddu#start({
     \ })<CR>
 nnoremap <silent> [ddu]h <Cmd>call ddu#start({
     \ 'name': 'home',
-    \ 'sources': [<sid>get('file_source')],
-    \ 'sourceOptions': {'file': #{ path: expand("~") },},
+    \ 'sources': <sid>get('file_sources'),
+    \ 'sourceOptions': {'_': #{ path: expand("~") },},
     \ 'uiParams': {
     \   'ff': {
     \     'floatingTitle' : expand("~")
@@ -230,7 +213,7 @@ nnoremap <silent> [ddu]o <Cmd>call ddu#start({
     \ 'sources': [
     \   {
     \       'name': 'lsp_documentSymbol',
-    \       'options': 
+    \       'options':
     \          {
     \             'converters': ['converter_lsp_symbol'],
     \             'sorters': [],
@@ -250,7 +233,7 @@ nnoremap <silent> gr <Cmd>call ddu#start({
     \ 'sources': [
     \   {
     \       'name': 'lsp_references',
-    \       'options': 
+    \       'options':
     \          {'converters': ['converter_lsp_symbol']}
     \   }
     \  ],
@@ -279,7 +262,6 @@ nnoremap <silent> gd <Cmd>call ddu#start({
     \     'startAutoAction' : v:true,
     \     'floatingTitle' : "LSP-Definitions",
     \    }
-    \   
     \  }
     \ })<CR>
 
@@ -324,37 +306,46 @@ nnoremap <silent> [ddu]g <Cmd>call ddu#start(#{
 
 function! s:ddu_ff_settings() abort
   setlocal cursorline
-  nnoremap <buffer><silent> <CR>
-        \ <Cmd>call ddu#ui#do_action('itemAction')<CR>
+  nnoremap <buffer><silent><expr> <CR>
+        \ ddu#ui#get_item()->get('kind', '') ==# 'file' && ddu#ui#get_item()->get('action')->get('isDirectory') ?
+         \ "<Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow'})<CR>" :
+         \ "<ESC><Cmd>call ddu#ui#do_action('itemAction')<CR>"
   nnoremap <buffer><silent> e
         \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'file_rec'})<CR>
   nnoremap <buffer><silent> <Space>
         \ <Cmd>call ddu#ui#do_action('toggleSelectItem')<CR>
   nnoremap <buffer><silent> i
         \ <Cmd>call ddu#ui#do_action('openFilterWindow')<CR>
+  nnoremap <buffer><silent> d
+        \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'delete'})<CR>
   nnoremap <buffer><silent> q <Cmd>call ddu#ui#do_action('quit')<CR>
   nnoremap <buffer><silent> e <Cmd>call ddu#ui#do_action('expandItem',#{mode: "toggle"})<CR>
   nnoremap <buffer><silent> <C-j> <Cmd>call ddu#ui#do_action('quit')<CR>
   nnoremap <buffer><silent> p <Cmd>call ddu#ui#do_action('toggleAutoAction')<CR>
   nnoremap <buffer><silent> j <Cmd>call <SID>go_down()<CR>
   nnoremap <buffer><silent> k <Cmd>call <SID>go_up()<CR>
+  nnoremap <buffer><silent> <TAB>
+        \ <Esc><Cmd>call ddu#ui#do_action('chooseAction')<CR>
   nmap <C-n> j
   nmap <C-p> k
   nnoremap <buffer><silent> u
-        \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'open_upper'})<CR>
+        \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'open_parent'})<CR>
 endfunction
 
 function! s:ddu_ff_filter_settings() abort
-  inoremap <buffer><silent> <CR>
-        \ <Esc><Cmd>call ddu#ui#do_action('itemAction')<CR>
-  inoremap <buffer><silent> <C-o>
-        \ <Cmd>call ddu#ui#do_action('itemAction', {"name": 'narrow'})<CR>
+  setlocal nosmartindent
+  setlocal noautoindent
+  filetype indent off
+  inoremap <buffer><silent><expr> <CR>
+        \ ddu#ui#get_item()->get('kind', '') ==# 'file' && ddu#ui#get_item()->get('action')->get('isDirectory') ?
+        \ "<ESC><Cmd>call ddu#ui#do_action('itemAction', {'name': 'narrow'})<CR>" :
+        \ "<ESC><Cmd>call ddu#ui#do_action('itemAction')<CR>"
   inoremap <buffer><silent> <TAB>
         \ <Esc><Cmd>call ddu#ui#do_action('chooseAction')<CR>
   inoremap <buffer><silent> <C-j>
         \ <Esc><Cmd>call ddu#ui#do_action('quit')<CR>
-  inoremap <buffer><silent> <C-u> 
-        \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'open_upper'})<CR>
+  inoremap <buffer><silent> <C-u>
+        \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'open_parent'})<CR>
 
   nnoremap <buffer><silent> <C-j>
         \ <Cmd>call ddu#ui#do_action('quit')<CR>
