@@ -78,6 +78,9 @@ call ddu#custom#patch_global({
       \     'lsp': {
       \       'defaultAction': "open",
       \     },
+      \     'ui_select': {
+      \       'defaultAction': "select",
+      \     },
       \   },
       \   'sourceOptions': {
       \     '_': {
@@ -335,8 +338,9 @@ function! s:ddu_ff_settings() abort
 endfunction
 
 function! s:ddu_ff_filter_settings() abort
-  setlocal nosmartindent
-  setlocal noautoindent
+  " if virtualedit is on, cursor stays same column after do action..
+  " it is caused by cursor('$'->line(), 0) at ddu/ui/ff/filter.vim
+  setlocal virtualedit=none
   filetype indent off
   inoremap <buffer><silent><expr> <CR>
         \ ddu#ui#get_item()->get('kind', '') ==# 'file' && ddu#ui#get_item()->get('action')->get('isDirectory') ?
