@@ -82,6 +82,8 @@ call ddu#custom#patch_global({
       \   'sourceOptions': {
       \     '_': {
       \       'matchers': ['matcher_substring'],
+      \     },
+      \     'file': {
       \       'sorters': ['sorter_alpha'],
       \     },
       \   },
@@ -284,9 +286,9 @@ nnoremap <silent> gc <Cmd>call ddu#start(#{
       \})<CR>
 
 nnoremap <silent> [ddu]g <Cmd>call ddu#start(#{
-      \ sources: [#{
-      \   name: 'rg',
-      \   params: {'input': input('Pattern: ')},
+      \ sources: [{
+      \   'name': 'rg',
+      \   'params': {'input': input('Pattern: ')},
       \ }],
       \ uiParams: #{
       \   ff: #{
