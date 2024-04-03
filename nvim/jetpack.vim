@@ -14,6 +14,7 @@ function! s:init() abort
   call jetpack#add('vim-denops/denops.vim')
   call jetpack#add('vim-skk/skkeleton', {"depends": "denops.vim"})
   call jetpack#add('kana/vim-smartchr')
+  call jetpack#add('hadronized/hop.nvim')
  
   "LSP
   call jetpack#add('neovim/nvim-lspconfig')
