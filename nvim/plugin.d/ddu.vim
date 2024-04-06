@@ -353,12 +353,10 @@ function! s:ddu_ff_filter_settings() abort
   inoremap <buffer><silent> <C-u>
         \ <Cmd>call ddu#ui#do_action('itemAction', {'name': 'open_parent'})<CR>
 
-  nnoremap <buffer><silent> <C-j>
-        \ <Cmd>call ddu#ui#do_action('quit')<CR>
-  nnoremap <buffer><silent> <CR>
-        \ <Cmd>close<CR>
-  nnoremap <buffer><silent> q
-        \ <Cmd>close<CR>
+  nnoremap <buffer><silent> <C-j> <Cmd>call ddu#ui#do_action('quit')<CR>
+  nnoremap <buffer><silent> <CR> <Cmd>close<CR>
+  nnoremap <buffer><silent> q <Cmd>close<CR>
+  inoremap <nowait><buffer><silent> <C-q> <ESC>:close<CR>
   inoremap <nowait><buffer><silent> <C-n> <Cmd>call <SID>go_down()<CR>
   inoremap <nowait><buffer><silent> <C-p> <Cmd>call <SID>go_up()<CR>
   inoremap <nowait><buffer><silent> <C-f> <Cmd>call <SID>exe_parent('normal! <C-f>')<CR>
