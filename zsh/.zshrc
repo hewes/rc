@@ -241,9 +241,6 @@ else
   alias	la='ls -a -G'
 fi
 
-alias	s='screen'
-alias	ss='screen -S'
-alias	sr='screen -D -RR'
 alias	tmr='tmux attach -t 0 || tmux'
 
 autoload history-search-end
