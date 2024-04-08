@@ -15,6 +15,9 @@ function! s:init() abort
   call jetpack#add('vim-skk/skkeleton', {"depends": "denops.vim"})
   call jetpack#add('kana/vim-smartchr')
   call jetpack#add('hadronized/hop.nvim')
+  call jetpack#add('iamcco/markdown-preview.nvim', 
+        \ {'on_ft': ['markdown', 'pandoc.markdown', 'rmd'],
+        \  'build': 'sh -c "cd app && npx --yes yarn install"' })
  
   "LSP
   call jetpack#add('neovim/nvim-lspconfig')
