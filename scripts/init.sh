@@ -12,11 +12,18 @@ function setup(){
     fi
   done
   mkdir -p $HOME/.config
-  if [ -e $HOME/.config/nvim ];then
-    echo ".config/nvim already exists"
+  link_config_dir $HOME/rc/nvim
+  link_config_dir $HOME/rc/config/ghostty
+}
+
+function link_config_dir(){
+  local src=$1
+  local target=`basename $src`
+  if [ -e $HOME/.config/${target} ];then
+    echo ".config/${target} already exists"
   else
     mkdir -p $HOME/.config
-    ln -s $HOME/rc/nvim $HOME/.config/nvim
+    ln -s ${src} $HOME/.config/${target}
   fi
 }
 

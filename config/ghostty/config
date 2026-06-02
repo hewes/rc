@@ -1,0 +1,3 @@
+keybind = ctrl+m=text:\r
+keybind = ctrl+i=text:\t
+shell-integration-features = ssh-terminfo,ssh-env
