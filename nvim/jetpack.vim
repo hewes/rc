@@ -24,6 +24,7 @@ function! s:init() abort
   call jetpack#add('williamboman/mason.nvim')
   call jetpack#add('williamboman/mason-lspconfig.nvim')
   call jetpack#add('hedyhli/outline.nvim')
+  call jetpack#add('mfussenegger/nvim-jdtls')
 
   " ddc
   call jetpack#add('Shougo/ddc.vim')

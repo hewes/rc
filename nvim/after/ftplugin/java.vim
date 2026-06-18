@@ -4,4 +4,5 @@ let g:java_allow_cpp_keywords = 1
 setlocal ts=4
 setlocal sw=4
 setlocal noexpandtab
+setlocal omnifunc=v:lua.vim.lsp.omnifunc
 
