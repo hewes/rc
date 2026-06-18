@@ -48,4 +48,5 @@ require("mason-lspconfig").setup_handlers {
       on_attach = on_attach, --keyバインドなどの設定を登録
     }
   end,
+  ["jdtls"] = function() end, -- handled by nvim-jdtls in after/ftplugin/java.lua
 }
