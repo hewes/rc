@@ -277,3 +277,4 @@ if [ -e $HOME/.fzf.zsh ]; then
 fi
 
 export PATH=~/.deno/bin:$PATH
+export PATH="$HOME/.local/bin:$PATH"
