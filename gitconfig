@@ -1,2 +1,5 @@
 [include]
   path = .gitconfig.common
+[user]
+	email = hrysk1986@gmail.com
+	name = hewes
