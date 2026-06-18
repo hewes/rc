@@ -60,7 +60,7 @@ set expandtab smarttab
 set smartindent
 set updatetime=500
 
-set browsedir=buffer
+if !has('nvim') | set browsedir=buffer | endif
 set backspace=indent,eol,start
 set clipboard=unnamed
 
